@@ -8,8 +8,10 @@ import { Button } from '@/components/ui/button';
 const navItems = [
   { title: 'Home', href: '/' },
   { title: 'About', href: '/about' },
+  { title: 'Visit', href: '/visit' },
   { title: 'Darshan', href: '/darshan' },
   { title: 'Gallery', href: '/gallery' },
+  { title: 'FAQ', href: '/faq' },
   { title: 'Contact', href: '/contact' },
 ];
 
@@ -45,8 +47,8 @@ const Navbar = () => {
                 {item.title}
               </Link>
             ))}
-            <Button className="bg-krishna-gold hover:bg-krishna-saffron text-white">
-              Donate
+            <Button className="bg-krishna-gold hover:bg-krishna-saffron text-white" asChild>
+              <Link to="/donate">Donate</Link>
             </Button>
           </nav>
           
@@ -79,8 +81,8 @@ const Navbar = () => {
               {item.title}
             </Link>
           ))}
-          <Button className="bg-krishna-gold hover:bg-krishna-saffron text-white w-full">
-            Donate
+          <Button className="bg-krishna-gold hover:bg-krishna-saffron text-white w-full" asChild>
+            <Link to="/donate" onClick={toggleMenu}>Donate</Link>
           </Button>
         </div>
       </div>

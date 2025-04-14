@@ -2,6 +2,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Calendar } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Hero = () => {
   return (
@@ -26,12 +27,14 @@ const Hero = () => {
             Sri Sri Radha Krishna Temple - A spiritual sanctuary in the heart of Lucknow
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button className="bg-krishna-gold hover:bg-krishna-saffron text-white text-lg px-6 py-6">
-              Visit the Temple
+            <Button className="bg-krishna-gold hover:bg-krishna-saffron text-white text-lg px-6 py-6" asChild>
+              <Link to="/visit">Visit the Temple</Link>
             </Button>
-            <Button variant="outline" className="bg-transparent border-white hover:bg-white/20 text-white text-lg px-6 py-6">
-              <Calendar className="mr-2" />
-              View Schedule
+            <Button variant="outline" className="bg-transparent border-white hover:bg-white/20 text-white text-lg px-6 py-6" asChild>
+              <Link to="/darshan">
+                <Calendar className="mr-2" />
+                View Schedule
+              </Link>
             </Button>
           </div>
         </div>
