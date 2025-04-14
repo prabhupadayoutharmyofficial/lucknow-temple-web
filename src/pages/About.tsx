@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -22,8 +21,8 @@ import {
   ShoppingBag, 
   BookMarked,
   Music,
-  Male,
-  Female,
+  User,
+  UserPlus,
   Baby
 } from 'lucide-react';
 
@@ -133,7 +132,7 @@ const About = () => {
                     <AccordionItem value="male-programs">
                       <AccordionTrigger className="bg-krishna-blue/10 px-4 rounded-t">
                         <div className="flex items-center gap-3">
-                          <Male className="h-5 w-5 text-krishna-blue" />
+                          <User className="h-5 w-5 text-krishna-blue" />
                           <span className="font-devotional text-lg">Programs for Men</span>
                         </div>
                       </AccordionTrigger>
@@ -169,7 +168,7 @@ const About = () => {
                     <AccordionItem value="female-programs" className="mt-4">
                       <AccordionTrigger className="bg-krishna-lotus/10 px-4 rounded-t">
                         <div className="flex items-center gap-3">
-                          <Female className="h-5 w-5 text-krishna-lotus" />
+                          <UserPlus className="h-5 w-5 text-krishna-lotus" />
                           <span className="font-devotional text-lg">Programs for Women</span>
                         </div>
                       </AccordionTrigger>
@@ -399,4 +398,3 @@ const About = () => {
 };
 
 export default About;
-
