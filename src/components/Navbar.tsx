@@ -28,8 +28,8 @@ const Navbar = () => {
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center gap-2">
             <Link to="/" className="flex items-center gap-2">
-              <div className="w-12 h-12 rounded-full bg-krishna-gold flex items-center justify-center text-white">
-                <img src="/public/logo.png" alt="ISKCON Logo" className="w-13 h-13" />
+              <div className="w-12 h-10 rounded-full bg-krishna-gold flex items-center justify-center text-white">
+                <img src="/public/logo.png" alt="ISKCON Logo" className="w-12 h-10" />
               </div>
               <span className="font-devotional text-xl font-semibold">
                 ISKCON LUCKNOW

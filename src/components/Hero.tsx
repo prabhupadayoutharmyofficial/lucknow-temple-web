@@ -21,10 +21,10 @@ const Hero = () => {
       <div className="container mx-auto px-4 relative h-full flex flex-col justify-center items-center text-white text-center">
         <div className="animate-fadeIn opacity-0" style={{ animationDelay: "0.2s" }}>
           <h1 className="font-devotional text-4xl md:text-6xl font-bold mb-6">
-            Welcome to ISKCON Lucknow
+            Welcome to ISKCON LUCKNOW
           </h1>
           <p className="text-xl md:text-2xl max-w-2xl mx-auto mb-10">
-            Sri Sri Radha Krishna Temple - A spiritual sanctuary in the heart of Lucknow
+            Sri Sri Radha Raman Bihari Temple
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button className="bg-krishna-gold hover:bg-krishna-saffron text-white text-lg px-6 py-6" asChild>
