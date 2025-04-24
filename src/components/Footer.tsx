@@ -53,7 +53,7 @@ const Footer = () => {
             <ul className="space-y-4">
               <li className="flex items-start gap-2">
                 <MapPin size={20} className="shrink-0 mt-1" />
-                <span>ISKCON Temple, Aliganj, Lucknow, Uttar Pradesh, India</span>
+                <span>ISKCON Temple, Amar Shaheed Path, Golf City, Sector-F, Ansal, Lucknow, Uttar Pradesh 226030 India</span>
               </li>
               <li className="flex items-center gap-2">
                 <Phone size={20} />
