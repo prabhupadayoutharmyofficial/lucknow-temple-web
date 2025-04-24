@@ -9,6 +9,7 @@ import ProgramsSection from '@/components/about/ProgramsSection';
 import FacilitiesSection from '@/components/about/FacilitiesSection';
 import ArchitectureSection from '@/components/about/ArchitectureSection';
 import AboutSidebar from '@/components/about/AboutSidebar';
+import TemplePresidentSection from '@/components/about/TemplePresidentSection';
 
 const About = () => {
   return (
@@ -28,6 +29,7 @@ const About = () => {
               <ProgramsSection />
               <FacilitiesSection />
               <ArchitectureSection />
+              <TemplePresidentSection />
             </div>
             
             <div className="lg:col-span-1">
