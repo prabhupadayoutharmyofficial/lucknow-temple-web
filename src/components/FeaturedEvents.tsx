@@ -12,7 +12,7 @@ const events = [
     date: 'August 15, 2025',
     time: '5:00 PM - 12:00 AM',
     description: 'Join us for the grand celebration of Lord Krishna\'s appearance day with kirtan, abhishek, drama, and midnight aarti.',
-    image: 'https://images.unsplash.com/photo-1617840213429-301c23a0c930?q=80&w=1970&auto=format&fit=crop'
+    image: '/public/janmashtami.jpg'
   },
   {
     id: 2,
@@ -20,15 +20,15 @@ const events = [
     date: 'December 2, 2025',
     time: '10:00 AM - 2:00 PM',
     description: 'Celebrate the day when Bhagavad Gita was spoken by Lord Krishna to Arjuna. Special discourse and havan ceremony.',
-    image: 'https://images.unsplash.com/photo-1600197155673-c2f7c9a36559?q=80&w=2069&auto=format&fit=crop'
+    image: '/public/geetajayanti.jpeg'
   },
   {
     id: 3,
-    title: 'Sunday Feast Program',
-    date: 'Every Sunday',
-    time: '5:30 PM - 8:30 PM',
-    description: 'Weekly spiritual program featuring bhajan, discourse, arati, and free prasadam (sanctified vegetarian meal).',
-    image: 'https://images.unsplash.com/photo-1580654712603-eb43273aff33?q=80&w=1970&auto=format&fit=crop'
+    title: 'Daily Feast Program',
+    date: 'Everyday',
+    time: '6:30 PM - 8:30 PM',
+    description: 'Daily spiritual program featuring bhajan, discourse, arati, and free prasadam (sanctified vegetarian meal).',
+    image: '/public/prasadam.jpg'
   }
 ];
 

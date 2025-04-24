@@ -11,7 +11,7 @@ const AboutSection = () => {
         <div className="order-2 md:order-1">
           <div className="space-y-6">
             <h2 className="font-devotional text-3xl font-semibold text-krishna-blue">
-              About ISKCON Lucknow Temple
+              About Iskcon Lucknow Temple
             </h2>
             <p className="text-lg text-gray-700">
               The International Society for Krishna Consciousness (ISKCON) 
