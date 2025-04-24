@@ -5,6 +5,10 @@ import { Clock, Sun } from 'lucide-react';
 
 const scheduleItems = [
   {
+    name: "Temple Opens",
+    time: "4:00 AM - 12:30 PM"
+  },
+  {
     name: "Mangala Aarti",
     time: "4:30 AM - 5:00 AM"
   },
@@ -30,15 +34,15 @@ const scheduleItems = [
   },
   {
     name: "Darshan Opens",
-    time: "4:00 PM - 7:00 PM"
+    time: "4:00 PM - 7:30 PM"
   },
   {
     name: "Sandhya Aarti",
-    time: "7:00 PM - 7:30 PM"
+    time: "6:00 PM - 7:30 PM"
   },
   {
-    name: "Shayana Aarti",
-    time: "8:30 PM - 9:00 PM"
+    name: "Temple Closes",
+    time: "8:30 PM - 4:00 AM"
   }
 ];
 
