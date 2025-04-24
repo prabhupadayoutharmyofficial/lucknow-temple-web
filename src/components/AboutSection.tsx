@@ -38,7 +38,7 @@ const AboutSection = () => {
             <div className="absolute -top-4 -left-4 w-32 h-32 border-l-4 border-t-4 border-krishna-gold opacity-60"></div>
             <div className="absolute -bottom-4 -right-4 w-32 h-32 border-r-4 border-b-4 border-krishna-gold opacity-60"></div>
             <img 
-              src="https://images.unsplash.com/photo-1543647777-3d116561dc7c?q=80&w=1974&auto=format&fit=crop" 
+              src="/public/iskconlucknowlogo.png" 
               alt="ISKCON Lucknow Temple" 
               className="rounded-lg shadow-xl max-h-[500px] object-cover"
             />

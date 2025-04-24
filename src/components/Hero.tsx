@@ -11,7 +11,7 @@ const Hero = () => {
       <div 
         className="absolute inset-0 bg-cover bg-center"
         style={{ 
-          backgroundImage: "url('https://images.unsplash.com/photo-1542644497-dab3d52f4bc7?q=80&w=1921&auto=format&fit=crop')", 
+          backgroundImage: "url('/public/background.jpg')", 
         }}
       >
         <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/60"></div>
@@ -21,10 +21,10 @@ const Hero = () => {
       <div className="container mx-auto px-4 relative h-full flex flex-col justify-center items-center text-white text-center">
         <div className="animate-fadeIn opacity-0" style={{ animationDelay: "0.2s" }}>
           <h1 className="font-devotional text-4xl md:text-6xl font-bold mb-6">
-            Welcome to ISKCON LUCKNOW
+            Shri Shri Radha Raman Bihari
           </h1>
-          <p className="text-xl md:text-2xl max-w-2xl mx-auto mb-10">
-            Sri Sri Radha Raman Bihari Temple
+          <p className="font-devotional text-xl md:text-3xl max-w-3xl mx-auto mb-10">
+            Iskcon Lucknow Temple
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button className="bg-krishna-gold hover:bg-krishna-saffron text-white text-lg px-6 py-6" asChild>
