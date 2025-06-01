@@ -7,11 +7,18 @@ import { Link } from 'react-router-dom';
 const Hero = () => {
   return (
     <div className="relative h-[90vh]">
-      {/* Background overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/60"></div>
+      {/* Background image with overlay */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ 
+          backgroundImage: "url('https://firebasestorage.googleapis.com/v0/b/pyaregistrationportal.firebasestorage.app/o/Iskcon%20Lucknow%20Website%2Fbackground.jpg?alt=media&token=fbcbdfe2-12be-4111-a3bf-2a8ded644622')", 
+        }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/60"></div>
+      </div>
       
       {/* Content */}
-      <div className="container mx-auto px-4 relative h-full flex flex-col justify-center items-center text-white text-center pt-32">
+      <div className="container mx-auto px-4 relative h-full flex flex-col justify-center items-center text-white text-center pt-20">
         <div className="animate-fadeIn opacity-0" style={{ animationDelay: "0.2s" }}>
           <h1 className="font-devotional text-4xl md:text-6xl font-bold mb-6">
             Shri Shri Radha Raman Bihari
