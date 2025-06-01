@@ -18,7 +18,7 @@ const Hero = () => {
       </div>
       
       {/* Content */}
-      <div className="container mx-auto px-4 relative h-full flex flex-col justify-center items-center text-white text-center pt-20">
+      <div className="container mx-auto px-4 relative h-full flex flex-col justify-center items-center text-white text-center pt-60">
         <div className="animate-fadeIn opacity-0" style={{ animationDelay: "0.2s" }}>
           <h1 className="font-devotional text-4xl md:text-6xl font-bold mb-6">
             Shri Shri Radha Raman Bihari
