@@ -48,7 +48,7 @@ const Contact = () => {
                 
                 <div className="h-[400px] rounded-lg overflow-hidden shadow-lg border">
                   <iframe 
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3558.2583498045455!2d80.93819911503493!3d26.894478683133216!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x399bfd7e0a9fd1e1%3A0x7fb93ebb4f3dcd51!2sISKCON%20Lucknow!5e0!3m2!1sen!2sin!4v1645372184429!5m2!1sen!2sin" 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3558.260948798046!2d80.92994757651246!3d26.89424067669716!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x399bfd7dfed76d05%3A0x826a93fc6b6c57b2!2sISKCON%20Lucknow%20Vrindavan%20Dham%20-%20International%20Society%20for%20Krishna%20Consciousness!5e0!3m2!1sen!2sin!4v1735744950377!5m2!1sen!2sin" 
                     width="100%" 
                     height="100%" 
                     style={{ border: 0 }} 
