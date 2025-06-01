@@ -21,23 +21,39 @@ const Navbar = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  // Split nav items for desktop view.
+  const leftNavItems = navItems.filter(item =>
+    ['Home', 'About', 'Visit', 'Darshan'].includes(item.title)
+  );
+  const rightNavItems = navItems.filter(item =>
+    ['Gallery', 'FAQ', 'Contact'].includes(item.title)
+  );
+
   return (
     <header className="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-sm border-b shadow-sm">
       <div className="container mx-auto px-4">
-        <div className="flex h-16 items-center justify-between">
-          <Link to="/" className="flex items-center gap-3 py-2">
+        {/* Desktop Header */}
+        <div className="hidden md:flex items-center justify-between h-16">
+          <nav className="flex items-center space-x-6">
+            {leftNavItems.map((item) => (
+              <Link
+                key={item.title}
+                to={item.href}
+                className="text-sm font-medium transition-colors hover:text-krishna-gold px-2 py-1"
+              >
+                {item.title}
+              </Link>
+            ))}
+          </nav>
+          <Link to="/" className="flex items-center gap-3">
             <img 
-              src="https://firebasestorage.googleapis.com/v0/b/pyaregistrationportal.firebasestorage.app/o/Iskcon%20Lucknow%20Website%2Fandroid-chrome-512x512.png?alt=media&token=82c44a03-c11a-4605-9d88-9605e5759085" 
+              src="https://firebasestorage.googleapis.com/v0/b/pyaregistrationportal.firebasestorage.app/o/Iskcon%20Lucknow%20Website%2Flogonewiskcon.png?alt=media&token=4463d404-a141-4a21-81d6-b608348030c7" 
               alt="ISKCON Logo" 
-              className="w-10 h-10 object-cover"
+              className="max-h-full max-w-full object-contain"
             />
-            <span className="font-devotional text-xl font-semibold leading-tight">
-              ISKCON LUCKNOW
-            </span>
           </Link>
-          
-          <nav className="hidden md:flex items-center space-x-6">
-            {navItems.map((item) => (
+          <nav className="flex items-center space-x-6">
+            {rightNavItems.map((item) => (
               <Link
                 key={item.title}
                 to={item.href}
@@ -50,18 +66,29 @@ const Navbar = () => {
               <Link to="/donate">Donate</Link>
             </Button>
           </nav>
-          
-          <div className="md:hidden flex items-center">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={toggleMenu} 
-              aria-label="Toggle Menu"
-              className="p-2"
-            >
-              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </Button>
-          </div>
+        </div>
+
+        {/* Mobile Header */}
+        <div className="flex md:hidden h-16 items-center justify-between">
+          <Link to="/" className="flex items-center gap-3 py-2">
+            <img 
+              src="https://firebasestorage.googleapis.com/v0/b/pyaregistrationportal.firebasestorage.app/o/Iskcon%20Lucknow%20Website%2Fandroid-chrome-512x512.png?alt=media&token=82c44a03-c11a-4605-9d88-9605e5759085" 
+              alt="ISKCON Logo" 
+              className="w-10 h-10 object-cover"
+            />
+            <span className="font-devotional text-xl font-semibold leading-tight">
+              ISKCON LUCKNOW
+            </span>
+          </Link>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={toggleMenu} 
+            aria-label="Toggle Menu"
+            className="p-2"
+          >
+            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </Button>
         </div>
       </div>
       
@@ -75,7 +102,7 @@ const Navbar = () => {
             <img 
               src="https://firebasestorage.googleapis.com/v0/b/pyaregistrationportal.firebasestorage.app/o/Iskcon%20Lucknow%20Website%2Fandroid-chrome-512x512.png?alt=media&token=82c44a03-c11a-4605-9d88-9605e5759085" 
               alt="ISKCON Logo" 
-              className="w-8 h-8 object-cover"
+              className="w-10 h-10 object-cover"
             />
             <span className="font-devotional text-lg font-semibold">
               ISKCON LUCKNOW
