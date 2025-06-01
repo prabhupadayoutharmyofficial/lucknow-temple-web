@@ -28,13 +28,11 @@ const Navbar = () => {
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center gap-2">
             <Link to="/" className="flex items-center gap-2">
-              <div className="w-12 h-10 rounded-full bg-krishna-gold flex items-center justify-center text-white">
-                <img 
-                  src="https://firebasestorage.googleapis.com/v0/b/pyaregistrationportal.firebasestorage.app/o/Iskcon%20Lucknow%20Website%2Fandroid-chrome-512x512.png?alt=media&token=82c44a03-c11a-4605-9d88-9605e5759085" 
-                  alt="ISKCON Logo" 
-                  className="w-12 h-10 rounded-full object-cover" 
-                />
-              </div>
+              <img 
+                src="https://firebasestorage.googleapis.com/v0/b/pyaregistrationportal.firebasestorage.app/o/Iskcon%20Lucknow%20Website%2Fandroid-chrome-512x512.png?alt=media&token=82c44a03-c11a-4605-9d88-9605e5759085" 
+                alt="ISKCON Logo" 
+                className="w-12 h-10 object-cover" 
+              />
               <span className="font-devotional text-xl font-semibold">
                 ISKCON LUCKNOW
               </span>
