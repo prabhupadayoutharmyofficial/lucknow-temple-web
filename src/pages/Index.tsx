@@ -37,22 +37,24 @@ const Index = () => {
         </div>
         
         {/* Welcome & About Section */}
-        <section className="py-20">
+        <section className="py-20 bg-white/95">
           <AboutSection />
         </section>
         
         {/* Featured Events */}
-        <FeaturedEvents />
+        <div className="bg-white/90">
+          <FeaturedEvents />
+        </div>
         
         {/* Temple Schedule and Info */}
-        <section className="container mx-auto px-4 py-16">
+        <section className="container mx-auto px-4 py-16 bg-white/95">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <DarshanSchedule />
             <div className="space-y-8">
               <TempleInfo />
               <div className="rounded-lg overflow-hidden shadow-lg h-[300px] border">
                 <iframe 
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3558.260948798046!2d80.92994757651246!3d26.89424067669716!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x399bfd7dfed76d05%3A0x826a93fc6b6c57b2!2sISKCON%20Lucknow%20Vrindavan%20Dham%20-%20International%20Society%20for%20Krishna%20Consciousness!5e0!3m2!1sen!2sin!4v1735744950377!5m2!1sen!2sin" 
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3558.4436826451676!2d80.92697837651224!3d26.89273507670214!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x399bfd62e52b1b1d%3A0x2a8c7c8d44444444!2sChaitanya%20Vihar%2C%20Aliganj%2C%20Lucknow%2C%20Uttar%20Pradesh%20226024!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin" 
                   width="100%" 
                   height="100%" 
                   style={{ border: 0 }} 
@@ -73,7 +75,7 @@ const Index = () => {
         </section>
         
         {/* Donation Call to Action */}
-        <section className="bg-gradient-to-r from-krishna-blue to-krishna-blue/90 text-white py-16">
+        <section className="bg-gradient-to-r from-krishna-blue/95 to-krishna-blue/90 text-white py-16">
           <div className="container mx-auto px-4 text-center">
             <h2 className="font-devotional text-3xl md:text-4xl font-semibold mb-6">
               Support the Temple's Mission
