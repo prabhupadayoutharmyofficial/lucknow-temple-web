@@ -12,7 +12,7 @@ const events = [
     date: 'August 15, 2025',
     time: '5:00 PM - 12:00 AM',
     description: 'Join us for the grand celebration of Lord Krishna\'s appearance day with kirtan, abhishek, drama, and midnight aarti.',
-    image: 'https://images.unsplash.com/photo-1617840213429-301c23a0c930?q=80&w=1970&auto=format&fit=crop'
+    image: '/public/janmashtami.jpg'
   },
   {
     id: 2,
@@ -20,7 +20,7 @@ const events = [
     date: 'December 2, 2025',
     time: '10:00 AM - 2:00 PM',
     description: 'Celebrate the day when Bhagavad Gita was spoken by Lord Krishna to Arjuna. Special discourse and havan ceremony.',
-    image: 'https://images.unsplash.com/photo-1600197155673-c2f7c9a36559?q=80&w=2069&auto=format&fit=crop'
+    image: '/public/geetajayanti.jpeg'
   },
   {
     id: 3,
@@ -28,10 +28,34 @@ const events = [
     date: 'Every Sunday',
     time: '5:30 PM - 8:30 PM',
     description: 'Weekly spiritual program featuring bhajan, discourse, arati, and free prasadam (sanctified vegetarian meal).',
-    image: 'https://images.unsplash.com/photo-1580654712603-eb43273aff33?q=80&w=1970&auto=format&fit=crop'
+    image: '/public/prasadam.jpg'
   },
   {
     id: 4,
+    title: 'Annadaan Festival',
+    date: 'March 20, 2025',
+    time: '11:00 AM - 4:00 PM',
+    description: 'Sacred food distribution program where devotees offer and distribute free meals to all visitors as a form of seva.',
+    image: 'https://images.unsplash.com/photo-1580654712603-eb43273aff33?q=80&w=1970&auto=format&fit=crop'
+  },
+  {
+    id: 5,
+    title: 'Jagannath Rath Yatra',
+    date: 'July 7, 2025',
+    time: '9:00 AM - 6:00 PM',
+    description: 'Grand chariot festival celebrating Lord Jagannath with colorful procession, cultural programs, and prasadam distribution.',
+    image: 'https://images.unsplash.com/photo-1623345805815-587eac999465?q=80&w=1970&auto=format&fit=crop'
+  },
+  {
+    id: 6,
+    title: 'Diwali Celebration',
+    date: 'November 1, 2025',
+    time: '6:00 PM - 10:00 PM',
+    description: 'Festival of lights celebration with special arti, lamp lighting ceremony, cultural programs, and festive prasadam.',
+    image: 'https://images.unsplash.com/photo-1605379399642-870262d3d051?q=80&w=1970&auto=format&fit=crop'
+  },
+  {
+    id: 7,
     title: 'Gaura Purnima Festival',
     date: 'March 14, 2025',
     time: '4:00 PM - 9:00 PM',
@@ -39,7 +63,7 @@ const events = [
     image: 'https://images.unsplash.com/photo-1623345805815-587eac999465?q=80&w=1970&auto=format&fit=crop'
   },
   {
-    id: 5,
+    id: 8,
     title: 'Rama Navami',
     date: 'April 17, 2025',
     time: '10:00 AM - 8:00 PM',
@@ -74,6 +98,7 @@ const Events = () => {
               {events.map((event) => (
                 <EventCard
                   key={event.id}
+                  id={event.id}
                   title={event.title}
                   date={event.date}
                   time={event.time}

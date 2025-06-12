@@ -3,8 +3,10 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 
 interface EventCardProps {
+  id: number;
   title: string;
   date: string;
   time: string;
@@ -12,7 +14,7 @@ interface EventCardProps {
   image: string;
 }
 
-const EventCard: React.FC<EventCardProps> = ({ title, date, time, description, image }) => {
+const EventCard: React.FC<EventCardProps> = ({ id, title, date, time, description, image }) => {
   return (
     <Card className="overflow-hidden transition-all hover:shadow-lg h-full flex flex-col">
       <div className="h-48 overflow-hidden">
@@ -33,9 +35,11 @@ const EventCard: React.FC<EventCardProps> = ({ title, date, time, description, i
         <p className="text-muted-foreground">{description}</p>
       </CardContent>
       <CardFooter className="pt-2 border-t">
-        <Button variant="ghost" className="hover:text-krishna-gold hover:bg-transparent p-0 h-auto">
-          Read more →
-        </Button>
+        <Link to={`/events/${id}`}>
+          <Button variant="ghost" className="hover:text-krishna-gold hover:bg-transparent p-0 h-auto">
+            Read more →
+          </Button>
+        </Link>
       </CardFooter>
     </Card>
   );
