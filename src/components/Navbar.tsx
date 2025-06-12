@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -47,9 +48,9 @@ const Navbar = () => {
           </nav>
           <Link to="/" className="flex items-center gap-3">
             <img 
-              src="https://firebasestorage.googleapis.com/v0/b/pyaregistrationportal.firebasestorage.app/o/Iskcon%20Lucknow%20Website%2Flogonewiskcon.png?alt=media&token=4463d404-a141-4a21-81d6-b608348030c7" 
+              src="/lovable-uploads/73c39504-0d98-4163-80cc-f0c8e0da3d20.png" 
               alt="ISKCON Logo" 
-              className="max-h-full max-w-full object-contain"
+              className="h-12 w-auto object-contain"
             />
           </Link>
           <nav className="flex items-center space-x-6">
@@ -72,9 +73,9 @@ const Navbar = () => {
         <div className="flex md:hidden h-16 items-center justify-between">
           <Link to="/" className="flex items-center gap-3 py-2">
             <img 
-              src="https://firebasestorage.googleapis.com/v0/b/pyaregistrationportal.firebasestorage.app/o/Iskcon%20Lucknow%20Website%2Fandroid-chrome-512x512.png?alt=media&token=82c44a03-c11a-4605-9d88-9605e5759085" 
+              src="/lovable-uploads/73c39504-0d98-4163-80cc-f0c8e0da3d20.png" 
               alt="ISKCON Logo" 
-              className="w-10 h-10 object-cover"
+              className="w-10 h-10 object-contain"
             />
             <span className="font-devotional text-xl font-semibold leading-tight">
               ISKCON LUCKNOW
@@ -100,9 +101,9 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-16 px-4 border-b">
           <Link to="/" className="flex items-center gap-2" onClick={toggleMenu}>
             <img 
-              src="https://firebasestorage.googleapis.com/v0/b/pyaregistrationportal.firebasestorage.app/o/Iskcon%20Lucknow%20Website%2Fandroid-chrome-512x512.png?alt=media&token=82c44a03-c11a-4605-9d88-9605e5759085" 
+              src="/lovable-uploads/73c39504-0d98-4163-80cc-f0c8e0da3d20.png" 
               alt="ISKCON Logo" 
-              className="w-10 h-10 object-cover"
+              className="w-10 h-10 object-contain"
             />
             <span className="font-devotional text-lg font-semibold">
               ISKCON LUCKNOW
