@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Plus, Edit, Trash2, Save, X } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import { Plus, Edit, Trash2, Save, X, Upload, Send, Calendar as CalendarIcon } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -14,6 +15,7 @@ const AdminEvents = () => {
   const [editingEvent, setEditingEvent] = useState<any>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const { toast } = useToast();
 
   const emptyEvent = {
@@ -24,7 +26,10 @@ const AdminEvents = () => {
     full_description: '',
     image: '',
     location: '',
-    highlights: []
+    highlights: [],
+    scheduled_publish: null,
+    is_published: true,
+    send_notification: false
   };
 
   useEffect(() => {
@@ -51,6 +56,56 @@ const AdminEvents = () => {
     }
   };
 
+  const uploadImage = async (file: File) => {
+    if (!file) return null;
+
+    setUploadingImage(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random()}.${fileExt}`;
+      const filePath = `event-images/${fileName}`;
+
+      const { data, error } = await supabase.storage
+        .from('events')
+        .upload(filePath, file);
+
+      if (error) throw error;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('events')
+        .getPublicUrl(filePath);
+
+      return publicUrl;
+    } catch (error: any) {
+      toast({
+        title: "Error uploading image",
+        description: error.message,
+        variant: "destructive"
+      });
+      return null;
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const sendNotification = async (event: any) => {
+    try {
+      const { error } = await supabase.functions.invoke('send-event-notification', {
+        body: { event }
+      });
+
+      if (error) throw error;
+      
+      toast({ title: "Notification sent successfully!" });
+    } catch (error: any) {
+      toast({
+        title: "Error sending notification",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  };
+
   const handleSave = async (eventData: any) => {
     try {
       const highlights = eventData.highlights_text 
@@ -65,7 +120,9 @@ const AdminEvents = () => {
         full_description: eventData.full_description,
         image: eventData.image,
         location: eventData.location,
-        highlights
+        highlights,
+        scheduled_publish: eventData.scheduled_publish || null,
+        is_published: eventData.is_published
       };
 
       if (eventData.id) {
@@ -76,11 +133,19 @@ const AdminEvents = () => {
         if (error) throw error;
         toast({ title: "Event updated successfully!" });
       } else {
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from('events')
-          .insert([saveData]);
+          .insert([saveData])
+          .select()
+          .single();
         if (error) throw error;
+        
         toast({ title: "Event created successfully!" });
+        
+        // Send notification if requested
+        if (eventData.send_notification && eventData.is_published) {
+          await sendNotification(data);
+        }
       }
 
       setEditingEvent(null);
@@ -122,6 +187,16 @@ const AdminEvents = () => {
       highlights_text: event.highlights ? event.highlights.join('\n') : ''
     });
 
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file) {
+        const imageUrl = await uploadImage(file);
+        if (imageUrl) {
+          setFormData({ ...formData, image: imageUrl });
+        }
+      }
+    };
+
     return (
       <Card>
         <CardHeader>
@@ -141,6 +216,7 @@ const AdminEvents = () => {
               <Label htmlFor="date">Date</Label>
               <Input
                 id="date"
+                type="date"
                 value={formData.date}
                 onChange={(e) => setFormData({ ...formData, date: e.target.value })}
               />
@@ -164,12 +240,32 @@ const AdminEvents = () => {
           </div>
           
           <div>
-            <Label htmlFor="image">Image URL</Label>
-            <Input
-              id="image"
-              value={formData.image}
-              onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-            />
+            <Label htmlFor="image">Event Image</Label>
+            <div className="space-y-2">
+              <Input
+                id="image"
+                value={formData.image}
+                onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                placeholder="Image URL or upload below"
+              />
+              <div className="flex items-center gap-2">
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  disabled={uploadingImage}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  disabled={uploadingImage}
+                  size="sm"
+                >
+                  <Upload className="h-4 w-4 mr-2" />
+                  {uploadingImage ? 'Uploading...' : 'Upload'}
+                </Button>
+              </div>
+            </div>
           </div>
           
           <div>
@@ -200,6 +296,38 @@ const AdminEvents = () => {
               rows={4}
               placeholder="Enter each highlight on a new line"
             />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="scheduled_publish">Scheduled Publish Date</Label>
+              <Input
+                id="scheduled_publish"
+                type="datetime-local"
+                value={formData.scheduled_publish || ''}
+                onChange={(e) => setFormData({ ...formData, scheduled_publish: e.target.value })}
+              />
+            </div>
+            <div className="space-y-4">
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="is_published"
+                  checked={formData.is_published}
+                  onCheckedChange={(checked) => setFormData({ ...formData, is_published: checked })}
+                />
+                <Label htmlFor="is_published">Publish immediately</Label>
+              </div>
+              {!event.id && (
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="send_notification"
+                    checked={formData.send_notification}
+                    onCheckedChange={(checked) => setFormData({ ...formData, send_notification: checked })}
+                  />
+                  <Label htmlFor="send_notification">Send email notification</Label>
+                </div>
+              )}
+            </div>
           </div>
           
           <div className="flex gap-2">
@@ -256,10 +384,29 @@ const AdminEvents = () => {
             <CardHeader>
               <div className="flex justify-between items-start">
                 <div>
-                  <CardTitle>{event.title}</CardTitle>
+                  <CardTitle className="flex items-center gap-2">
+                    {event.title}
+                    {!event.is_published && (
+                      <span className="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded">Draft</span>
+                    )}
+                    {event.scheduled_publish && (
+                      <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded flex items-center gap-1">
+                        <CalendarIcon className="h-3 w-3" />
+                        Scheduled
+                      </span>
+                    )}
+                  </CardTitle>
                   <CardDescription>{event.date} • {event.time}</CardDescription>
                 </div>
                 <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => sendNotification(event)}
+                    disabled={!event.is_published}
+                  >
+                    <Send className="h-4 w-4" />
+                  </Button>
                   <Button
                     variant="outline"
                     size="sm"
@@ -281,6 +428,9 @@ const AdminEvents = () => {
               <p className="text-sm text-muted-foreground">{event.description}</p>
               {event.location && (
                 <p className="text-sm mt-2"><strong>Location:</strong> {event.location}</p>
+              )}
+              {event.scheduled_publish && (
+                <p className="text-sm mt-2"><strong>Scheduled for:</strong> {new Date(event.scheduled_publish).toLocaleString()}</p>
               )}
             </CardContent>
           </Card>

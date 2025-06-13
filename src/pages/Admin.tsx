@@ -11,6 +11,7 @@ import AdminEvents from '@/components/admin/AdminEvents';
 import AdminTempleInfo from '@/components/admin/AdminTempleInfo';
 import AdminSchedule from '@/components/admin/AdminSchedule';
 import AdminHero from '@/components/admin/AdminHero';
+import AdminUsers from '@/components/admin/AdminUsers';
 
 const Admin = () => {
   const { user, profile, loading, isAdmin } = useAuth();
@@ -68,7 +69,7 @@ const Admin = () => {
 
         <div className="container mx-auto px-4 py-8">
           <Tabs defaultValue="events" className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-5">
               <TabsTrigger value="events" className="flex items-center gap-2">
                 <Calendar className="h-4 w-4" />
                 Events
@@ -82,8 +83,12 @@ const Admin = () => {
                 Schedule
               </TabsTrigger>
               <TabsTrigger value="hero" className="flex items-center gap-2">
-                <Users className="h-4 w-4" />
+                <Shield className="h-4 w-4" />
                 Homepage
+              </TabsTrigger>
+              <TabsTrigger value="users" className="flex items-center gap-2">
+                <Users className="h-4 w-4" />
+                Users
               </TabsTrigger>
             </TabsList>
             
@@ -101,6 +106,10 @@ const Admin = () => {
             
             <TabsContent value="hero" className="mt-6">
               <AdminHero />
+            </TabsContent>
+            
+            <TabsContent value="users" className="mt-6">
+              <AdminUsers />
             </TabsContent>
           </Tabs>
         </div>

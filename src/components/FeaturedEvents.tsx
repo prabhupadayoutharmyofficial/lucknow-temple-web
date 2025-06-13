@@ -1,9 +1,10 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import EventCard from './EventCard';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 import {
   Carousel,
   CarouselContent,
@@ -12,58 +13,41 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel"
 
-const events = [
-  {
-    id: 1,
-    title: 'Janmashtami Celebration',
-    date: 'August 15, 2025',
-    time: '5:00 PM - 12:00 AM',
-    description: 'Join us for the grand celebration of Lord Krishna\'s appearance day with kirtan, abhishek, drama, and midnight aarti.',
-    image: '/public/janmashtami.jpg'
-  },
-  {
-    id: 2,
-    title: 'Gita Jayanti',
-    date: 'December 2, 2025',
-    time: '10:00 AM - 2:00 PM',
-    description: 'Celebrate the day when Bhagavad Gita was spoken by Lord Krishna to Arjuna. Special discourse and havan ceremony.',
-    image: '/public/geetajayanti.jpeg'
-  },
-  {
-    id: 3,
-    title: 'Daily Feast Program',
-    date: 'Everyday',
-    time: '6:30 PM - 8:30 PM',
-    description: 'Daily spiritual program featuring bhajan, discourse, arati, and free prasadam (sanctified vegetarian meal).',
-    image: '/public/prasadam.jpg'
-  },
-  {
-    id: 4,
-    title: 'Annadaan Festival',
-    date: 'March 20, 2025',
-    time: '11:00 AM - 4:00 PM',
-    description: 'Sacred food distribution program where devotees offer and distribute free meals to all visitors as a form of seva.',
-    image: 'https://images.unsplash.com/photo-1580654712603-eb43273aff33?q=80&w=1970&auto=format&fit=crop'
-  },
-  {
-    id: 5,
-    title: 'Jagannath Rath Yatra',
-    date: 'July 7, 2025',
-    time: '9:00 AM - 6:00 PM',
-    description: 'Grand chariot festival celebrating Lord Jagannath with colorful procession, cultural programs, and prasadam distribution.',
-    image: 'https://images.unsplash.com/photo-1623345805815-587eac999465?q=80&w=1970&auto=format&fit=crop'
-  },
-  {
-    id: 6,
-    title: 'Diwali Celebration',
-    date: 'November 1, 2025',
-    time: '6:00 PM - 10:00 PM',
-    description: 'Festival of lights celebration with special arti, lamp lighting ceremony, cultural programs, and festive prasadam.',
-    image: 'https://images.unsplash.com/photo-1605379399642-870262d3d051?q=80&w=1970&auto=format&fit=crop'
-  }
-];
-
 const FeaturedEvents = () => {
+  const [events, setEvents] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchEvents();
+  }, []);
+
+  const fetchEvents = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('events')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(6);
+
+      if (error) throw error;
+      setEvents(data || []);
+    } catch (error) {
+      console.error('Error fetching events:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <section className="lotus-pattern py-16">
+        <div className="container mx-auto px-4">
+          <div className="text-center">Loading events...</div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="lotus-pattern py-16">
       <div className="container mx-auto px-4">
@@ -78,30 +62,36 @@ const FeaturedEvents = () => {
           </Link>
         </div>
         
-        <Carousel
-          opts={{
-            align: "start",
-            loop: true,
-          }}
-          className="w-full"
-        >
-          <CarouselContent className="-ml-2 md:-ml-4">
-            {events.map((event) => (
-              <CarouselItem key={event.id} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
-                <EventCard
-                  id={event.id}
-                  title={event.title}
-                  date={event.date}
-                  time={event.time}
-                  description={event.description}
-                  image={event.image}
-                />
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious className="hidden md:flex" />
-          <CarouselNext className="hidden md:flex" />
-        </Carousel>
+        {events.length > 0 ? (
+          <Carousel
+            opts={{
+              align: "start",
+              loop: true,
+            }}
+            className="w-full"
+          >
+            <CarouselContent className="-ml-2 md:-ml-4">
+              {events.map((event) => (
+                <CarouselItem key={event.id} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
+                  <EventCard
+                    id={event.id}
+                    title={event.title}
+                    date={event.date}
+                    time={event.time}
+                    description={event.description}
+                    image={event.image}
+                  />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className="hidden md:flex" />
+            <CarouselNext className="hidden md:flex" />
+          </Carousel>
+        ) : (
+          <div className="text-center py-8">
+            <p className="text-gray-600">No events available at the moment.</p>
+          </div>
+        )}
       </div>
     </section>
   );
