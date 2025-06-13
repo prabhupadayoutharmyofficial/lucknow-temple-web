@@ -23,19 +23,17 @@ const Index = () => {
       <Navbar />
       
       <main className="flex-grow">
-        {/* Hero Section - adjusted for new header height */}
-        <div className="relative">
-          <Hero />
-          <div className="absolute bottom-12 left-0 right-0 flex justify-center z-10">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white rounded-full p-3 animate-bounce"
-              onClick={scrollToContent}
-            >
-              <ChevronDown size={24} />
-            </Button>
-          </div>
+        {/* Hero Section */}
+        <Hero />
+        <div className="absolute bottom-12 left-0 right-0 flex justify-center z-10">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white rounded-full p-3 animate-bounce"
+            onClick={scrollToContent}
+          >
+            <ChevronDown size={24} />
+          </Button>
         </div>
         
         {/* Welcome & About Section */}
