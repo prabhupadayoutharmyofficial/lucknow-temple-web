@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { Navigate } from 'react-router-dom';
@@ -6,12 +5,13 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Shield, Settings, Calendar, MapPin, Users } from 'lucide-react';
+import { Shield, Settings, Calendar, MapPin, Users, Camera } from 'lucide-react';
 import AdminEvents from '@/components/admin/AdminEvents';
 import AdminTempleInfo from '@/components/admin/AdminTempleInfo';
 import AdminSchedule from '@/components/admin/AdminSchedule';
 import AdminHero from '@/components/admin/AdminHero';
 import AdminUsers from '@/components/admin/AdminUsers';
+import AdminGallery from '@/components/admin/AdminGallery';
 
 const Admin = () => {
   const { user, profile, loading, isAdmin } = useAuth();
@@ -69,7 +69,7 @@ const Admin = () => {
 
         <div className="container mx-auto px-4 py-8">
           <Tabs defaultValue="events" className="w-full">
-            <TabsList className="grid w-full grid-cols-5">
+            <TabsList className="grid w-full grid-cols-6">
               <TabsTrigger value="events" className="flex items-center gap-2">
                 <Calendar className="h-4 w-4" />
                 Events
@@ -85,6 +85,10 @@ const Admin = () => {
               <TabsTrigger value="hero" className="flex items-center gap-2">
                 <Shield className="h-4 w-4" />
                 Homepage
+              </TabsTrigger>
+              <TabsTrigger value="gallery" className="flex items-center gap-2">
+                <Camera className="h-4 w-4" />
+                Gallery
               </TabsTrigger>
               <TabsTrigger value="users" className="flex items-center gap-2">
                 <Users className="h-4 w-4" />
@@ -106,6 +110,10 @@ const Admin = () => {
             
             <TabsContent value="hero" className="mt-6">
               <AdminHero />
+            </TabsContent>
+            
+            <TabsContent value="gallery" className="mt-6">
+              <AdminGallery />
             </TabsContent>
             
             <TabsContent value="users" className="mt-6">
