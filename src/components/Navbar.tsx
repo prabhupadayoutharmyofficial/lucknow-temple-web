@@ -1,140 +1,157 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { cn } from '@/lib/utils';
-import { Menu, X } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 
-const navItems = [
-  { title: 'Home', href: '/' },
-  { title: 'About', href: '/about' },
-  { title: 'Visit', href: '/visit' },
-  { title: 'Darshan', href: '/darshan' },
-  { title: 'Gallery', href: '/gallery' },
-  { title: 'FAQ', href: '/faq' },
-  { title: 'Contact', href: '/contact' },
-];
+import React, { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Menu, X, Shield, LogOut } from 'lucide-react';
+import { useAuth } from '@/components/auth/AuthProvider';
 
 const Navbar = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
+  const { user, isAdmin, signOut } = useAuth();
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
+  const navItems = [
+    { name: 'Home', path: '/' },
+    { name: 'About', path: '/about' },
+    { name: 'Darshan', path: '/darshan' },
+    { name: 'Events', path: '/events' },
+    { name: 'Gallery', path: '/gallery' },
+    { name: 'Visit', path: '/visit' },
+    { name: 'FAQ', path: '/faq' },
+    { name: 'Donate', path: '/donate' },
+    { name: 'Contact', path: '/contact' },
+  ];
+
+  const isActivePath = (path: string) => {
+    return location.pathname === path;
   };
 
-  // Split nav items for desktop view.
-  const leftNavItems = navItems.filter(item =>
-    ['Home', 'About', 'Visit', 'Darshan'].includes(item.title)
-  );
-  const rightNavItems = navItems.filter(item =>
-    ['Gallery', 'FAQ', 'Contact'].includes(item.title)
-  );
+  const handleSignOut = async () => {
+    await signOut();
+    setIsOpen(false);
+  };
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-sm border-b shadow-sm">
+    <nav className="bg-white shadow-lg sticky top-0 z-50">
       <div className="container mx-auto px-4">
-        {/* Desktop Header */}
-        <div className="hidden md:flex items-center justify-between h-16">
-          <nav className="flex items-center space-x-6">
-            {leftNavItems.map((item) => (
-              <Link
-                key={item.title}
-                to={item.href}
-                className="text-sm font-medium transition-colors hover:text-krishna-gold px-2 py-1"
-              >
-                {item.title}
-              </Link>
-            ))}
-          </nav>
-          <Link to="/" className="flex items-center gap-3">
+        <div className="flex justify-between items-center py-4">
+          {/* Logo */}
+          <Link to="/" className="flex items-center space-x-3">
             <img 
-              src="https://firebasestorage.googleapis.com/v0/b/pyaregistrationportal.firebasestorage.app/o/Iskcon%20Lucknow%20Website%2Flogonewiskcon.png?alt=media&token=4463d404-a141-4a21-81d6-b608348030c7" 
-              alt="ISKCON Logo" 
-              className="max-h-full max-w-full object-contain"
+              src="/public/iskconlucknowlogo.png" 
+              alt="ISKCON Lucknow" 
+              className="h-10 w-10"
             />
+            <div className="text-krishna-blue">
+              <div className="font-devotional text-lg font-semibold">ISKCON Lucknow</div>
+              <div className="text-xs text-muted-foreground">Vrindavan Dham</div>
+            </div>
           </Link>
-          <nav className="flex items-center space-x-6">
-            {rightNavItems.map((item) => (
+
+          {/* Desktop Navigation */}
+          <div className="hidden lg:flex items-center space-x-6">
+            {navItems.map((item) => (
               <Link
-                key={item.title}
-                to={item.href}
-                className="text-sm font-medium transition-colors hover:text-krishna-gold px-2 py-1"
+                key={item.name}
+                to={item.path}
+                className={`text-sm font-medium transition-colors hover:text-krishna-gold ${
+                  isActivePath(item.path)
+                    ? 'text-krishna-gold border-b-2 border-krishna-gold'
+                    : 'text-gray-700'
+                }`}
               >
-                {item.title}
+                {item.name}
               </Link>
             ))}
-            <Button className="ml-2 bg-krishna-gold hover:bg-krishna-saffron text-white px-4 py-2" asChild>
-              <Link to="/donate">Donate</Link>
+            
+            {/* Auth Section */}
+            <div className="flex items-center space-x-2 ml-4 border-l pl-4">
+              {user ? (
+                <>
+                  {isAdmin && (
+                    <Link to="/admin">
+                      <Button variant="outline" size="sm" className="flex items-center gap-2">
+                        <Shield className="h-4 w-4" />
+                        Admin
+                      </Button>
+                    </Link>
+                  )}
+                  <Button variant="outline" size="sm" onClick={handleSignOut} className="flex items-center gap-2">
+                    <LogOut className="h-4 w-4" />
+                    Sign Out
+                  </Button>
+                </>
+              ) : (
+                <Link to="/auth">
+                  <Button variant="outline" size="sm">
+                    Sign In
+                  </Button>
+                </Link>
+              )}
+            </div>
+          </div>
+
+          {/* Mobile menu button */}
+          <div className="lg:hidden">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsOpen(!isOpen)}
+            >
+              {isOpen ? <X size={24} /> : <Menu size={24} />}
             </Button>
-          </nav>
+          </div>
         </div>
 
-        {/* Mobile Header */}
-        <div className="flex md:hidden h-16 items-center justify-between">
-          <Link to="/" className="flex items-center gap-3 py-2">
-            <img 
-              src="https://firebasestorage.googleapis.com/v0/b/pyaregistrationportal.firebasestorage.app/o/Iskcon%20Lucknow%20Website%2Fandroid-chrome-512x512.png?alt=media&token=82c44a03-c11a-4605-9d88-9605e5759085" 
-              alt="ISKCON Logo" 
-              className="w-10 h-10 object-cover"
-            />
-            <span className="font-devotional text-xl font-semibold leading-tight">
-              ISKCON LUCKNOW
-            </span>
-          </Link>
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={toggleMenu} 
-            aria-label="Toggle Menu"
-            className="p-2"
-          >
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </Button>
-        </div>
+        {/* Mobile Navigation */}
+        {isOpen && (
+          <div className="lg:hidden pb-4">
+            <div className="flex flex-col space-y-2">
+              {navItems.map((item) => (
+                <Link
+                  key={item.name}
+                  to={item.path}
+                  className={`block px-3 py-2 text-sm font-medium transition-colors hover:text-krishna-gold ${
+                    isActivePath(item.path)
+                      ? 'text-krishna-gold bg-krishna-gold/10'
+                      : 'text-gray-700'
+                  }`}
+                  onClick={() => setIsOpen(false)}
+                >
+                  {item.name}
+                </Link>
+              ))}
+              
+              {/* Mobile Auth Section */}
+              <div className="border-t pt-2 mt-2">
+                {user ? (
+                  <>
+                    {isAdmin && (
+                      <Link to="/admin" onClick={() => setIsOpen(false)}>
+                        <Button variant="outline" size="sm" className="w-full mb-2 flex items-center gap-2">
+                          <Shield className="h-4 w-4" />
+                          Admin Dashboard
+                        </Button>
+                      </Link>
+                    )}
+                    <Button variant="outline" size="sm" onClick={handleSignOut} className="w-full flex items-center gap-2">
+                      <LogOut className="h-4 w-4" />
+                      Sign Out
+                    </Button>
+                  </>
+                ) : (
+                  <Link to="/auth" onClick={() => setIsOpen(false)}>
+                    <Button variant="outline" size="sm" className="w-full">
+                      Sign In
+                    </Button>
+                  </Link>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
-      
-      {/* Mobile menu */}
-      <div className={cn(
-        "md:hidden fixed top-0 left-0 right-0 bg-white border-b shadow-lg transition-transform duration-200 ease-in-out transform z-40",
-        isMenuOpen ? "translate-y-0" : "-translate-y-full"
-      )}>
-        <div className="flex justify-between items-center h-16 px-4 border-b">
-          <Link to="/" className="flex items-center gap-2" onClick={toggleMenu}>
-            <img 
-              src="https://firebasestorage.googleapis.com/v0/b/pyaregistrationportal.firebasestorage.app/o/Iskcon%20Lucknow%20Website%2Fandroid-chrome-512x512.png?alt=media&token=82c44a03-c11a-4605-9d88-9605e5759085" 
-              alt="ISKCON Logo" 
-              className="w-10 h-10 object-cover"
-            />
-            <span className="font-devotional text-lg font-semibold">
-              ISKCON LUCKNOW
-            </span>
-          </Link>
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={toggleMenu} 
-            aria-label="Close Menu"
-            className="p-2"
-          >
-            <X size={24} />
-          </Button>
-        </div>
-        <div className="px-4 py-4 flex flex-col space-y-2">
-          {navItems.map((item) => (
-            <Link
-              key={item.title}
-              to={item.href}
-              className="text-base font-medium py-2 transition-colors hover:text-krishna-gold"
-              onClick={toggleMenu}
-            >
-              {item.title}
-            </Link>
-          ))}
-          <Button className="bg-krishna-gold hover:bg-krishna-saffron text-white w-full mt-2" asChild>
-            <Link to="/donate" onClick={toggleMenu}>Donate</Link>
-          </Button>
-        </div>
-      </div>
-    </header>
+    </nav>
   );
 };
 

@@ -9,7 +9,206 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      darshan_schedule: {
+        Row: {
+          day_of_week: string
+          evening_time: string | null
+          id: string
+          morning_time: string | null
+          special_notes: string | null
+          updated_at: string | null
+          updated_by: string | null
+        }
+        Insert: {
+          day_of_week: string
+          evening_time?: string | null
+          id?: string
+          morning_time?: string | null
+          special_notes?: string | null
+          updated_at?: string | null
+          updated_by?: string | null
+        }
+        Update: {
+          day_of_week?: string
+          evening_time?: string | null
+          id?: string
+          morning_time?: string | null
+          special_notes?: string | null
+          updated_at?: string | null
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "darshan_schedule_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      events: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          date: string
+          description: string
+          full_description: string | null
+          highlights: string[] | null
+          id: string
+          image: string
+          location: string | null
+          time: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          date: string
+          description: string
+          full_description?: string | null
+          highlights?: string[] | null
+          id?: string
+          image: string
+          location?: string | null
+          time: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          date?: string
+          description?: string
+          full_description?: string | null
+          highlights?: string[] | null
+          id?: string
+          image?: string
+          location?: string | null
+          time?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "events_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hero_section: {
+        Row: {
+          background_image: string
+          cta_primary_link: string
+          cta_primary_text: string
+          cta_secondary_link: string
+          cta_secondary_text: string
+          id: string
+          subtitle: string
+          title: string
+          updated_at: string | null
+          updated_by: string | null
+        }
+        Insert: {
+          background_image: string
+          cta_primary_link: string
+          cta_primary_text: string
+          cta_secondary_link: string
+          cta_secondary_text: string
+          id?: string
+          subtitle: string
+          title: string
+          updated_at?: string | null
+          updated_by?: string | null
+        }
+        Update: {
+          background_image?: string
+          cta_primary_link?: string
+          cta_primary_text?: string
+          cta_secondary_link?: string
+          cta_secondary_text?: string
+          id?: string
+          subtitle?: string
+          title?: string
+          updated_at?: string | null
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hero_section_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string | null
+          email: string | null
+          full_name: string | null
+          id: string
+          role: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email?: string | null
+          full_name?: string | null
+          id: string
+          role?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          role?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      temple_info: {
+        Row: {
+          display_label: string
+          field_name: string
+          field_value: string
+          id: string
+          updated_at: string | null
+          updated_by: string | null
+        }
+        Insert: {
+          display_label: string
+          field_name: string
+          field_value: string
+          id?: string
+          updated_at?: string | null
+          updated_by?: string | null
+        }
+        Update: {
+          display_label?: string
+          field_name?: string
+          field_value?: string
+          id?: string
+          updated_at?: string | null
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "temple_info_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
