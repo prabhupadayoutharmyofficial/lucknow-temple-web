@@ -10,14 +10,17 @@ const Navbar = () => {
   const location = useLocation();
   const { user, isAdmin, signOut } = useAuth();
 
-  // Main nav links including sign in as a regular link
-  const getNavItems = () => {
-    const baseItems = [
-      { name: 'Home', path: '/' },
-      { name: 'About', path: '/about' },
-      { name: 'Darshan', path: '/darshan' },
-      { name: 'Events', path: '/events' },
-      { name: 'Gallery', path: '/gallery' },
+  // Split navigation items into left and right groups
+  const getLeftNavItems = () => [
+    { name: 'Home', path: '/' },
+    { name: 'About', path: '/about' },
+    { name: 'Darshan', path: '/darshan' },
+    { name: 'Events', path: '/events' },
+    { name: 'Gallery', path: '/gallery' },
+  ];
+
+  const getRightNavItems = () => {
+    const items = [
       { name: 'Visit', path: '/visit' },
       { name: 'FAQ', path: '/faq' },
       { name: 'Donate', path: '/donate' },
@@ -25,10 +28,10 @@ const Navbar = () => {
     ];
 
     if (!user) {
-      baseItems.push({ name: 'Sign In', path: '/auth' });
+      items.push({ name: 'Sign In', path: '/auth' });
     }
 
-    return baseItems;
+    return items;
   };
 
   const isActivePath = (path: string) => location.pathname === path;
@@ -37,6 +40,9 @@ const Navbar = () => {
     await signOut();
     setIsOpen(false);
   };
+
+  // For mobile navigation, combine both groups for a single vertical menu
+  const getAllNavItems = () => [...getLeftNavItems(), ...getRightNavItems()];
 
   return (
     <div className="relative">
@@ -57,10 +63,32 @@ const Navbar = () => {
       
       <nav className="bg-white/95 backdrop-blur-sm shadow-lg sticky top-0 z-40 border-b border-krishna-gold/20">
         <div className="container mx-auto px-4">
-          <div className="flex justify-center items-center py-4 pt-10 md:pt-12 relative">
-            {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center gap-3">
-              {getNavItems().map((item) => (
+          <div className="flex justify-between items-center py-4 pt-10 md:pt-12 relative">
+            {/* Left Navigation Group */}
+            <div className="hidden lg:flex items-center gap-2 w-1/3 justify-start">
+              {getLeftNavItems().map((item) => (
+                <Link
+                  key={item.name}
+                  to={item.path}
+                  className={`text-sm font-medium transition-colors hover:text-krishna-gold px-2 py-1 rounded ${
+                    isActivePath(item.path)
+                      ? 'text-krishna-gold bg-krishna-gold/10 border-b-2 border-krishna-gold'
+                      : 'text-gray-700 hover:bg-krishna-gold/5'
+                  }`}
+                >
+                  {item.name}
+                </Link>
+              ))}
+            </div>
+            
+            {/* Empty Center Space for Logo */}
+            <div className="w-1/3 flex justify-center">
+              {/* Logo is positioned absolutely above */}
+            </div>
+            
+            {/* Right Navigation Group */}
+            <div className="hidden lg:flex items-center gap-2 w-1/3 justify-end">
+              {getRightNavItems().map((item) => (
                 <Link
                   key={item.name}
                   to={item.path}
@@ -115,7 +143,7 @@ const Navbar = () => {
           {isOpen && (
             <div className="lg:hidden pb-4 border-t border-krishna-gold/20 bg-white/95 backdrop-blur-sm">
               <div className="flex flex-col space-y-2 pt-4">
-                {getNavItems().map((item) => (
+                {getAllNavItems().map((item) => (
                   <Link
                     key={item.name}
                     to={item.path}
