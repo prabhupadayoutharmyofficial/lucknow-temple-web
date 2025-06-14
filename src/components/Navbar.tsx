@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -10,6 +9,7 @@ const Navbar = () => {
   const location = useLocation();
   const { user, isAdmin, signOut } = useAuth();
 
+  // Main nav links (without ISKCON wording)
   const navItems = [
     { name: 'Home', path: '/' },
     { name: 'About', path: '/about' },
@@ -22,9 +22,7 @@ const Navbar = () => {
     { name: 'Contact', path: '/contact' },
   ];
 
-  const isActivePath = (path: string) => {
-    return location.pathname === path;
-  };
+  const isActivePath = (path: string) => location.pathname === path;
 
   const handleSignOut = async () => {
     await signOut();
@@ -33,31 +31,29 @@ const Navbar = () => {
 
   return (
     <div className="relative">
-      {/* Centered Logo - Positioned absolutely to overlap navbar */}
-      <div className="absolute top-0 left-1/2 transform -translate-x-1/2 z-50">
+      {/* Centered Crest Logo - Overlaps navbar */}
+      <div className="absolute left-1/2 -top-10 transform -translate-x-1/2 z-50 pointer-events-auto">
         <Link to="/" className="block">
           <img 
-            src="/public/iskconlucknowlogo.png" 
-            alt="ISKCON Lucknow Crest" 
-            className="h-20 w-20 md:h-24 md:w-24 object-contain drop-shadow-lg"
+            src="/public/iskconlucknowlogo.png"
+            alt="ISKCON Lucknow Crest"
+            className="h-20 w-20 md:h-24 md:w-24 object-contain drop-shadow-xl select-none"
+            draggable={false}
+            style={{
+              filter: 'drop-shadow(0 8px 16px rgba(0,0,0,0.10))', // subtle shadow on all BGs
+            }}
           />
         </Link>
       </div>
-
-      {/* Main Navigation Bar */}
+      
       <nav className="bg-white/95 backdrop-blur-sm shadow-lg sticky top-0 z-40 border-b border-krishna-gold/20">
         <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center py-4 pt-16 md:pt-16">
-            {/* Left Side - Temple Name */}
-            <div className="flex items-center space-x-3">
-              <div className="text-krishna-blue ml-12 md:ml-16">
-                <div className="font-devotional text-lg md:text-xl font-semibold">ISKCON Lucknow</div>
-                <div className="text-xs md:text-sm text-muted-foreground">Vrindavan Dham</div>
-              </div>
-            </div>
+          <div className="flex justify-between items-center py-4 pt-10 md:pt-12 relative">
+            {/* Empty left side to keep logo centered, no ISKCON Lucknow wording */}
+            <div className="flex-1" />
 
-            {/* Desktop Navigation - Right Side */}
-            <div className="hidden lg:flex items-center space-x-6 mr-12 md:mr-16">
+            {/* Desktop Navigation */}
+            <div className="hidden lg:flex items-center gap-3 mr-12 md:mr-16">
               {navItems.map((item) => (
                 <Link
                   key={item.name}
@@ -71,36 +67,42 @@ const Navbar = () => {
                   {item.name}
                 </Link>
               ))}
-              
-              {/* Auth Section */}
-              <div className="flex items-center space-x-2 ml-4 border-l border-krishna-gold/20 pl-4">
-                {user ? (
-                  <>
-                    {isAdmin && (
-                      <Link to="/admin">
-                        <Button variant="outline" size="sm" className="flex items-center gap-2 border-krishna-blue text-krishna-blue hover:bg-krishna-blue hover:text-white">
-                          <Shield className="h-4 w-4" />
-                          Admin
-                        </Button>
-                      </Link>
-                    )}
-                    <Button variant="outline" size="sm" onClick={handleSignOut} className="flex items-center gap-2 border-krishna-blue text-krishna-blue hover:bg-krishna-blue hover:text-white">
-                      <LogOut className="h-4 w-4" />
-                      Sign Out
-                    </Button>
-                  </>
-                ) : (
-                  <Link to="/auth">
-                    <Button variant="outline" size="sm" className="border-krishna-blue text-krishna-blue hover:bg-krishna-blue hover:text-white">
-                      Sign In
-                    </Button>
-                  </Link>
-                )}
-              </div>
+              {/* Sign In/Sign Out/Admin placed inline with nav quick links */}
+              {user ? (
+                <>
+                  {isAdmin && (
+                    <Link to="/admin">
+                      <Button variant="outline" size="sm" className="flex items-center gap-2 border-krishna-blue text-krishna-blue hover:bg-krishna-blue hover:text-white ml-3">
+                        <Shield className="h-4 w-4" />
+                        Admin
+                      </Button>
+                    </Link>
+                  )}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleSignOut}
+                    className="flex items-center gap-2 border-krishna-blue text-krishna-blue hover:bg-krishna-blue hover:text-white ml-2"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    Sign Out
+                  </Button>
+                </>
+              ) : (
+                <Link to="/auth" className="ml-3">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="border-krishna-blue text-krishna-blue hover:bg-krishna-blue hover:text-white"
+                  >
+                    Sign In
+                  </Button>
+                </Link>
+              )}
             </div>
 
-            {/* Mobile menu button */}
-            <div className="lg:hidden mr-12 md:mr-16">
+            {/* Mobile menu button (right side) */}
+            <div className="lg:hidden mr-2">
               <Button
                 variant="ghost"
                 size="sm"
@@ -130,27 +132,39 @@ const Navbar = () => {
                     {item.name}
                   </Link>
                 ))}
-                
-                {/* Mobile Auth Section */}
+                {/* Auth actions (sign in/out/admin) in mobile quick links */}
                 <div className="border-t border-krishna-gold/20 pt-4 mt-4">
                   {user ? (
                     <>
                       {isAdmin && (
                         <Link to="/admin" onClick={() => setIsOpen(false)}>
-                          <Button variant="outline" size="sm" className="w-full mb-2 flex items-center gap-2 border-krishna-blue text-krishna-blue hover:bg-krishna-blue hover:text-white">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="w-full mb-2 flex items-center gap-2 border-krishna-blue text-krishna-blue hover:bg-krishna-blue hover:text-white"
+                          >
                             <Shield className="h-4 w-4" />
                             Admin Dashboard
                           </Button>
                         </Link>
                       )}
-                      <Button variant="outline" size="sm" onClick={handleSignOut} className="w-full flex items-center gap-2 border-krishna-blue text-krishna-blue hover:bg-krishna-blue hover:text-white">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleSignOut}
+                        className="w-full flex items-center gap-2 border-krishna-blue text-krishna-blue hover:bg-krishna-blue hover:text-white"
+                      >
                         <LogOut className="h-4 w-4" />
                         Sign Out
                       </Button>
                     </>
                   ) : (
                     <Link to="/auth" onClick={() => setIsOpen(false)}>
-                      <Button variant="outline" size="sm" className="w-full border-krishna-blue text-krishna-blue hover:bg-krishna-blue hover:text-white">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full border-krishna-blue text-krishna-blue hover:bg-krishna-blue hover:text-white"
+                      >
                         Sign In
                       </Button>
                     </Link>
