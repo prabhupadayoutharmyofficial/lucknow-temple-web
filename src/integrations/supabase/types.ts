@@ -100,6 +100,33 @@ export type Database = {
           },
         ]
       }
+      gallery_photos: {
+        Row: {
+          alt: string
+          category: string
+          created_at: string | null
+          display_order: number
+          id: string
+          url: string
+        }
+        Insert: {
+          alt: string
+          category: string
+          created_at?: string | null
+          display_order?: number
+          id?: string
+          url: string
+        }
+        Update: {
+          alt?: string
+          category?: string
+          created_at?: string | null
+          display_order?: number
+          id?: string
+          url?: string
+        }
+        Relationships: []
+      }
       hero_section: {
         Row: {
           background_image: string
