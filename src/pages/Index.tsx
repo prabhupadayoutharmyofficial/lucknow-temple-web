@@ -54,7 +54,7 @@ const Index = () => {
               <TempleInfo />
               <div className="rounded-lg overflow-hidden shadow-lg h-[300px] border">
                 <iframe 
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d224.84260949593925!2d80.9299473765118!3d26.894240676697178!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x399bfd7dfed76d05%3A0x826a93fc6b6c57b2!2sISKCON%20Lucknow%20Vrindavan%20Dham%20-%20International%20Society%20for%20Krishna%20Consciousness!5e0!3m2!1sen!2sin!4v1703123456789!5m2!1sen!2sin" 
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3558.1848234567!2d81.0083062149085!3d26.787922283147!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x399be498d37028c7%3A0xdf8427c7e3c40689!2sISKCON%20Temple%2C%20Sri%20Sri%20Radha%20Raman%20Bihari%20Ji%20Mandir%2C%20Lucknow!5e0!3m2!1sen!2sin!4v1703123456789!5m2!1sen!2sin"
                   width="100%" 
                   height="100%" 
                   style={{ border: 0 }} 
