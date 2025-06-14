@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -9,7 +10,7 @@ const Navbar = () => {
   const location = useLocation();
   const { user, isAdmin, signOut } = useAuth();
 
-  // Main nav links (without ISKCON wording)
+  // Main nav links including auth actions
   const navItems = [
     { name: 'Home', path: '/' },
     { name: 'About', path: '/about' },
@@ -40,7 +41,7 @@ const Navbar = () => {
             className="h-20 w-20 md:h-24 md:w-24 object-contain drop-shadow-xl select-none"
             draggable={false}
             style={{
-              filter: 'drop-shadow(0 8px 16px rgba(0,0,0,0.10))', // subtle shadow on all BGs
+              filter: 'drop-shadow(0 8px 16px rgba(0,0,0,0.10))',
             }}
           />
         </Link>
@@ -48,12 +49,9 @@ const Navbar = () => {
       
       <nav className="bg-white/95 backdrop-blur-sm shadow-lg sticky top-0 z-40 border-b border-krishna-gold/20">
         <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center py-4 pt-10 md:pt-12 relative">
-            {/* Empty left side to keep logo centered, no ISKCON Lucknow wording */}
-            <div className="flex-1" />
-
+          <div className="flex justify-center items-center py-4 pt-10 md:pt-12 relative">
             {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center gap-3 mr-12 md:mr-16">
+            <div className="hidden lg:flex items-center gap-3">
               {navItems.map((item) => (
                 <Link
                   key={item.name}
@@ -67,7 +65,8 @@ const Navbar = () => {
                   {item.name}
                 </Link>
               ))}
-              {/* Sign In/Sign Out/Admin placed inline with nav quick links */}
+              
+              {/* Auth actions in quick links */}
               {user ? (
                 <>
                   {isAdmin && (
@@ -101,8 +100,8 @@ const Navbar = () => {
               )}
             </div>
 
-            {/* Mobile menu button (right side) */}
-            <div className="lg:hidden mr-2">
+            {/* Mobile menu button (absolute positioned) */}
+            <div className="lg:hidden absolute right-2 top-1/2 transform -translate-y-1/2">
               <Button
                 variant="ghost"
                 size="sm"
@@ -132,7 +131,8 @@ const Navbar = () => {
                     {item.name}
                   </Link>
                 ))}
-                {/* Auth actions (sign in/out/admin) in mobile quick links */}
+                
+                {/* Auth actions in mobile menu */}
                 <div className="border-t border-krishna-gold/20 pt-4 mt-4">
                   {user ? (
                     <>
