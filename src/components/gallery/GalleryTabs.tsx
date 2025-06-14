@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Camera, User, Utensils, Calendar } from 'lucide-react';
+import { Camera, User, Utensils, Calendar, Clock } from 'lucide-react';
 import GalleryCategory from './GalleryCategory';
 
 interface Photo {
@@ -23,6 +23,7 @@ interface GalleryTabsProps {
     deities: Photo[];
     festivals: Photo[];
     prasadam: Photo[];
+    dailyDarshan: Photo[];
   };
   collections: PhotoCollection[];
   selectedCollection: string;
@@ -43,7 +44,7 @@ const GalleryTabs: React.FC<GalleryTabsProps> = ({
 }) => {
   return (
     <Tabs defaultValue="temple" className="w-full" onValueChange={onTabChange}>
-      <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 mb-8">
+      <TabsList className="grid w-full grid-cols-3 md:grid-cols-5 mb-8">
         <TabsTrigger value="temple" className="flex items-center gap-2">
           <Camera size={16} />
           Temple
@@ -59,6 +60,10 @@ const GalleryTabs: React.FC<GalleryTabsProps> = ({
         <TabsTrigger value="prasadam" className="flex items-center gap-2">
           <Utensils size={16} />
           Prasadam
+        </TabsTrigger>
+        <TabsTrigger value="dailyDarshan" className="flex items-center gap-2">
+          <Clock size={16} />
+          Daily Darshan
         </TabsTrigger>
       </TabsList>
       
@@ -100,6 +105,17 @@ const GalleryTabs: React.FC<GalleryTabsProps> = ({
           title="Prasadam Photos"
           photos={photos.prasadam}
           collections={getCollectionsForCategory('prasadam')}
+          selectedCollection={selectedCollection}
+          onCollectionChange={onCollectionChange}
+          currentCollectionName={getCurrentCollectionName()}
+        />
+      </TabsContent>
+      
+      <TabsContent value="dailyDarshan">
+        <GalleryCategory
+          title="Daily Darshan Photos"
+          photos={photos.dailyDarshan}
+          collections={getCollectionsForCategory('dailyDarshan')}
           selectedCollection={selectedCollection}
           onCollectionChange={onCollectionChange}
           currentCollectionName={getCurrentCollectionName()}

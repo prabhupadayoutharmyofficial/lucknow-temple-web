@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -32,11 +33,13 @@ const Gallery = () => {
     deities: Photo[];
     festivals: Photo[];
     prasadam: Photo[];
+    dailyDarshan: Photo[];
   }>({
     temple: [],
     deities: [],
     festivals: [],
-    prasadam: []
+    prasadam: [],
+    dailyDarshan: []
   });
   const [collections, setCollections] = useState<PhotoCollection[]>([]);
   const [selectedCollection, setSelectedCollection] = useState<string>('all');
@@ -88,7 +91,8 @@ const Gallery = () => {
         temple: groupedPhotos.temple || [],
         deities: groupedPhotos.deities || [],
         festivals: groupedPhotos.festivals || [],
-        prasadam: groupedPhotos.prasadam || []
+        prasadam: groupedPhotos.prasadam || [],
+        dailyDarshan: groupedPhotos.dailyDarshan || []
       });
     } catch (error) {
       console.error('Error fetching photos:', error);
@@ -135,6 +139,18 @@ const Gallery = () => {
             id: 1,
             url: "https://images.unsplash.com/photo-1626074353765-517a681e40be?q=80&w=1974&auto=format&fit=crop",
             alt: "Temple Prasadam"
+          }
+        ],
+        dailyDarshan: [
+          {
+            id: 1,
+            url: "https://images.unsplash.com/photo-1621965958162-5043761957e1?q=80&w=2070&auto=format&fit=crop",
+            alt: "Morning Darshan"
+          },
+          {
+            id: 2,
+            url: "https://images.unsplash.com/photo-1577715696282-d91979bd3c9a?q=80&w=2052&auto=format&fit=crop",
+            alt: "Evening Aarti"
           }
         ]
       });
