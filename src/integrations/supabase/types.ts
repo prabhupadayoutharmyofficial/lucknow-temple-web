@@ -9,6 +9,36 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      admin_popup: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          image_url: string | null
+          is_enabled: boolean
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          is_enabled?: boolean
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          is_enabled?: boolean
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       darshan_schedule: {
         Row: {
           day_of_week: string

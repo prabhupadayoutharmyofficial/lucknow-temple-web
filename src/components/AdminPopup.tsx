@@ -30,15 +30,15 @@ const AdminPopup = () => {
         .from('admin_popup')
         .select('*')
         .eq('is_enabled', true)
-        .single();
+        .maybeSingle();
 
-      if (error && error.code !== 'PGRST116') {
+      if (error) {
         console.error('Error fetching popup data:', error);
         return;
       }
 
       if (data) {
-        setPopupData(data);
+        setPopupData(data as PopupData);
         setIsOpen(true);
       }
     } catch (error) {
