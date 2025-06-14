@@ -10,18 +10,26 @@ const Navbar = () => {
   const location = useLocation();
   const { user, isAdmin, signOut } = useAuth();
 
-  // Main nav links including auth actions
-  const navItems = [
-    { name: 'Home', path: '/' },
-    { name: 'About', path: '/about' },
-    { name: 'Darshan', path: '/darshan' },
-    { name: 'Events', path: '/events' },
-    { name: 'Gallery', path: '/gallery' },
-    { name: 'Visit', path: '/visit' },
-    { name: 'FAQ', path: '/faq' },
-    { name: 'Donate', path: '/donate' },
-    { name: 'Contact', path: '/contact' },
-  ];
+  // Main nav links including sign in as a regular link
+  const getNavItems = () => {
+    const baseItems = [
+      { name: 'Home', path: '/' },
+      { name: 'About', path: '/about' },
+      { name: 'Darshan', path: '/darshan' },
+      { name: 'Events', path: '/events' },
+      { name: 'Gallery', path: '/gallery' },
+      { name: 'Visit', path: '/visit' },
+      { name: 'FAQ', path: '/faq' },
+      { name: 'Donate', path: '/donate' },
+      { name: 'Contact', path: '/contact' },
+    ];
+
+    if (!user) {
+      baseItems.push({ name: 'Sign In', path: '/auth' });
+    }
+
+    return baseItems;
+  };
 
   const isActivePath = (path: string) => location.pathname === path;
 
@@ -52,7 +60,7 @@ const Navbar = () => {
           <div className="flex justify-center items-center py-4 pt-10 md:pt-12 relative">
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center gap-3">
-              {navItems.map((item) => (
+              {getNavItems().map((item) => (
                 <Link
                   key={item.name}
                   to={item.path}
@@ -66,8 +74,8 @@ const Navbar = () => {
                 </Link>
               ))}
               
-              {/* Auth actions in quick links */}
-              {user ? (
+              {/* Admin and Sign Out buttons for authenticated users */}
+              {user && (
                 <>
                   {isAdmin && (
                     <Link to="/admin">
@@ -87,16 +95,6 @@ const Navbar = () => {
                     Sign Out
                   </Button>
                 </>
-              ) : (
-                <Link to="/auth" className="ml-3">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="border-krishna-blue text-krishna-blue hover:bg-krishna-blue hover:text-white"
-                  >
-                    Sign In
-                  </Button>
-                </Link>
               )}
             </div>
 
@@ -117,7 +115,7 @@ const Navbar = () => {
           {isOpen && (
             <div className="lg:hidden pb-4 border-t border-krishna-gold/20 bg-white/95 backdrop-blur-sm">
               <div className="flex flex-col space-y-2 pt-4">
-                {navItems.map((item) => (
+                {getNavItems().map((item) => (
                   <Link
                     key={item.name}
                     to={item.path}
@@ -132,44 +130,32 @@ const Navbar = () => {
                   </Link>
                 ))}
                 
-                {/* Auth actions in mobile menu */}
-                <div className="border-t border-krishna-gold/20 pt-4 mt-4">
-                  {user ? (
-                    <>
-                      {isAdmin && (
-                        <Link to="/admin" onClick={() => setIsOpen(false)}>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="w-full mb-2 flex items-center gap-2 border-krishna-blue text-krishna-blue hover:bg-krishna-blue hover:text-white"
-                          >
-                            <Shield className="h-4 w-4" />
-                            Admin Dashboard
-                          </Button>
-                        </Link>
-                      )}
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={handleSignOut}
-                        className="w-full flex items-center gap-2 border-krishna-blue text-krishna-blue hover:bg-krishna-blue hover:text-white"
-                      >
-                        <LogOut className="h-4 w-4" />
-                        Sign Out
-                      </Button>
-                    </>
-                  ) : (
-                    <Link to="/auth" onClick={() => setIsOpen(false)}>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="w-full border-krishna-blue text-krishna-blue hover:bg-krishna-blue hover:text-white"
-                      >
-                        Sign In
-                      </Button>
-                    </Link>
-                  )}
-                </div>
+                {/* Admin and Sign Out for mobile authenticated users */}
+                {user && (
+                  <div className="border-t border-krishna-gold/20 pt-4 mt-4">
+                    {isAdmin && (
+                      <Link to="/admin" onClick={() => setIsOpen(false)}>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="w-full mb-2 flex items-center gap-2 border-krishna-blue text-krishna-blue hover:bg-krishna-blue hover:text-white"
+                        >
+                          <Shield className="h-4 w-4" />
+                          Admin Dashboard
+                        </Button>
+                      </Link>
+                    )}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleSignOut}
+                      className="w-full flex items-center gap-2 border-krishna-blue text-krishna-blue hover:bg-krishna-blue hover:text-white"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      Sign Out
+                    </Button>
+                  </div>
+                )}
               </div>
             </div>
           )}
