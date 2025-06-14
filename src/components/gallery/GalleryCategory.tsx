@@ -56,6 +56,15 @@ const GalleryCategory: React.FC<GalleryCategoryProps> = ({
         />
       </div>
       
+      {selectedCollection !== 'all' && (
+        <div className="text-center py-4">
+          <h3 className="font-devotional text-3xl font-bold text-krishna-blue mb-2">
+            {currentCollectionName}
+          </h3>
+          <div className="w-24 h-1 bg-krishna-blue mx-auto rounded-full"></div>
+        </div>
+      )}
+      
       {filteredPhotos.length > 0 ? (
         <PhotoGallery photos={filteredPhotos} />
       ) : (
