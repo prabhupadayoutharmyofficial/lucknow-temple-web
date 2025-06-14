@@ -54,7 +54,7 @@ const AdminPopup = () => {
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="max-w-2xl p-0 overflow-hidden border-0 shadow-2xl bg-gradient-to-br from-white via-orange-50/30 to-amber-50/50 backdrop-blur-sm">
+      <DialogContent className="max-w-4xl p-0 overflow-hidden border-0 shadow-2xl bg-gradient-to-br from-white via-orange-50/30 to-amber-50/50 backdrop-blur-sm max-h-[90vh] overflow-y-auto">
         {/* Decorative top border */}
         <div className="h-1 bg-gradient-to-r from-krishna-gold via-krishna-saffron to-krishna-gold"></div>
         
@@ -85,7 +85,7 @@ const AdminPopup = () => {
             </div>
           </div>
 
-          {/* Image Section */}
+          {/* Image Section - Dynamic sizing */}
           {popupData.image_url && (
             <div className="px-8 mb-6">
               <div className="relative group">
@@ -94,7 +94,8 @@ const AdminPopup = () => {
                   <img
                     src={popupData.image_url}
                     alt={popupData.title}
-                    className="w-full h-auto max-h-80 object-cover rounded-lg"
+                    className="w-full h-auto rounded-lg"
+                    style={{ maxWidth: '100%', height: 'auto' }}
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
                       target.style.display = 'none';
