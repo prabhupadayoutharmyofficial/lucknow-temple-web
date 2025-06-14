@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
@@ -54,32 +54,52 @@ const AdminPopup = () => {
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <DialogTitle className="text-krishna-blue font-devotional">
-            {popupData.title}
-          </DialogTitle>
+      <DialogContent className="max-w-lg p-0 overflow-hidden border-0 shadow-2xl bg-white">
+        {/* Header with close button */}
+        <div className="relative bg-gradient-to-r from-krishna-blue to-krishna-blue/90 text-white p-6 pb-4">
           <Button
             variant="ghost"
             size="icon"
-            className="absolute right-4 top-4"
+            className="absolute right-3 top-3 text-white hover:bg-white/20 h-8 w-8"
             onClick={() => setIsOpen(false)}
           >
             <X className="h-4 w-4" />
           </Button>
-        </DialogHeader>
-        <div className="space-y-4">
+          <h2 className="font-devotional text-2xl font-bold pr-8">
+            {popupData.title}
+          </h2>
+        </div>
+
+        {/* Content */}
+        <div className="p-6 space-y-6">
           {popupData.image_url && (
             <div className="flex justify-center">
-              <img
-                src={popupData.image_url}
-                alt={popupData.title}
-                className="max-w-full h-auto rounded-lg"
-              />
+              <div className="relative overflow-hidden rounded-lg shadow-lg max-w-full">
+                <img
+                  src={popupData.image_url}
+                  alt={popupData.title}
+                  className="max-w-full h-auto max-h-64 object-cover"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                  }}
+                />
+              </div>
             </div>
           )}
-          <div className="text-gray-700 whitespace-pre-wrap">
+          
+          <div className="text-gray-700 leading-relaxed whitespace-pre-wrap text-base">
             {popupData.content}
+          </div>
+          
+          {/* Action area */}
+          <div className="flex justify-end pt-4 border-t border-gray-100">
+            <Button
+              onClick={() => setIsOpen(false)}
+              className="bg-krishna-blue hover:bg-krishna-blue/90 text-white px-8"
+            >
+              Got it
+            </Button>
           </div>
         </div>
       </DialogContent>
