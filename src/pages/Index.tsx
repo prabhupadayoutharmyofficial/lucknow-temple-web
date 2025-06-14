@@ -65,7 +65,7 @@ const Index = () => {
               </div>
               <Button 
                 className="w-full flex gap-2 bg-krishna-blue hover:bg-krishna-blue/80 text-white"
-                onClick={() => window.open('https://maps.app.goo.gl/w4ScCjeGWWuQ2TpS8', '_blank')}
+                onClick={() => window.open('https://g.co/kgs/deYmRWx', '_blank')}
               >
                 <MapPin size={16} />
                 Get Directions
