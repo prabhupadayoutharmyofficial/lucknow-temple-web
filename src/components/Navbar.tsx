@@ -8,7 +8,7 @@ import {
   Sheet,
   SheetContent,
   SheetHeader,
-  SheetTitle,
+  SheetTitle, 
   SheetTrigger,
 } from "@/components/ui/sheet";
 import Logo from './navbar/Logo';
@@ -28,18 +28,23 @@ const Navbar = () => {
   return (
     <nav className="bg-white shadow-sm border-b sticky top-0 z-50">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
-          {/* Left Navigation */}
+        <div className="flex items-center justify-between lg:justify-between h-16">
+          {/* Left Navigation - Hidden on mobile */}
           <div className="hidden lg:flex items-center space-x-1">
             {getLeftNavItems().map((item) => (
               <NavLink key={item.name} item={item} />
             ))}
           </div>
 
-          {/* Logo */}
-          <Logo />
+          {/* Hidden spacer for mobile to center logo */}
+          <div className="lg:hidden w-10"></div>
 
-          {/* Right Navigation */}
+          {/* Logo - Centered on mobile, positioned normally on desktop */}
+          <div className="flex-shrink-0 lg:flex-shrink-0">
+            <Logo />
+          </div>
+
+          {/* Right Navigation - Hidden on mobile */}
           <div className="hidden lg:flex items-center space-x-1">
             {getRightNavItems(user).map((item) => (
               <NavLink key={item.name} item={item} />
@@ -72,7 +77,7 @@ const Navbar = () => {
             )}
           </div>
 
-          {/* Mobile Menu */}
+          {/* Mobile Menu - Visible only on mobile */}
           <div className="lg:hidden">
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>
