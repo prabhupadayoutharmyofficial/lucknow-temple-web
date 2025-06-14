@@ -46,35 +46,38 @@ const Navbar = () => {
 
   return (
     <div className="relative">
-      {/* Centered Crest Logo - Overlaps navbar */}
-      <div className="absolute left-1/2 -top-10 transform -translate-x-1/2 z-50 pointer-events-auto">
+      {/* Centered Logo - Enhanced overflowing effect */}
+      <div className="absolute left-1/2 -top-16 transform -translate-x-1/2 z-50 pointer-events-auto">
         <Link to="/" className="block">
           <img 
-            src="/public/iskconlucknowlogo.png"
-            alt="ISKCON Lucknow Crest"
-            className="h-20 w-20 md:h-24 md:w-24 object-contain drop-shadow-xl select-none"
+            src="/lovable-uploads/f1e30908-8120-41f1-bdef-06d8962203e4.png"
+            alt="ISKCON Lucknow"
+            className="h-32 w-32 md:h-36 md:w-36 object-contain select-none"
             draggable={false}
             style={{
-              filter: 'drop-shadow(0 8px 16px rgba(0,0,0,0.10))',
+              filter: 'drop-shadow(0 12px 24px rgba(0,0,0,0.25)) drop-shadow(0 4px 8px rgba(0,0,0,0.15))',
             }}
           />
         </Link>
       </div>
       
-      <nav className="bg-white/95 backdrop-blur-sm shadow-lg sticky top-0 z-40 border-b border-krishna-gold/20">
+      <nav className="bg-transparent backdrop-blur-none sticky top-0 z-40">
         <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center py-4 pt-10 md:pt-12 relative">
+          <div className="flex justify-between items-center py-4 pt-16 md:pt-18 relative">
             {/* Left Navigation Group */}
             <div className="hidden lg:flex items-center gap-2 w-1/3 justify-start">
               {getLeftNavItems().map((item) => (
                 <Link
                   key={item.name}
                   to={item.path}
-                  className={`text-sm font-medium transition-colors hover:text-krishna-gold px-2 py-1 rounded ${
+                  className={`text-sm font-medium transition-colors px-3 py-2 rounded-lg ${
                     isActivePath(item.path)
-                      ? 'text-krishna-gold bg-krishna-gold/10 border-b-2 border-krishna-gold'
-                      : 'text-gray-700 hover:bg-krishna-gold/5'
+                      ? 'text-krishna-gold bg-white/20 backdrop-blur-sm border-b-2 border-krishna-gold shadow-lg'
+                      : 'text-white hover:text-krishna-gold hover:bg-white/10 backdrop-blur-sm'
                   }`}
+                  style={{
+                    textShadow: '0 2px 4px rgba(0,0,0,0.5)',
+                  }}
                 >
                   {item.name}
                 </Link>
@@ -92,11 +95,14 @@ const Navbar = () => {
                 <Link
                   key={item.name}
                   to={item.path}
-                  className={`text-sm font-medium transition-colors hover:text-krishna-gold px-2 py-1 rounded ${
+                  className={`text-sm font-medium transition-colors px-3 py-2 rounded-lg ${
                     isActivePath(item.path)
-                      ? 'text-krishna-gold bg-krishna-gold/10 border-b-2 border-krishna-gold'
-                      : 'text-gray-700 hover:bg-krishna-gold/5'
+                      ? 'text-krishna-gold bg-white/20 backdrop-blur-sm border-b-2 border-krishna-gold shadow-lg'
+                      : 'text-white hover:text-krishna-gold hover:bg-white/10 backdrop-blur-sm'
                   }`}
+                  style={{
+                    textShadow: '0 2px 4px rgba(0,0,0,0.5)',
+                  }}
                 >
                   {item.name}
                 </Link>
@@ -107,7 +113,7 @@ const Navbar = () => {
                 <>
                   {isAdmin && (
                     <Link to="/admin">
-                      <Button variant="outline" size="sm" className="flex items-center gap-2 border-krishna-blue text-krishna-blue hover:bg-krishna-blue hover:text-white ml-3">
+                      <Button variant="outline" size="sm" className="flex items-center gap-2 border-white/30 text-white hover:bg-white/20 hover:text-krishna-gold ml-3 backdrop-blur-sm">
                         <Shield className="h-4 w-4" />
                         Admin
                       </Button>
@@ -117,7 +123,7 @@ const Navbar = () => {
                     variant="outline"
                     size="sm"
                     onClick={handleSignOut}
-                    className="flex items-center gap-2 border-krishna-blue text-krishna-blue hover:bg-krishna-blue hover:text-white ml-2"
+                    className="flex items-center gap-2 border-white/30 text-white hover:bg-white/20 hover:text-krishna-gold ml-2 backdrop-blur-sm"
                   >
                     <LogOut className="h-4 w-4" />
                     Sign Out
@@ -132,7 +138,10 @@ const Navbar = () => {
                 variant="ghost"
                 size="sm"
                 onClick={() => setIsOpen(!isOpen)}
-                className="text-krishna-blue hover:bg-krishna-blue/10"
+                className="text-white hover:bg-white/20 hover:text-krishna-gold backdrop-blur-sm"
+                style={{
+                  textShadow: '0 2px 4px rgba(0,0,0,0.5)',
+                }}
               >
                 {isOpen ? <X size={24} /> : <Menu size={24} />}
               </Button>
@@ -141,18 +150,21 @@ const Navbar = () => {
 
           {/* Mobile Navigation */}
           {isOpen && (
-            <div className="lg:hidden pb-4 border-t border-krishna-gold/20 bg-white/95 backdrop-blur-sm">
+            <div className="lg:hidden pb-4 border-t border-white/20 bg-black/30 backdrop-blur-md rounded-b-lg">
               <div className="flex flex-col space-y-2 pt-4">
                 {getAllNavItems().map((item) => (
                   <Link
                     key={item.name}
                     to={item.path}
-                    className={`block px-3 py-2 text-sm font-medium transition-colors hover:text-krishna-gold rounded ${
+                    className={`block px-3 py-2 text-sm font-medium transition-colors rounded ${
                       isActivePath(item.path)
-                        ? 'text-krishna-gold bg-krishna-gold/10'
-                        : 'text-gray-700 hover:bg-krishna-gold/5'
+                        ? 'text-krishna-gold bg-white/20'
+                        : 'text-white hover:bg-white/10 hover:text-krishna-gold'
                     }`}
                     onClick={() => setIsOpen(false)}
+                    style={{
+                      textShadow: '0 1px 2px rgba(0,0,0,0.5)',
+                    }}
                   >
                     {item.name}
                   </Link>
@@ -160,13 +172,13 @@ const Navbar = () => {
                 
                 {/* Admin and Sign Out for mobile authenticated users */}
                 {user && (
-                  <div className="border-t border-krishna-gold/20 pt-4 mt-4">
+                  <div className="border-t border-white/20 pt-4 mt-4">
                     {isAdmin && (
                       <Link to="/admin" onClick={() => setIsOpen(false)}>
                         <Button
                           variant="outline"
                           size="sm"
-                          className="w-full mb-2 flex items-center gap-2 border-krishna-blue text-krishna-blue hover:bg-krishna-blue hover:text-white"
+                          className="w-full mb-2 flex items-center gap-2 border-white/30 text-white hover:bg-white/20 hover:text-krishna-gold"
                         >
                           <Shield className="h-4 w-4" />
                           Admin Dashboard
@@ -177,7 +189,7 @@ const Navbar = () => {
                       variant="outline"
                       size="sm"
                       onClick={handleSignOut}
-                      className="w-full flex items-center gap-2 border-krishna-blue text-krishna-blue hover:bg-krishna-blue hover:text-white"
+                      className="w-full flex items-center gap-2 border-white/30 text-white hover:bg-white/20 hover:text-krishna-gold"
                     >
                       <LogOut className="h-4 w-4" />
                       Sign Out
