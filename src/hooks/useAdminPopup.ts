@@ -23,29 +23,17 @@ export const useAdminPopup = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    fetchPopupData();
+    // No longer auto-fetch on mount, let user choose what to edit
+    setLoading(false);
   }, []);
 
-  const fetchPopupData = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('admin_popup')
-        .select('*')
-        .maybeSingle();
-
-      if (error) {
-        console.error('Error fetching popup data:', error);
-        return;
-      }
-
-      if (data) {
-        setPopupData(data);
-      }
-    } catch (error) {
-      console.error('Error fetching popup data:', error);
-    } finally {
-      setLoading(false);
-    }
+  const resetForm = () => {
+    setPopupData({
+      title: '',
+      content: '',
+      image_url: '',
+      is_enabled: false
+    });
   };
 
   const savePopupData = async () => {
@@ -66,6 +54,7 @@ export const useAdminPopup = () => {
           .eq('id', popupData.id);
 
         if (error) throw error;
+        toast({ title: "Popup updated successfully!" });
       } else {
         const { data, error } = await supabase
           .from('admin_popup')
@@ -78,12 +67,11 @@ export const useAdminPopup = () => {
 
         if (error) throw error;
         setPopupData({ ...popupData, id: data.id });
+        toast({ title: "Popup created successfully!" });
       }
-
-      toast({ title: "Popup settings saved successfully!" });
     } catch (error: any) {
       toast({
-        title: "Error saving popup settings",
+        title: "Error saving popup",
         description: error.message,
         variant: "destructive"
       });
@@ -97,6 +85,7 @@ export const useAdminPopup = () => {
     setPopupData,
     loading,
     saving,
-    savePopupData
+    savePopupData,
+    resetForm
   };
 };
