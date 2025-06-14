@@ -37,16 +37,16 @@ const GalleryCategory: React.FC<GalleryCategoryProps> = ({
     ? photos 
     : photos.filter(photo => photo.collection_id === selectedCollection);
 
+  const displayName = selectedCollection === 'all' ? 'All Photos' : currentCollectionName;
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h2 className="font-devotional text-2xl font-semibold text-krishna-blue">{title}</h2>
-          {selectedCollection !== 'all' && (
-            <p className="text-muted-foreground mt-1">
-              Viewing: {currentCollectionName}
-            </p>
-          )}
+          <p className="text-muted-foreground mt-1">
+            Viewing: {displayName}
+          </p>
         </div>
         <CollectionFilter
           collections={collections}
@@ -56,14 +56,12 @@ const GalleryCategory: React.FC<GalleryCategoryProps> = ({
         />
       </div>
       
-      {selectedCollection !== 'all' && (
-        <div className="text-center py-4">
-          <h3 className="font-devotional text-3xl font-bold text-krishna-blue mb-2">
-            {currentCollectionName}
-          </h3>
-          <div className="w-24 h-1 bg-krishna-blue mx-auto rounded-full"></div>
-        </div>
-      )}
+      <div className="text-center py-4">
+        <h3 className="font-devotional text-3xl font-bold text-krishna-blue mb-2">
+          {displayName}
+        </h3>
+        <div className="w-24 h-1 bg-krishna-blue mx-auto rounded-full"></div>
+      </div>
       
       {filteredPhotos.length > 0 ? (
         <PhotoGallery photos={filteredPhotos} />
