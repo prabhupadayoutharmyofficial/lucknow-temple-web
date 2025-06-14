@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { X, Sparkles } from 'lucide-react';
+import { X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 interface PopupData {
@@ -72,11 +71,8 @@ const AdminPopup = () => {
         <div className="relative">
           {/* Header Section */}
           <div className="px-8 pt-8 pb-6">
-            <div className="flex items-start gap-3 mb-4">
-              <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-krishna-gold to-krishna-saffron rounded-full flex items-center justify-center shadow-lg">
-                <Sparkles className="h-6 w-6 text-white" />
-              </div>
-              <div className="flex-1 min-w-0 pr-12">
+            <div className="mb-4">
+              <div className="pr-12">
                 <h1 className="text-3xl font-devotional font-bold text-krishna-blue leading-tight mb-2">
                   {popupData.title}
                 </h1>
