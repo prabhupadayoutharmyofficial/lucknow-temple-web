@@ -104,6 +104,7 @@ export type Database = {
         Row: {
           alt: string
           category: string
+          collection_id: string | null
           created_at: string | null
           display_order: number
           id: string
@@ -112,6 +113,7 @@ export type Database = {
         Insert: {
           alt: string
           category: string
+          collection_id?: string | null
           created_at?: string | null
           display_order?: number
           id?: string
@@ -120,12 +122,21 @@ export type Database = {
         Update: {
           alt?: string
           category?: string
+          collection_id?: string | null
           created_at?: string | null
           display_order?: number
           id?: string
           url?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "gallery_photos_collection_id_fkey"
+            columns: ["collection_id"]
+            isOneToOne: false
+            referencedRelation: "photo_collections"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       hero_section: {
         Row: {
@@ -173,6 +184,27 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      photo_collections: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
       }
       profiles: {
         Row: {
