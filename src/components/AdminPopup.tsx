@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { X } from 'lucide-react';
+import { X, Sparkles } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 interface PopupData {
@@ -54,54 +54,81 @@ const AdminPopup = () => {
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="max-w-lg p-0 overflow-hidden border-0 shadow-2xl bg-white">
-        {/* Header with close button */}
-        <div className="relative bg-gradient-to-r from-krishna-blue to-krishna-blue/90 text-white p-6 pb-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute right-3 top-3 text-white hover:bg-white/20 h-8 w-8"
-            onClick={() => setIsOpen(false)}
-          >
-            <X className="h-4 w-4" />
-          </Button>
-          <h2 className="font-devotional text-2xl font-bold pr-8">
-            {popupData.title}
-          </h2>
-        </div>
+      <DialogContent className="max-w-2xl p-0 overflow-hidden border-0 shadow-2xl bg-gradient-to-br from-white via-orange-50/30 to-amber-50/50 backdrop-blur-sm">
+        {/* Decorative top border */}
+        <div className="h-1 bg-gradient-to-r from-krishna-gold via-krishna-saffron to-krishna-gold"></div>
+        
+        {/* Close button - floating style */}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="absolute right-4 top-4 z-10 bg-white/80 hover:bg-white shadow-md rounded-full h-10 w-10 text-gray-600 hover:text-gray-800 transition-all duration-200"
+          onClick={() => setIsOpen(false)}
+        >
+          <X className="h-5 w-5" />
+        </Button>
 
-        {/* Content */}
-        <div className="p-6 space-y-6">
+        {/* Content Container */}
+        <div className="relative">
+          {/* Header Section */}
+          <div className="px-8 pt-8 pb-6">
+            <div className="flex items-start gap-3 mb-4">
+              <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-krishna-gold to-krishna-saffron rounded-full flex items-center justify-center shadow-lg">
+                <Sparkles className="h-6 w-6 text-white" />
+              </div>
+              <div className="flex-1 min-w-0 pr-12">
+                <h1 className="text-3xl font-devotional font-bold text-krishna-blue leading-tight mb-2">
+                  {popupData.title}
+                </h1>
+                <div className="w-16 h-0.5 bg-gradient-to-r from-krishna-gold to-krishna-saffron rounded-full"></div>
+              </div>
+            </div>
+          </div>
+
+          {/* Image Section */}
           {popupData.image_url && (
-            <div className="flex justify-center">
-              <div className="relative overflow-hidden rounded-lg shadow-lg max-w-full">
-                <img
-                  src={popupData.image_url}
-                  alt={popupData.title}
-                  className="max-w-full h-auto max-h-64 object-cover"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.style.display = 'none';
-                  }}
-                />
+            <div className="px-8 mb-6">
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-r from-krishna-gold/20 to-krishna-saffron/20 rounded-xl blur opacity-75 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="relative bg-white p-3 rounded-xl shadow-lg">
+                  <img
+                    src={popupData.image_url}
+                    alt={popupData.title}
+                    className="w-full h-auto max-h-80 object-cover rounded-lg"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                    }}
+                  />
+                </div>
               </div>
             </div>
           )}
-          
-          <div className="text-gray-700 leading-relaxed whitespace-pre-wrap text-base">
-            {popupData.content}
+
+          {/* Content Section */}
+          <div className="px-8 mb-8">
+            <div className="prose prose-lg max-w-none">
+              <div className="text-gray-700 leading-relaxed whitespace-pre-wrap text-lg font-light">
+                {popupData.content}
+              </div>
+            </div>
           </div>
-          
-          {/* Action area */}
-          <div className="flex justify-end pt-4 border-t border-gray-100">
-            <Button
-              onClick={() => setIsOpen(false)}
-              className="bg-krishna-blue hover:bg-krishna-blue/90 text-white px-8"
-            >
-              Got it
-            </Button>
+
+          {/* Action Section */}
+          <div className="px-8 pb-8">
+            <div className="flex justify-center">
+              <Button
+                onClick={() => setIsOpen(false)}
+                className="bg-gradient-to-r from-krishna-blue to-krishna-blue/90 hover:from-krishna-blue/90 hover:to-krishna-blue text-white px-10 py-3 rounded-full font-medium text-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+              >
+                Got it, thanks!
+              </Button>
+            </div>
           </div>
         </div>
+
+        {/* Decorative bottom pattern */}
+        <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-krishna-gold/5 to-transparent pointer-events-none"></div>
       </DialogContent>
     </Dialog>
   );
