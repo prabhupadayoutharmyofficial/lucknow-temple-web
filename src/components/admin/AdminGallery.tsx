@@ -63,7 +63,12 @@ const AdminGallery = () => {
     }
   };
 
-  const handleSavePhoto = async (photoData: Partial<GalleryPhoto>) => {
+  const handleSavePhoto = async (photoData: {
+    category: string;
+    url: string;
+    alt: string;
+    display_order: number;
+  }) => {
     try {
       if (editingPhoto) {
         const { error } = await supabase
@@ -129,7 +134,12 @@ const AdminGallery = () => {
 
   const PhotoForm = ({ photo, onSave, onCancel }: {
     photo?: GalleryPhoto;
-    onSave: (data: Partial<GalleryPhoto>) => void;
+    onSave: (data: {
+      category: string;
+      url: string;
+      alt: string;
+      display_order: number;
+    }) => void;
     onCancel: () => void;
   }) => {
     const [formData, setFormData] = useState({
