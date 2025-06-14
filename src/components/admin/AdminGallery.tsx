@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -39,7 +38,7 @@ const AdminGallery = () => {
   const [isCollectionDialogOpen, setIsCollectionDialogOpen] = useState(false);
   const [editingCollection, setEditingCollection] = useState<PhotoCollection | null>(null);
   const [activeCategory, setActiveCategory] = useState('temple');
-  const [selectedCollection, setSelectedCollection] = useState<string | null>(null);
+  const [selectedCollection, setSelectedCollection] = useState<string>('all');
   const { toast } = useToast();
 
   const categories = [
@@ -251,7 +250,7 @@ const AdminGallery = () => {
       });
       fetchCollections();
       if (selectedCollection === id) {
-        setSelectedCollection(null);
+        setSelectedCollection('all');
       }
     } catch (error) {
       console.error('Error deleting collection:', error);
@@ -279,7 +278,7 @@ const AdminGallery = () => {
       url: photo?.url || '',
       alt: photo?.alt || '',
       display_order: photo?.display_order || 1,
-      collection_id: photo?.collection_id || null
+      collection_id: photo?.collection_id || 'none'
     });
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [uploadMethod, setUploadMethod] = useState<'url' | 'upload'>('url');
@@ -319,7 +318,7 @@ const AdminGallery = () => {
       onSave({
         ...formData,
         url: finalUrl,
-        collection_id: formData.collection_id || null
+        collection_id: formData.collection_id === 'none' ? null : formData.collection_id
       });
     };
 
@@ -344,14 +343,14 @@ const AdminGallery = () => {
         <div>
           <Label htmlFor="collection">Collection (Optional)</Label>
           <Select 
-            value={formData.collection_id || ""} 
-            onValueChange={(value) => setFormData({ ...formData, collection_id: value || null })}
+            value={formData.collection_id} 
+            onValueChange={(value) => setFormData({ ...formData, collection_id: value })}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select a collection (optional)" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">No Collection</SelectItem>
+              <SelectItem value="none">No Collection</SelectItem>
               {collections.map((collection) => (
                 <SelectItem key={collection.id} value={collection.id}>
                   {collection.name}
@@ -512,7 +511,7 @@ const AdminGallery = () => {
 
   const filteredPhotos = photos.filter(photo => {
     const categoryMatch = photo.category === activeCategory;
-    const collectionMatch = selectedCollection ? photo.collection_id === selectedCollection : true;
+    const collectionMatch = selectedCollection === 'all' ? true : photo.collection_id === selectedCollection;
     return categoryMatch && collectionMatch;
   });
 
@@ -616,12 +615,12 @@ const AdminGallery = () => {
                     {collections.length > 0 && (
                       <div className="flex items-center gap-2">
                         <Label htmlFor="collection-filter">Filter by Collection:</Label>
-                        <Select value={selectedCollection || ""} onValueChange={(value) => setSelectedCollection(value || null)}>
+                        <Select value={selectedCollection} onValueChange={setSelectedCollection}>
                           <SelectTrigger className="w-48">
                             <SelectValue placeholder="All photos" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="">All photos</SelectItem>
+                            <SelectItem value="all">All photos</SelectItem>
                             {collections.map((collection) => (
                               <SelectItem key={collection.id} value={collection.id}>
                                 <div className="flex items-center gap-2">
@@ -745,7 +744,7 @@ const AdminGallery = () => {
                   </Table>
                 ) : (
                   <div className="text-center py-8 text-muted-foreground">
-                    {selectedCollection 
+                    {selectedCollection !== 'all'
                       ? `No photos in this collection for ${category.label.toLowerCase()} category.`
                       : `No photos in this category. Add some photos to get started.`
                     }
