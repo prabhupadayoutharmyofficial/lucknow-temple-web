@@ -1,11 +1,19 @@
-
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import DarshanSchedule from '@/components/DarshanSchedule';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent } from '@/components/ui/card';
 import { Calendar, Info } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+
+interface FestivalEvent {
+  id: string;
+  name: string;
+  date: string;
+  month: string;
+  description?: string;
+}
 
 const festivals = [
   {
@@ -88,6 +96,39 @@ const festivals = [
 ];
 
 const Darshan = () => {
+  const [festivals, setFestivals] = useState<{ [key: string]: FestivalEvent[] }>({});
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchFestivals();
+  }, []);
+
+  const fetchFestivals = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('festival_calendar')
+        .select('*')
+        .order('date');
+
+      if (error) throw error;
+      
+      // Group festivals by month
+      const groupedFestivals = (data || []).reduce((acc: { [key: string]: FestivalEvent[] }, festival: FestivalEvent) => {
+        if (!acc[festival.month]) {
+          acc[festival.month] = [];
+        }
+        acc[festival.month].push(festival);
+        return acc;
+      }, {});
+      
+      setFestivals(groupedFestivals);
+    } catch (error) {
+      console.error('Error fetching festivals:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -153,23 +194,30 @@ const Darshan = () => {
                 </TabsContent>
                 
                 <TabsContent value="festival-calendar" className="pt-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {festivals.map((month) => (
-                      <Card key={month.month}>
-                        <CardContent className="p-4">
-                          <h4 className="font-medium border-b pb-2 mb-3">{month.month}</h4>
-                          <ul className="space-y-2">
-                            {month.events.map((event, index) => (
-                              <li key={index} className="text-sm">
-                                <span className="text-krishna-gold font-semibold">{event.date}</span>
-                                <p>{event.name}</p>
-                              </li>
-                            ))}
-                          </ul>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
+                  {loading ? (
+                    <div className="text-center py-8">Loading festival calendar...</div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {Object.entries(festivals).map(([month, events]) => (
+                        <Card key={month}>
+                          <CardContent className="p-4">
+                            <h4 className="font-medium border-b pb-2 mb-3">{month}</h4>
+                            <ul className="space-y-2">
+                              {events.map((event) => (
+                                <li key={event.id} className="text-sm">
+                                  <span className="text-krishna-gold font-semibold">{event.date}</span>
+                                  <p>{event.name}</p>
+                                  {event.description && (
+                                    <p className="text-xs text-muted-foreground mt-1">{event.description}</p>
+                                  )}
+                                </li>
+                              ))}
+                            </ul>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  )}
                 </TabsContent>
               </Tabs>
             </div>

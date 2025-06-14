@@ -6,7 +6,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Shield, Settings, Calendar, MapPin, Users, Camera, MessageSquare } from 'lucide-react';
+import { Shield, Settings, Calendar, MapPin, Users, Camera, MessageSquare, Clock } from 'lucide-react';
 import AdminEvents from '@/components/admin/AdminEvents';
 import AdminTempleInfo from '@/components/admin/AdminTempleInfo';
 import AdminSchedule from '@/components/admin/AdminSchedule';
@@ -14,6 +14,7 @@ import AdminHero from '@/components/admin/AdminHero';
 import AdminUsers from '@/components/admin/AdminUsers';
 import AdminGallery from '@/components/admin/AdminGallery';
 import AdminPopupManager from '@/components/admin/AdminPopupManager';
+import AdminFestivalCalendar from '@/components/admin/AdminFestivalCalendar';
 
 const Admin = () => {
   const { user, profile, loading, isAdmin } = useAuth();
@@ -71,7 +72,7 @@ const Admin = () => {
 
         <div className="container mx-auto px-4 py-8">
           <Tabs defaultValue="events" className="w-full">
-            <TabsList className="grid w-full grid-cols-7">
+            <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8">
               <TabsTrigger value="events" className="flex items-center gap-2">
                 <Calendar className="h-4 w-4" />
                 Events
@@ -81,8 +82,12 @@ const Admin = () => {
                 Temple Info
               </TabsTrigger>
               <TabsTrigger value="schedule" className="flex items-center gap-2">
-                <Settings className="h-4 w-4" />
-                Schedule
+                <Clock className="h-4 w-4" />
+                Daily Schedule
+              </TabsTrigger>
+              <TabsTrigger value="festivals" className="flex items-center gap-2">
+                <Calendar className="h-4 w-4" />
+                Festivals
               </TabsTrigger>
               <TabsTrigger value="hero" className="flex items-center gap-2">
                 <Shield className="h-4 w-4" />
@@ -112,6 +117,10 @@ const Admin = () => {
             
             <TabsContent value="schedule" className="mt-6">
               <AdminSchedule />
+            </TabsContent>
+            
+            <TabsContent value="festivals" className="mt-6">
+              <AdminFestivalCalendar />
             </TabsContent>
             
             <TabsContent value="hero" className="mt-6">
