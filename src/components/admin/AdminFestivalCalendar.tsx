@@ -34,12 +34,12 @@ const AdminFestivalCalendar = () => {
   const fetchFestivals = async () => {
     try {
       const { data, error } = await supabase
-        .from('festival_calendar')
+        .from('festival_calendar' as any)
         .select('*')
         .order('date');
 
       if (error) throw error;
-      setFestivals(data || []);
+      setFestivals(data as FestivalEvent[] || []);
     } catch (error: any) {
       toast({
         title: "Error fetching festivals",
@@ -59,7 +59,7 @@ const AdminFestivalCalendar = () => {
   const handleSave = async (id: string) => {
     try {
       const { error } = await supabase
-        .from('festival_calendar')
+        .from('festival_calendar' as any)
         .update({
           name: editValues.name,
           date: editValues.date,
@@ -87,7 +87,7 @@ const AdminFestivalCalendar = () => {
     
     try {
       const { error } = await supabase
-        .from('festival_calendar')
+        .from('festival_calendar' as any)
         .delete()
         .eq('id', id);
 
@@ -116,8 +116,13 @@ const AdminFestivalCalendar = () => {
 
     try {
       const { error } = await supabase
-        .from('festival_calendar')
-        .insert([newFestival]);
+        .from('festival_calendar' as any)
+        .insert([{
+          name: newFestival.name,
+          date: newFestival.date,
+          month: newFestival.month,
+          description: newFestival.description
+        }]);
 
       if (error) throw error;
       

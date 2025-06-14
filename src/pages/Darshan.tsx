@@ -106,14 +106,14 @@ const Darshan = () => {
   const fetchFestivals = async () => {
     try {
       const { data, error } = await supabase
-        .from('festival_calendar')
+        .from('festival_calendar' as any)
         .select('*')
         .order('date');
 
       if (error) throw error;
       
       // Group festivals by month
-      const groupedFestivals = (data || []).reduce((acc: { [key: string]: FestivalEvent[] }, festival: FestivalEvent) => {
+      const groupedFestivals = (data as FestivalEvent[] || []).reduce((acc: { [key: string]: FestivalEvent[] }, festival: FestivalEvent) => {
         if (!acc[festival.month]) {
           acc[festival.month] = [];
         }

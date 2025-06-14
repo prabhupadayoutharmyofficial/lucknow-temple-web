@@ -130,6 +130,36 @@ export type Database = {
           },
         ]
       }
+      festival_calendar: {
+        Row: {
+          created_at: string
+          date: string
+          description: string | null
+          id: string
+          month: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          description?: string | null
+          id?: string
+          month: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          description?: string | null
+          id?: string
+          month?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       gallery_photos: {
         Row: {
           alt: string
