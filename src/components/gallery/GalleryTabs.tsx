@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Camera, User, Utensils, Calendar, Clock } from 'lucide-react';
@@ -43,8 +42,12 @@ const GalleryTabs: React.FC<GalleryTabsProps> = ({
   getCurrentCollectionName
 }) => {
   return (
-    <Tabs defaultValue="temple" className="w-full" onValueChange={onTabChange}>
+    <Tabs defaultValue="dailyDarshan" className="w-full" onValueChange={onTabChange}>
       <TabsList className="grid w-full grid-cols-3 md:grid-cols-5 mb-8">
+        <TabsTrigger value="dailyDarshan" className="flex items-center gap-2">
+          <Clock size={16} />
+          Daily Darshan
+        </TabsTrigger>
         <TabsTrigger value="temple" className="flex items-center gap-2">
           <Camera size={16} />
           Temple
@@ -61,11 +64,18 @@ const GalleryTabs: React.FC<GalleryTabsProps> = ({
           <Utensils size={16} />
           Prasadam
         </TabsTrigger>
-        <TabsTrigger value="dailyDarshan" className="flex items-center gap-2">
-          <Clock size={16} />
-          Daily Darshan
-        </TabsTrigger>
       </TabsList>
+      
+      <TabsContent value="dailyDarshan">
+        <GalleryCategory
+          title="Daily Darshan Photos"
+          photos={photos.dailyDarshan}
+          collections={getCollectionsForCategory('dailyDarshan')}
+          selectedCollection={selectedCollection}
+          onCollectionChange={onCollectionChange}
+          currentCollectionName={getCurrentCollectionName()}
+        />
+      </TabsContent>
       
       <TabsContent value="temple">
         <GalleryCategory
@@ -105,17 +115,6 @@ const GalleryTabs: React.FC<GalleryTabsProps> = ({
           title="Prasadam Photos"
           photos={photos.prasadam}
           collections={getCollectionsForCategory('prasadam')}
-          selectedCollection={selectedCollection}
-          onCollectionChange={onCollectionChange}
-          currentCollectionName={getCurrentCollectionName()}
-        />
-      </TabsContent>
-      
-      <TabsContent value="dailyDarshan">
-        <GalleryCategory
-          title="Daily Darshan Photos"
-          photos={photos.dailyDarshan}
-          collections={getCollectionsForCategory('dailyDarshan')}
           selectedCollection={selectedCollection}
           onCollectionChange={onCollectionChange}
           currentCollectionName={getCurrentCollectionName()}
