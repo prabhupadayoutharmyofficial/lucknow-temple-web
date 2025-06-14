@@ -8,6 +8,7 @@ import TempleInfo from '@/components/TempleInfo';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import FloatingDonateButton from '@/components/FloatingDonateButton';
+import AdminPopup from '@/components/AdminPopup';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, MapPin } from 'lucide-react';
 
@@ -22,6 +23,7 @@ const Index = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
+      <AdminPopup />
       
       <main className="flex-grow">
         {/* Hero Section */}
