@@ -7,6 +7,7 @@ import DarshanSchedule from '@/components/DarshanSchedule';
 import TempleInfo from '@/components/TempleInfo';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import FloatingDonateButton from '@/components/FloatingDonateButton';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, MapPin } from 'lucide-react';
 
@@ -92,6 +93,7 @@ const Index = () => {
       </main>
 
       <Footer />
+      <FloatingDonateButton />
     </div>
   );
 };
