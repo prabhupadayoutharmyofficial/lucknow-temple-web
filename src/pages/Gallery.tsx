@@ -4,7 +4,8 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import PhotoGallery from '@/components/PhotoGallery';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Camera, User, Utensils, Calendar } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Camera, User, Utensils, Calendar, Folder, FolderOpen } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 interface Photo {
@@ -19,6 +20,13 @@ interface GalleryPhoto {
   url: string;
   alt: string;
   display_order: number;
+  collection_id: string | null;
+}
+
+interface PhotoCollection {
+  id: string;
+  name: string;
+  description: string | null;
 }
 
 const Gallery = () => {
@@ -33,11 +41,28 @@ const Gallery = () => {
     festivals: [],
     prasadam: []
   });
+  const [collections, setCollections] = useState<PhotoCollection[]>([]);
+  const [selectedCollection, setSelectedCollection] = useState<string>('all');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchPhotos();
+    fetchCollections();
   }, []);
+
+  const fetchCollections = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('photo_collections')
+        .select('*')
+        .order('name', { ascending: true });
+
+      if (error) throw error;
+      setCollections(data || []);
+    } catch (error) {
+      console.error('Error fetching collections:', error);
+    }
+  };
 
   const fetchPhotos = async () => {
     try {
@@ -56,7 +81,8 @@ const Gallery = () => {
         acc[photo.category].push({
           id: parseInt(photo.id), // Convert string id to number for PhotoGallery component
           url: photo.url,
-          alt: photo.alt
+          alt: photo.alt,
+          collection_id: photo.collection_id
         });
         return acc;
       }, {});
@@ -120,6 +146,31 @@ const Gallery = () => {
     }
   };
 
+  const filterPhotosByCollection = (categoryPhotos: any[], category: string) => {
+    if (selectedCollection === 'all') {
+      return categoryPhotos;
+    }
+    return categoryPhotos.filter(photo => photo.collection_id === selectedCollection);
+  };
+
+  const getCollectionsForCategory = (category: string) => {
+    // Get all photos for this category
+    const categoryPhotos = photos[category as keyof typeof photos];
+    // Get unique collection IDs from photos in this category
+    const collectionIds = [...new Set(categoryPhotos
+      .map((photo: any) => photo.collection_id)
+      .filter(id => id !== null)
+    )];
+    // Return collections that have photos in this category
+    return collections.filter(collection => collectionIds.includes(collection.id));
+  };
+
+  const getCurrentCollectionName = () => {
+    if (selectedCollection === 'all') return 'All Photos';
+    const collection = collections.find(c => c.id === selectedCollection);
+    return collection ? collection.name : 'Unknown Collection';
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -145,7 +196,7 @@ const Gallery = () => {
               <p className="mt-4">Loading gallery...</p>
             </div>
           ) : (
-            <Tabs defaultValue="temple" className="w-full">
+            <Tabs defaultValue="temple" className="w-full" onValueChange={() => setSelectedCollection('all')}>
               <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 mb-8">
                 <TabsTrigger value="temple" className="flex items-center gap-2">
                   <Camera size={16} />
@@ -166,47 +217,207 @@ const Gallery = () => {
               </TabsList>
               
               <TabsContent value="temple">
-                <h2 className="font-devotional text-2xl font-semibold text-krishna-blue mb-6">Temple Photos</h2>
-                {photos.temple.length > 0 ? (
-                  <PhotoGallery photos={photos.temple} />
-                ) : (
-                  <div className="text-center py-8 text-gray-500">
-                    No temple photos available. Please check back later.
+                <div className="space-y-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                      <h2 className="font-devotional text-2xl font-semibold text-krishna-blue">Temple Photos</h2>
+                      {selectedCollection !== 'all' && (
+                        <p className="text-muted-foreground mt-1">
+                          Viewing: {getCurrentCollectionName()}
+                        </p>
+                      )}
+                    </div>
+                    {getCollectionsForCategory('temple').length > 0 && (
+                      <div className="flex items-center gap-2">
+                        <Folder size={16} className="text-muted-foreground" />
+                        <Select value={selectedCollection} onValueChange={setSelectedCollection}>
+                          <SelectTrigger className="w-48">
+                            <SelectValue placeholder="All photos" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">
+                              <div className="flex items-center gap-2">
+                                <FolderOpen size={14} />
+                                All Photos
+                              </div>
+                            </SelectItem>
+                            {getCollectionsForCategory('temple').map((collection) => (
+                              <SelectItem key={collection.id} value={collection.id}>
+                                <div className="flex items-center gap-2">
+                                  <Folder size={14} />
+                                  {collection.name}
+                                </div>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
                   </div>
-                )}
+                  {filterPhotosByCollection(photos.temple, 'temple').length > 0 ? (
+                    <PhotoGallery photos={filterPhotosByCollection(photos.temple, 'temple')} />
+                  ) : (
+                    <div className="text-center py-8 text-gray-500">
+                      {selectedCollection !== 'all' 
+                        ? `No photos in "${getCurrentCollectionName()}" collection.`
+                        : "No temple photos available. Please check back later."
+                      }
+                    </div>
+                  )}
+                </div>
               </TabsContent>
               
               <TabsContent value="deities">
-                <h2 className="font-devotional text-2xl font-semibold text-krishna-blue mb-6">Deities Photos</h2>
-                {photos.deities.length > 0 ? (
-                  <PhotoGallery photos={photos.deities} />
-                ) : (
-                  <div className="text-center py-8 text-gray-500">
-                    No deity photos available. Please check back later.
+                <div className="space-y-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                      <h2 className="font-devotional text-2xl font-semibold text-krishna-blue">Deities Photos</h2>
+                      {selectedCollection !== 'all' && (
+                        <p className="text-muted-foreground mt-1">
+                          Viewing: {getCurrentCollectionName()}
+                        </p>
+                      )}
+                    </div>
+                    {getCollectionsForCategory('deities').length > 0 && (
+                      <div className="flex items-center gap-2">
+                        <Folder size={16} className="text-muted-foreground" />
+                        <Select value={selectedCollection} onValueChange={setSelectedCollection}>
+                          <SelectTrigger className="w-48">
+                            <SelectValue placeholder="All photos" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">
+                              <div className="flex items-center gap-2">
+                                <FolderOpen size={14} />
+                                All Photos
+                              </div>
+                            </SelectItem>
+                            {getCollectionsForCategory('deities').map((collection) => (
+                              <SelectItem key={collection.id} value={collection.id}>
+                                <div className="flex items-center gap-2">
+                                  <Folder size={14} />
+                                  {collection.name}
+                                </div>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
                   </div>
-                )}
+                  {filterPhotosByCollection(photos.deities, 'deities').length > 0 ? (
+                    <PhotoGallery photos={filterPhotosByCollection(photos.deities, 'deities')} />
+                  ) : (
+                    <div className="text-center py-8 text-gray-500">
+                      {selectedCollection !== 'all' 
+                        ? `No photos in "${getCurrentCollectionName()}" collection.`
+                        : "No deity photos available. Please check back later."
+                      }
+                    </div>
+                  )}
+                </div>
               </TabsContent>
               
               <TabsContent value="festivals">
-                <h2 className="font-devotional text-2xl font-semibold text-krishna-blue mb-6">Festival Photos</h2>
-                {photos.festivals.length > 0 ? (
-                  <PhotoGallery photos={photos.festivals} />
-                ) : (
-                  <div className="text-center py-8 text-gray-500">
-                    No festival photos available. Please check back later.
+                <div className="space-y-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                      <h2 className="font-devotional text-2xl font-semibold text-krishna-blue">Festival Photos</h2>
+                      {selectedCollection !== 'all' && (
+                        <p className="text-muted-foreground mt-1">
+                          Viewing: {getCurrentCollectionName()}
+                        </p>
+                      )}
+                    </div>
+                    {getCollectionsForCategory('festivals').length > 0 && (
+                      <div className="flex items-center gap-2">
+                        <Folder size={16} className="text-muted-foreground" />
+                        <Select value={selectedCollection} onValueChange={setSelectedCollection}>
+                          <SelectTrigger className="w-48">
+                            <SelectValue placeholder="All photos" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">
+                              <div className="flex items-center gap-2">
+                                <FolderOpen size={14} />
+                                All Photos
+                              </div>
+                            </SelectItem>
+                            {getCollectionsForCategory('festivals').map((collection) => (
+                              <SelectItem key={collection.id} value={collection.id}>
+                                <div className="flex items-center gap-2">
+                                  <Folder size={14} />
+                                  {collection.name}
+                                </div>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
                   </div>
-                )}
+                  {filterPhotosByCollection(photos.festivals, 'festivals').length > 0 ? (
+                    <PhotoGallery photos={filterPhotosByCollection(photos.festivals, 'festivals')} />
+                  ) : (
+                    <div className="text-center py-8 text-gray-500">
+                      {selectedCollection !== 'all' 
+                        ? `No photos in "${getCurrentCollectionName()}" collection.`
+                        : "No festival photos available. Please check back later."
+                      }
+                    </div>
+                  )}
+                </div>
               </TabsContent>
               
               <TabsContent value="prasadam">
-                <h2 className="font-devotional text-2xl font-semibold text-krishna-blue mb-6">Prasadam Photos</h2>
-                {photos.prasadam.length > 0 ? (
-                  <PhotoGallery photos={photos.prasadam} />
-                ) : (
-                  <div className="text-center py-8 text-gray-500">
-                    No prasadam photos available. Please check back later.
+                <div className="space-y-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                      <h2 className="font-devotional text-2xl font-semibold text-krishna-blue">Prasadam Photos</h2>
+                      {selectedCollection !== 'all' && (
+                        <p className="text-muted-foreground mt-1">
+                          Viewing: {getCurrentCollectionName()}
+                        </p>
+                      )}
+                    </div>
+                    {getCollectionsForCategory('prasadam').length > 0 && (
+                      <div className="flex items-center gap-2">
+                        <Folder size={16} className="text-muted-foreground" />
+                        <Select value={selectedCollection} onValueChange={setSelectedCollection}>
+                          <SelectTrigger className="w-48">
+                            <SelectValue placeholder="All photos" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">
+                              <div className="flex items-center gap-2">
+                                <FolderOpen size={14} />
+                                All Photos
+                              </div>
+                            </SelectItem>
+                            {getCollectionsForCategory('prasadam').map((collection) => (
+                              <SelectItem key={collection.id} value={collection.id}>
+                                <div className="flex items-center gap-2">
+                                  <Folder size={14} />
+                                  {collection.name}
+                                </div>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
                   </div>
-                )}
+                  {filterPhotosByCollection(photos.prasadam, 'prasadam').length > 0 ? (
+                    <PhotoGallery photos={filterPhotosByCollection(photos.prasadam, 'prasadam')} />
+                  ) : (
+                    <div className="text-center py-8 text-gray-500">
+                      {selectedCollection !== 'all' 
+                        ? `No photos in "${getCurrentCollectionName()}" collection.`
+                        : "No prasadam photos available. Please check back later."
+                      }
+                    </div>
+                  )}
+                </div>
               </TabsContent>
             </Tabs>
           )}
