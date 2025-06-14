@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Trash2, Edit, Plus, Save, X, Upload, Images } from 'lucide-react';
+import { Trash2, Edit, Plus, Save, X, Upload, Images, Link } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 interface GalleryPhoto {
@@ -60,6 +60,34 @@ const AdminGallery = () => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const uploadFile = async (file: File): Promise<string | null> => {
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random()}.${fileExt}`;
+      const filePath = `${fileName}`;
+
+      const { data, error } = await supabase.storage
+        .from('gallery-images')
+        .upload(filePath, file);
+
+      if (error) throw error;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('gallery-images')
+        .getPublicUrl(filePath);
+
+      return publicUrl;
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      toast({
+        title: "Upload Error",
+        description: "Failed to upload image",
+        variant: "destructive",
+      });
+      return null;
     }
   };
 
@@ -148,10 +176,45 @@ const AdminGallery = () => {
       alt: photo?.alt || '',
       display_order: photo?.display_order || 1
     });
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [uploadMethod, setUploadMethod] = useState<'url' | 'upload'>('url');
+    const [uploading, setUploading] = useState(false);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file) {
+        setSelectedFile(file);
+        setFormData({ ...formData, alt: file.name.split('.')[0] });
+      }
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
-      onSave(formData);
+      
+      let finalUrl = formData.url;
+      
+      if (uploadMethod === 'upload' && selectedFile) {
+        setUploading(true);
+        const uploadedUrl = await uploadFile(selectedFile);
+        setUploading(false);
+        
+        if (!uploadedUrl) return;
+        finalUrl = uploadedUrl;
+      }
+      
+      if (!finalUrl) {
+        toast({
+          title: "Error",
+          description: "Please provide an image URL or upload a file",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      onSave({
+        ...formData,
+        url: finalUrl
+      });
     };
 
     return (
@@ -173,14 +236,50 @@ const AdminGallery = () => {
         </div>
         
         <div>
-          <Label htmlFor="url">Image URL</Label>
-          <Input
-            id="url"
-            value={formData.url}
-            onChange={(e) => setFormData({ ...formData, url: e.target.value })}
-            placeholder="https://images.unsplash.com/..."
-            required
-          />
+          <Label>Image Source</Label>
+          <Tabs value={uploadMethod} onValueChange={(value) => setUploadMethod(value as 'url' | 'upload')} className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="url" className="flex items-center gap-2">
+                <Link className="h-4 w-4" />
+                URL
+              </TabsTrigger>
+              <TabsTrigger value="upload" className="flex items-center gap-2">
+                <Upload className="h-4 w-4" />
+                Upload
+              </TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="url" className="mt-4">
+              <div>
+                <Label htmlFor="url">Image URL</Label>
+                <Input
+                  id="url"
+                  value={formData.url}
+                  onChange={(e) => setFormData({ ...formData, url: e.target.value })}
+                  placeholder="https://images.unsplash.com/..."
+                  required={uploadMethod === 'url'}
+                />
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="upload" className="mt-4">
+              <div>
+                <Label htmlFor="file">Upload Image</Label>
+                <Input
+                  id="file"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  required={uploadMethod === 'upload'}
+                />
+                {selectedFile && (
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Selected: {selectedFile.name}
+                  </p>
+                )}
+              </div>
+            </TabsContent>
+          </Tabs>
         </div>
         
         <div>
@@ -207,13 +306,22 @@ const AdminGallery = () => {
         </div>
         
         <div className="flex gap-2 justify-end">
-          <Button type="button" variant="outline" onClick={onCancel}>
+          <Button type="button" variant="outline" onClick={onCancel} disabled={uploading}>
             <X className="h-4 w-4 mr-2" />
             Cancel
           </Button>
-          <Button type="submit">
-            <Save className="h-4 w-4 mr-2" />
-            Save
+          <Button type="submit" disabled={uploading}>
+            {uploading ? (
+              <>
+                <Upload className="h-4 w-4 mr-2 animate-spin" />
+                Uploading...
+              </>
+            ) : (
+              <>
+                <Save className="h-4 w-4 mr-2" />
+                Save
+              </>
+            )}
           </Button>
         </div>
       </form>
@@ -242,7 +350,7 @@ const AdminGallery = () => {
               Gallery Management
             </CardTitle>
             <CardDescription>
-              Manage photos in different gallery categories
+              Manage photos in different gallery categories. Upload files or use external URLs.
             </CardDescription>
           </div>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
