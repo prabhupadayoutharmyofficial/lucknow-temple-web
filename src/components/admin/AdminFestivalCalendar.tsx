@@ -1,27 +1,14 @@
+
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Calendar, Plus, Edit, Trash2 } from 'lucide-react';
+import { Calendar, Plus } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+import FestivalForm from './festival/FestivalForm';
+import FestivalTable from './festival/FestivalTable';
 
 interface FestivalEvent {
   id: string;
@@ -155,123 +142,26 @@ const AdminFestivalCalendar = () => {
           <Calendar className="h-6 w-6" />
           Festival Calendar Management
         </h2>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={resetForm}>
-              <Plus className="h-4 w-4 mr-2" />
-              Add Festival
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>
-                {editingFestival ? 'Edit Festival' : 'Add New Festival'}
-              </DialogTitle>
-            </DialogHeader>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <Label htmlFor="name">Festival Name</Label>
-                <Input
-                  id="name"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="date">Date</Label>
-                <Input
-                  id="date"
-                  value={formData.date}
-                  onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                  placeholder="e.g., January 2, 2025"
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="month">Month</Label>
-                <Input
-                  id="month"
-                  value={formData.month}
-                  onChange={(e) => setFormData({ ...formData, month: e.target.value })}
-                  placeholder="e.g., January"
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="Festival description..."
-                />
-              </div>
-              <div className="flex justify-end gap-2">
-                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
-                  Cancel
-                </Button>
-                <Button type="submit">
-                  {editingFestival ? 'Update' : 'Add'} Festival
-                </Button>
-              </div>
-            </form>
-          </DialogContent>
-        </Dialog>
+        <Button onClick={() => { resetForm(); setIsDialogOpen(true); }}>
+          <Plus className="h-4 w-4 mr-2" />
+          Add Festival
+        </Button>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Festivals</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Month</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {festivals.map((festival) => (
-                <TableRow key={festival.id}>
-                  <TableCell className="font-medium">{festival.name}</TableCell>
-                  <TableCell>{festival.date}</TableCell>
-                  <TableCell>{festival.month}</TableCell>
-                  <TableCell>{festival.description || 'No description'}</TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleEdit(festival)}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleDelete(festival.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-          
-          {festivals.length === 0 && (
-            <div className="text-center py-8 text-muted-foreground">
-              No festivals found. Add your first festival!
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      <FestivalTable 
+        festivals={festivals}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
+
+      <FestivalForm
+        isOpen={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
+        editingFestival={editingFestival}
+        formData={formData}
+        setFormData={setFormData}
+        onSubmit={handleSubmit}
+      />
     </div>
   );
 };
