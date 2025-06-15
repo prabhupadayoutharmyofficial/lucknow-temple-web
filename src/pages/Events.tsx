@@ -19,6 +19,7 @@ const Events = () => {
       const { data, error } = await supabase
         .from('events')
         .select('*')
+        .eq('is_published', true) // Only fetch published events
         .order('created_at', { ascending: false });
 
       if (error) throw error;

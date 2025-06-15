@@ -87,7 +87,9 @@ export type Database = {
           highlights: string[] | null
           id: string
           image: string
+          is_published: boolean
           location: string | null
+          scheduled_publish: string | null
           time: string
           title: string
           updated_at: string | null
@@ -101,7 +103,9 @@ export type Database = {
           highlights?: string[] | null
           id?: string
           image: string
+          is_published?: boolean
           location?: string | null
+          scheduled_publish?: string | null
           time: string
           title: string
           updated_at?: string | null
@@ -115,7 +119,9 @@ export type Database = {
           highlights?: string[] | null
           id?: string
           image?: string
+          is_published?: boolean
           location?: string | null
+          scheduled_publish?: string | null
           time?: string
           title?: string
           updated_at?: string | null
