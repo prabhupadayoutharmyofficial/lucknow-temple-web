@@ -1,78 +1,22 @@
-import React, { useState, useEffect } from 'react';
+
+import React from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import DarshanSchedule from '@/components/DarshanSchedule';
+import DarshanHero from '@/components/darshan/DarshanHero';
+import WeeklyPrograms from '@/components/darshan/WeeklyPrograms';
+import FestivalCalendarDisplay from '@/components/darshan/FestivalCalendarDisplay';
+import VisitorGuidelines from '@/components/darshan/VisitorGuidelines';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent } from '@/components/ui/card';
-import { Calendar, Info } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
-
-interface FestivalEvent {
-  id: string;
-  name: string;
-  date: string;
-  month: string;
-  description?: string;
-}
+import { Calendar } from 'lucide-react';
 
 const Darshan = () => {
-  const [festivals, setFestivals] = useState<{ [key: string]: FestivalEvent[] }>({});
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchFestivals();
-  }, []);
-
-  const fetchFestivals = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('festival_calendar')
-        .select('*')
-        .order('date');
-
-      if (error) throw error;
-      
-      // Group festivals by month
-      const festivalData = (data as any[])?.map(item => ({
-        id: item.id,
-        name: item.name,
-        date: item.date,
-        month: item.month,
-        description: item.description
-      })) || [];
-      
-      const groupedFestivals = festivalData.reduce((acc: { [key: string]: FestivalEvent[] }, festival: FestivalEvent) => {
-        if (!acc[festival.month]) {
-          acc[festival.month] = [];
-        }
-        acc[festival.month].push(festival);
-        return acc;
-      }, {});
-      
-      setFestivals(groupedFestivals);
-    } catch (error) {
-      console.error('Error fetching festivals:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
       
       <main className="flex-grow">
-        {/* Hero Section */}
-        <div className="relative h-[50vh] bg-cover bg-center flex items-center justify-center" 
-          style={{ 
-            backgroundImage: "url('')"
-          }}>
-          <div className="absolute inset-0 bg-black/40"></div>
-          <div className="relative text-center text-white z-10">
-            <h1 className="font-devotional text-5xl font-bold mb-4">Temple Schedule</h1>
-            <p className="text-xl max-w-3xl mx-auto">Darshan timings, aarti schedule, and festival calendar</p>
-          </div>
-        </div>
+        <DarshanHero />
         
         {/* Schedule Content */}
         <section className="container mx-auto px-4 py-16">
@@ -92,110 +36,16 @@ const Darshan = () => {
                 
                 <TabsContent value="daily-schedule" className="pt-6">
                   <DarshanSchedule />
-                  
-                  <div className="mt-8">
-                    <h3 className="font-devotional text-2xl font-semibold text-krishna-blue mb-4">Special Weekly Programs</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <Card>
-                        <CardContent className="p-4">
-                          <h4 className="font-medium text-center">Sunday</h4>
-                          <p className="text-sm text-center text-muted-foreground">Special Feast Program</p>
-                          <p className="text-sm text-center">5:30 PM - 8:30 PM</p>
-                        </CardContent>
-                      </Card>
-                      <Card>
-                        <CardContent className="p-4">
-                          <h4 className="font-medium text-center">Tuesday</h4>
-                          <p className="text-sm text-center text-muted-foreground">Bhagavad Gita Class</p>
-                          <p className="text-sm text-center">6:00 PM - 7:30 PM</p>
-                        </CardContent>
-                      </Card>
-                      <Card>
-                        <CardContent className="p-4">
-                          <h4 className="font-medium text-center">Friday</h4>
-                          <p className="text-sm text-center text-muted-foreground">Bhajan Night</p>
-                          <p className="text-sm text-center">7:00 PM - 9:00 PM</p>
-                        </CardContent>
-                      </Card>
-                    </div>
-                  </div>
+                  <WeeklyPrograms />
                 </TabsContent>
                 
                 <TabsContent value="festival-calendar" className="pt-6">
-                  {loading ? (
-                    <div className="text-center py-8">Loading festival calendar...</div>
-                  ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {Object.entries(festivals).map(([month, events]) => (
-                        <Card key={month}>
-                          <CardContent className="p-4">
-                            <h4 className="font-medium border-b pb-2 mb-3">{month}</h4>
-                            <ul className="space-y-2">
-                              {events.map((event) => (
-                                <li key={event.id} className="text-sm">
-                                  <span className="text-krishna-gold font-semibold">{event.date}</span>
-                                  <p>{event.name}</p>
-                                  {event.description && (
-                                    <p className="text-xs text-muted-foreground mt-1">{event.description}</p>
-                                  )}
-                                </li>
-                              ))}
-                            </ul>
-                          </CardContent>
-                        </Card>
-                      ))}
-                    </div>
-                  )}
+                  <FestivalCalendarDisplay />
                 </TabsContent>
               </Tabs>
             </div>
             
-            <div className="lg:col-span-1">
-              <Card className="mb-8 decorative-border overflow-hidden">
-                <CardContent className="p-0">
-                  <div className="bg-krishna-gold/10 px-6 py-4 flex items-center gap-3 border-b">
-                    <Info size={20} className="text-krishna-gold" />
-                    <h3 className="font-devotional text-xl text-krishna-blue">Visitor Guidelines</h3>
-                  </div>
-                  <div className="p-6 space-y-4">
-                    <h4 className="font-medium">Dress Code</h4>
-                    <ul className="list-disc ml-6 space-y-1 text-sm">
-                      <li>Please dress modestly and conservatively</li>
-                      <li>Men: Full pants and shirts/t-shirts</li>
-                      <li>Women: Sarees, salwar kameez, long skirts, or modest western attire</li>
-                      <li>Shorts, sleeveless tops, and short skirts are not appropriate</li>
-                    </ul>
-                    
-                    <h4 className="font-medium pt-2">Temple Etiquette</h4>
-                    <ul className="list-disc ml-6 space-y-1 text-sm">
-                      <li>Remove footwear before entering the temple</li>
-                      <li>Maintain silence or speak softly inside the temple hall</li>
-                      <li>Photography may be restricted in certain areas</li>
-                      <li>Please respect the deities and the devotees</li>
-                      <li>Food or drinks are not allowed inside the temple hall</li>
-                      <li>Mobile phones should be kept on silent mode</li>
-                    </ul>
-                    
-                    <h4 className="font-medium pt-2">Prasadam (Sacred Food)</h4>
-                    <p className="text-sm">
-                      The temple serves prasadam (sanctified vegetarian food) to all visitors. Donations for prasadam are welcome but not mandatory.
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card className="decorative-border">
-                <CardContent className="p-6">
-                  <h3 className="font-devotional text-xl text-krishna-blue mb-4">Special Instructions</h3>
-                  <p className="text-sm mb-4">
-                    Ekadashi (11th day of lunar cycle) is observed with fasting from grains and beans. Temple kitchen serves special Ekadashi prasadam on these days.
-                  </p>
-                  <p className="text-sm">
-                    During major festivals, special schedules are followed. Please check the temple notice board or contact the temple office for festival details.
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
+            <VisitorGuidelines />
           </div>
         </section>
       </main>
