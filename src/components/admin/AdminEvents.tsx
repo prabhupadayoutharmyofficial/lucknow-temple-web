@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -223,6 +224,7 @@ const AdminEvents = () => {
       ...event,
       highlights_text: event.highlights ? event.highlights.join('\n') : ''
     });
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
@@ -233,6 +235,10 @@ const AdminEvents = () => {
         }
       }
     };
+    
+    const handleUploadButtonClick = () => {
+      fileInputRef.current?.click();
+    }
 
     return (
       <Card>
@@ -286,21 +292,23 @@ const AdminEvents = () => {
                 placeholder="Image URL or upload below"
               />
               <div className="flex items-center gap-2">
-                <Input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  disabled={uploadingImage}
-                />
                 <Button
                   type="button"
                   variant="outline"
+                  onClick={handleUploadButtonClick}
                   disabled={uploadingImage}
-                  size="sm"
                 >
                   <Upload className="h-4 w-4 mr-2" />
                   {uploadingImage ? 'Uploading...' : 'Upload'}
                 </Button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                  disabled={uploadingImage}
+                />
               </div>
             </div>
           </div>
