@@ -15,86 +15,6 @@ interface FestivalEvent {
   description?: string;
 }
 
-const festivals = [
-  {
-    month: "January",
-    events: [
-      { name: "Vaikuntha Ekadashi", date: "January 2, 2025" },
-      { name: "Putrada Ekadashi", date: "January 16, 2025" }
-    ]
-  },
-  {
-    month: "February",
-    events: [
-      { name: "Vasant Panchami", date: "February 4, 2025" },
-      { name: "Nityananda Trayodashi", date: "February 12, 2025" }
-    ]
-  },
-  {
-    month: "March",
-    events: [
-      { name: "Gaura Purnima", date: "March 14, 2025" },
-      { name: "Ram Navami", date: "March 30, 2025" }
-    ]
-  },
-  {
-    month: "April",
-    events: [
-      { name: "Narsimha Chaturdasi", date: "April 23, 2025" }
-    ]
-  },
-  {
-    month: "May",
-    events: [
-      { name: "Panihati Cida Dahi Festival", date: "May 10, 2025" }
-    ]
-  },
-  {
-    month: "June",
-    events: [
-      { name: "Ratha Yatra", date: "June 29, 2025" }
-    ]
-  },
-  {
-    month: "July",
-    events: [
-      { name: "Guru Purnima", date: "July 12, 2025" }
-    ]
-  },
-  {
-    month: "August",
-    events: [
-      { name: "Janmashtami", date: "August 15, 2025" },
-      { name: "Srila Prabhupada's Appearance Day", date: "August 29, 2025" }
-    ]
-  },
-  {
-    month: "September",
-    events: [
-      { name: "Radhastami", date: "September 5, 2025" }
-    ]
-  },
-  {
-    month: "October",
-    events: [
-      { name: "Kartik Month Begins", date: "October 15, 2025" },
-      { name: "Govardhan Puja", date: "October 31, 2025" }
-    ]
-  },
-  {
-    month: "November",
-    events: [
-      { name: "Tulasi-Saligram Vivaha", date: "November 11, 2025" }
-    ]
-  },
-  {
-    month: "December",
-    events: [
-      { name: "Gita Jayanti", date: "December 2, 2025" }
-    ]
-  }
-];
-
 const Darshan = () => {
   const [festivals, setFestivals] = useState<{ [key: string]: FestivalEvent[] }>({});
   const [loading, setLoading] = useState(true);
@@ -106,14 +26,22 @@ const Darshan = () => {
   const fetchFestivals = async () => {
     try {
       const { data, error } = await supabase
-        .from('festival_calendar' as any)
+        .from('festival_calendar')
         .select('*')
         .order('date');
 
       if (error) throw error;
       
       // Group festivals by month
-      const groupedFestivals = (data as FestivalEvent[] || []).reduce((acc: { [key: string]: FestivalEvent[] }, festival: FestivalEvent) => {
+      const festivalData = (data as any[])?.map(item => ({
+        id: item.id,
+        name: item.name,
+        date: item.date,
+        month: item.month,
+        description: item.description
+      })) || [];
+      
+      const groupedFestivals = festivalData.reduce((acc: { [key: string]: FestivalEvent[] }, festival: FestivalEvent) => {
         if (!acc[festival.month]) {
           acc[festival.month] = [];
         }

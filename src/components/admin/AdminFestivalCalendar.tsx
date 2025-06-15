@@ -1,13 +1,27 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Edit, Save, X, Plus, Trash2, Calendar } from 'lucide-react';
+import { Calendar, Plus, Edit, Trash2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 
 interface FestivalEvent {
   id: string;
@@ -15,16 +29,19 @@ interface FestivalEvent {
   date: string;
   month: string;
   description?: string;
-  created_at?: string;
 }
 
 const AdminFestivalCalendar = () => {
   const [festivals, setFestivals] = useState<FestivalEvent[]>([]);
-  const [editingFestival, setEditingFestival] = useState<string | null>(null);
-  const [newFestival, setNewFestival] = useState<Partial<FestivalEvent>>({});
-  const [editValues, setEditValues] = useState<Partial<FestivalEvent>>({});
   const [loading, setLoading] = useState(true);
-  const [showAddForm, setShowAddForm] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [editingFestival, setEditingFestival] = useState<FestivalEvent | null>(null);
+  const [formData, setFormData] = useState({
+    name: '',
+    date: '',
+    month: '',
+    description: ''
+  });
   const { toast } = useToast();
 
   useEffect(() => {
@@ -34,12 +51,18 @@ const AdminFestivalCalendar = () => {
   const fetchFestivals = async () => {
     try {
       const { data, error } = await supabase
-        .from('festival_calendar' as any)
+        .from('festival_calendar')
         .select('*')
         .order('date');
 
       if (error) throw error;
-      setFestivals(data as FestivalEvent[] || []);
+      setFestivals((data as any[])?.map(item => ({
+        id: item.id,
+        name: item.name,
+        date: item.date,
+        month: item.month,
+        description: item.description
+      })) || []);
     } catch (error: any) {
       toast({
         title: "Error fetching festivals",
@@ -51,35 +74,48 @@ const AdminFestivalCalendar = () => {
     }
   };
 
-  const handleEdit = (festival: FestivalEvent) => {
-    setEditingFestival(festival.id);
-    setEditValues(festival);
-  };
-
-  const handleSave = async (id: string) => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
     try {
-      const { error } = await supabase
-        .from('festival_calendar' as any)
-        .update({
-          name: editValues.name,
-          date: editValues.date,
-          month: editValues.month,
-          description: editValues.description
-        })
-        .eq('id', id);
-
-      if (error) throw error;
+      if (editingFestival) {
+        const { error } = await supabase
+          .from('festival_calendar')
+          .update(formData)
+          .eq('id', editingFestival.id);
+        
+        if (error) throw error;
+        toast({ title: "Festival updated successfully" });
+      } else {
+        const { error } = await supabase
+          .from('festival_calendar')
+          .insert([formData]);
+        
+        if (error) throw error;
+        toast({ title: "Festival added successfully" });
+      }
       
-      toast({ title: "Festival updated successfully!" });
-      setEditingFestival(null);
       fetchFestivals();
+      setIsDialogOpen(false);
+      resetForm();
     } catch (error: any) {
       toast({
-        title: "Error updating festival",
+        title: "Error saving festival",
         description: error.message,
         variant: "destructive"
       });
     }
+  };
+
+  const handleEdit = (festival: FestivalEvent) => {
+    setEditingFestival(festival);
+    setFormData({
+      name: festival.name,
+      date: festival.date,
+      month: festival.month,
+      description: festival.description || ''
+    });
+    setIsDialogOpen(true);
   };
 
   const handleDelete = async (id: string) => {
@@ -87,13 +123,12 @@ const AdminFestivalCalendar = () => {
     
     try {
       const { error } = await supabase
-        .from('festival_calendar' as any)
+        .from('festival_calendar')
         .delete()
         .eq('id', id);
-
-      if (error) throw error;
       
-      toast({ title: "Festival deleted successfully!" });
+      if (error) throw error;
+      toast({ title: "Festival deleted successfully" });
       fetchFestivals();
     } catch (error: any) {
       toast({
@@ -104,152 +139,111 @@ const AdminFestivalCalendar = () => {
     }
   };
 
-  const handleAddFestival = async () => {
-    if (!newFestival.name || !newFestival.date || !newFestival.month) {
-      toast({
-        title: "Missing required fields",
-        description: "Please fill in name, date, and month",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    try {
-      const { error } = await supabase
-        .from('festival_calendar' as any)
-        .insert([{
-          name: newFestival.name,
-          date: newFestival.date,
-          month: newFestival.month,
-          description: newFestival.description
-        }]);
-
-      if (error) throw error;
-      
-      toast({ title: "Festival added successfully!" });
-      setNewFestival({});
-      setShowAddForm(false);
-      fetchFestivals();
-    } catch (error: any) {
-      toast({
-        title: "Error adding festival",
-        description: error.message,
-        variant: "destructive"
-      });
-    }
-  };
-
-  const handleCancel = () => {
+  const resetForm = () => {
+    setFormData({ name: '', date: '', month: '', description: '' });
     setEditingFestival(null);
-    setEditValues({});
-    setShowAddForm(false);
-    setNewFestival({});
   };
 
   if (loading) {
-    return <div className="text-center py-8">Loading festival calendar...</div>;
+    return <div className="text-center py-8">Loading festivals...</div>;
   }
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Calendar className="h-6 w-6 text-krishna-blue" />
-          <h2 className="text-2xl font-bold">Manage Festival Calendar</h2>
-        </div>
-        <Button
-          onClick={() => setShowAddForm(true)}
-          className="bg-krishna-blue hover:bg-krishna-blue/80"
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          Add Festival
-        </Button>
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold flex items-center gap-2">
+          <Calendar className="h-6 w-6" />
+          Festival Calendar Management
+        </h2>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button onClick={resetForm}>
+              <Plus className="h-4 w-4 mr-2" />
+              Add Festival
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>
+                {editingFestival ? 'Edit Festival' : 'Add New Festival'}
+              </DialogTitle>
+            </DialogHeader>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <Label htmlFor="name">Festival Name</Label>
+                <Input
+                  id="name"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="date">Date</Label>
+                <Input
+                  id="date"
+                  value={formData.date}
+                  onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                  placeholder="e.g., January 2, 2025"
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="month">Month</Label>
+                <Input
+                  id="month"
+                  value={formData.month}
+                  onChange={(e) => setFormData({ ...formData, month: e.target.value })}
+                  placeholder="e.g., January"
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="description">Description</Label>
+                <Textarea
+                  id="description"
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  placeholder="Festival description..."
+                />
+              </div>
+              <div className="flex justify-end gap-2">
+                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
+                  Cancel
+                </Button>
+                <Button type="submit">
+                  {editingFestival ? 'Update' : 'Add'} Festival
+                </Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
       </div>
 
-      {showAddForm && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Add New Festival</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <Label htmlFor="new-name">Festival Name</Label>
-                <Input
-                  id="new-name"
-                  value={newFestival.name || ''}
-                  onChange={(e) => setNewFestival({ ...newFestival, name: e.target.value })}
-                  placeholder="e.g., Janmashtami"
-                />
-              </div>
-              <div>
-                <Label htmlFor="new-date">Date</Label>
-                <Input
-                  id="new-date"
-                  value={newFestival.date || ''}
-                  onChange={(e) => setNewFestival({ ...newFestival, date: e.target.value })}
-                  placeholder="e.g., August 15, 2025"
-                />
-              </div>
-              <div>
-                <Label htmlFor="new-month">Month</Label>
-                <Input
-                  id="new-month"
-                  value={newFestival.month || ''}
-                  onChange={(e) => setNewFestival({ ...newFestival, month: e.target.value })}
-                  placeholder="e.g., August"
-                />
-              </div>
-            </div>
-            <div>
-              <Label htmlFor="new-description">Description (optional)</Label>
-              <Textarea
-                id="new-description"
-                value={newFestival.description || ''}
-                onChange={(e) => setNewFestival({ ...newFestival, description: e.target.value })}
-                rows={2}
-              />
-            </div>
-            <div className="flex gap-2">
-              <Button onClick={handleAddFestival} className="bg-krishna-blue hover:bg-krishna-blue/80">
-                <Save className="h-4 w-4 mr-2" />
-                Add Festival
-              </Button>
-              <Button variant="outline" onClick={handleCancel}>
-                <X className="h-4 w-4 mr-2" />
-                Cancel
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-      
-      <div className="grid gap-4">
-        {festivals.map((festival) => (
-          <Card key={festival.id}>
-            <CardHeader>
-              <div className="flex justify-between items-center">
-                <CardTitle className="text-lg">{festival.name}</CardTitle>
-                <div className="flex gap-2">
-                  {editingFestival === festival.id ? (
-                    <>
-                      <Button
-                        size="sm"
-                        onClick={() => handleSave(festival.id)}
-                        className="bg-krishna-blue hover:bg-krishna-blue/80"
-                      >
-                        <Save className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={handleCancel}
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </>
-                  ) : (
-                    <>
+      <Card>
+        <CardHeader>
+          <CardTitle>Festivals</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Name</TableHead>
+                <TableHead>Date</TableHead>
+                <TableHead>Month</TableHead>
+                <TableHead>Description</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {festivals.map((festival) => (
+                <TableRow key={festival.id}>
+                  <TableCell className="font-medium">{festival.name}</TableCell>
+                  <TableCell>{festival.date}</TableCell>
+                  <TableCell>{festival.month}</TableCell>
+                  <TableCell>{festival.description || 'No description'}</TableCell>
+                  <TableCell>
+                    <div className="flex gap-2">
                       <Button
                         variant="outline"
                         size="sm"
@@ -261,71 +255,23 @@ const AdminFestivalCalendar = () => {
                         variant="outline"
                         size="sm"
                         onClick={() => handleDelete(festival.id)}
-                        className="text-red-600 hover:text-red-700"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
-                    </>
-                  )}
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {editingFestival === festival.id ? (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <Label htmlFor={`name-${festival.id}`}>Festival Name</Label>
-                    <Input
-                      id={`name-${festival.id}`}
-                      value={editValues.name || ''}
-                      onChange={(e) => setEditValues({ ...editValues, name: e.target.value })}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor={`date-${festival.id}`}>Date</Label>
-                    <Input
-                      id={`date-${festival.id}`}
-                      value={editValues.date || ''}
-                      onChange={(e) => setEditValues({ ...editValues, date: e.target.value })}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor={`month-${festival.id}`}>Month</Label>
-                    <Input
-                      id={`month-${festival.id}`}
-                      value={editValues.month || ''}
-                      onChange={(e) => setEditValues({ ...editValues, month: e.target.value })}
-                    />
-                  </div>
-                  <div className="md:col-span-3">
-                    <Label htmlFor={`description-${festival.id}`}>Description</Label>
-                    <Textarea
-                      id={`description-${festival.id}`}
-                      value={editValues.description || ''}
-                      onChange={(e) => setEditValues({ ...editValues, description: e.target.value })}
-                      rows={2}
-                    />
-                  </div>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <strong>Date:</strong> {festival.date}
-                  </div>
-                  <div>
-                    <strong>Month:</strong> {festival.month}
-                  </div>
-                  {festival.description && (
-                    <div className="md:col-span-3">
-                      <strong>Description:</strong> {festival.description}
                     </div>
-                  )}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          
+          {festivals.length === 0 && (
+            <div className="text-center py-8 text-muted-foreground">
+              No festivals found. Add your first festival!
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 };
