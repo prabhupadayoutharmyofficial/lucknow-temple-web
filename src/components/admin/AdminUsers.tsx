@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -9,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Users, Search, UserPlus, Shield, User as UserIcon } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { usePermissions } from '@/hooks/usePermissions';
 import {
   Table,
   TableBody,
@@ -24,6 +24,7 @@ const AdminUsers = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
   const { toast } = useToast();
+  const permissions = usePermissions();
 
   useEffect(() => {
     fetchUsers();
@@ -50,6 +51,15 @@ const AdminUsers = () => {
   };
 
   const updateUserRole = async (userId: string, newRole: string) => {
+    if (!permissions.canEditUserRoles) {
+      toast({
+        title: "Permission denied",
+        description: "You don't have permission to change user roles",
+        variant: "destructive"
+      });
+      return;
+    }
+
     try {
       const { error } = await supabase
         .from('profiles')
@@ -150,6 +160,11 @@ const AdminUsers = () => {
       <Card>
         <CardHeader>
           <CardTitle>Users</CardTitle>
+          {!permissions.canEditUserRoles && (
+            <CardDescription className="text-amber-600">
+              You can view users but cannot modify their roles.
+            </CardDescription>
+          )}
         </CardHeader>
         <CardContent>
           <Table>
@@ -159,7 +174,7 @@ const AdminUsers = () => {
                 <TableHead>Email</TableHead>
                 <TableHead>Role</TableHead>
                 <TableHead>Joined</TableHead>
-                <TableHead>Actions</TableHead>
+                {permissions.canEditUserRoles && <TableHead>Actions</TableHead>}
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -178,21 +193,23 @@ const AdminUsers = () => {
                   <TableCell>
                     {user.created_at ? new Date(user.created_at).toLocaleDateString() : 'Unknown'}
                   </TableCell>
-                  <TableCell>
-                    <Select
-                      value={user.role}
-                      onValueChange={(newRole) => updateUserRole(user.id, newRole)}
-                    >
-                      <SelectTrigger className="w-32">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="user">User</SelectItem>
-                        <SelectItem value="moderator">Moderator</SelectItem>
-                        <SelectItem value="admin">Admin</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </TableCell>
+                  {permissions.canEditUserRoles && (
+                    <TableCell>
+                      <Select
+                        value={user.role}
+                        onValueChange={(newRole) => updateUserRole(user.id, newRole)}
+                      >
+                        <SelectTrigger className="w-32">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="user">User</SelectItem>
+                          <SelectItem value="moderator">Moderator</SelectItem>
+                          <SelectItem value="admin">Admin</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </TableCell>
+                  )}
                 </TableRow>
               ))}
             </TableBody>

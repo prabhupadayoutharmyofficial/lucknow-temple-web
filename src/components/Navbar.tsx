@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -18,7 +17,7 @@ import { getLeftNavItems, getRightNavItems } from './navbar/NavigationItems';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { user, isAdmin, signOut } = useAuth();
+  const { user, hasAdminAccess, signOut } = useAuth();
 
   const handleSignOut = async () => {
     await signOut();
@@ -52,7 +51,7 @@ const Navbar = () => {
             
             {user && (
               <div className="flex items-center space-x-2 ml-4 pl-4 border-l border-gray-200">
-                {isAdmin && (
+                {hasAdminAccess && (
                   <Link to="/admin">
                     <Button 
                       variant="ghost" 
@@ -97,7 +96,7 @@ const Navbar = () => {
                 </SheetHeader>
                 <MobileNavContent 
                   user={user}
-                  isAdmin={isAdmin}
+                  isAdmin={hasAdminAccess}
                   onSignOut={signOut}
                   onClose={() => setIsOpen(false)}
                 />

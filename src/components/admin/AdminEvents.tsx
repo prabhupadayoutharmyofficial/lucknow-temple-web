@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -9,6 +8,7 @@ import { Switch } from '@/components/ui/switch';
 import { Plus, Edit, Trash2, Save, X, Upload, Send, Calendar as CalendarIcon } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { usePermissions } from '@/hooks/usePermissions';
 
 const AdminEvents = () => {
   const [events, setEvents] = useState<any[]>([]);
@@ -17,6 +17,7 @@ const AdminEvents = () => {
   const [loading, setLoading] = useState(true);
   const [uploadingImage, setUploadingImage] = useState(false);
   const { toast } = useToast();
+  const permissions = usePermissions();
 
   const emptyEvent = {
     title: '',
@@ -89,6 +90,15 @@ const AdminEvents = () => {
   };
 
   const sendNotification = async (event: any) => {
+    if (!permissions.canSendNotifications) {
+      toast({
+        title: "Permission denied",
+        description: "You don't have permission to send notifications",
+        variant: "destructive"
+      });
+      return;
+    }
+
     try {
       const { error } = await supabase.functions.invoke('send-event-notification', {
         body: { event }
@@ -107,6 +117,24 @@ const AdminEvents = () => {
   };
 
   const handleSave = async (eventData: any) => {
+    if (!eventData.id && !permissions.canCreateEvents) {
+      toast({
+        title: "Permission denied",
+        description: "You don't have permission to create events",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (eventData.id && !permissions.canEditEvents) {
+      toast({
+        title: "Permission denied",
+        description: "You don't have permission to edit events",
+        variant: "destructive"
+      });
+      return;
+    }
+
     try {
       const highlights = eventData.highlights_text 
         ? eventData.highlights_text.split('\n').filter((h: string) => h.trim())
@@ -161,6 +189,15 @@ const AdminEvents = () => {
   };
 
   const handleDelete = async (id: string) => {
+    if (!permissions.canDeleteEvents) {
+      toast({
+        title: "Permission denied",
+        description: "You don't have permission to delete events",
+        variant: "destructive"
+      });
+      return;
+    }
+
     if (!confirm('Are you sure you want to delete this event?')) return;
 
     try {
@@ -353,16 +390,18 @@ const AdminEvents = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Manage Events</h2>
-        <Button 
-          onClick={() => setIsCreating(true)}
-          className="bg-krishna-gold hover:bg-krishna-saffron"
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          Add Event
-        </Button>
+        {permissions.canCreateEvents && (
+          <Button 
+            onClick={() => setIsCreating(true)}
+            className="bg-krishna-gold hover:bg-krishna-saffron"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Add Event
+          </Button>
+        )}
       </div>
 
-      {isCreating && (
+      {isCreating && permissions.canCreateEvents && (
         <EventForm
           event={emptyEvent}
           onSave={handleSave}
@@ -370,7 +409,7 @@ const AdminEvents = () => {
         />
       )}
 
-      {editingEvent && (
+      {editingEvent && permissions.canEditEvents && (
         <EventForm
           event={editingEvent}
           onSave={handleSave}
@@ -399,28 +438,34 @@ const AdminEvents = () => {
                   <CardDescription>{event.date} • {event.time}</CardDescription>
                 </div>
                 <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => sendNotification(event)}
-                    disabled={!event.is_published}
-                  >
-                    <Send className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setEditingEvent(event)}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleDelete(event.id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  {permissions.canSendNotifications && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => sendNotification(event)}
+                      disabled={!event.is_published}
+                    >
+                      <Send className="h-4 w-4" />
+                    </Button>
+                  )}
+                  {permissions.canEditEvents && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setEditingEvent(event)}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                  )}
+                  {permissions.canDeleteEvents && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleDelete(event.id)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  )}
                 </div>
               </div>
             </CardHeader>

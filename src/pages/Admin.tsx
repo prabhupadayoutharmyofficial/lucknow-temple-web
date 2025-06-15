@@ -15,9 +15,11 @@ import AdminUsers from '@/components/admin/AdminUsers';
 import AdminGallery from '@/components/admin/AdminGallery';
 import AdminPopupManager from '@/components/admin/AdminPopupManager';
 import AdminFestivalCalendar from '@/components/admin/AdminFestivalCalendar';
+import { usePermissions } from '@/hooks/usePermissions';
 
 const Admin = () => {
-  const { user, profile, loading, isAdmin } = useAuth();
+  const { user, profile, loading } = useAuth();
+  const permissions = usePermissions();
 
   if (loading) {
     return (
@@ -34,7 +36,7 @@ const Admin = () => {
     return <Navigate to="/auth" replace />;
   }
 
-  if (!isAdmin) {
+  if (!permissions.canAccessAdminPanel) {
     return (
       <div className="min-h-screen flex flex-col">
         <Navbar />
@@ -43,7 +45,7 @@ const Admin = () => {
             <CardHeader>
               <CardTitle className="text-center text-red-600">Access Denied</CardTitle>
               <CardDescription className="text-center">
-                You don't have admin privileges to access this page.
+                You don't have permissions to access this page.
               </CardDescription>
             </CardHeader>
           </Card>
@@ -52,6 +54,47 @@ const Admin = () => {
       </div>
     );
   }
+
+  const getAvailableTabs = () => {
+    const tabs = [];
+    
+    if (permissions.canViewEvents) {
+      tabs.push({ value: 'events', label: 'Events', icon: Calendar });
+    }
+    
+    if (permissions.canManageTempleInfo) {
+      tabs.push({ value: 'temple', label: 'Temple Info', icon: MapPin });
+    }
+    
+    if (permissions.canManageSchedule) {
+      tabs.push({ value: 'schedule', label: 'Daily Schedule', icon: Clock });
+    }
+    
+    if (permissions.canManageFestivals) {
+      tabs.push({ value: 'festivals', label: 'Festivals', icon: Calendar });
+    }
+    
+    if (permissions.canManageHero) {
+      tabs.push({ value: 'hero', label: 'Homepage', icon: Shield });
+    }
+    
+    if (permissions.canManageGallery) {
+      tabs.push({ value: 'gallery', label: 'Gallery', icon: Camera });
+    }
+    
+    if (permissions.canManagePopups) {
+      tabs.push({ value: 'popup', label: 'Popup', icon: MessageSquare });
+    }
+    
+    if (permissions.canViewUsers) {
+      tabs.push({ value: 'users', label: 'Users', icon: Users });
+    }
+    
+    return tabs;
+  };
+
+  const availableTabs = getAvailableTabs();
+  const defaultTab = availableTabs.length > 0 ? availableTabs[0].value : 'events';
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -62,7 +105,9 @@ const Admin = () => {
           <div className="container mx-auto px-4">
             <div className="flex items-center gap-3 mb-4">
               <Shield className="h-8 w-8" />
-              <h1 className="font-devotional text-3xl md:text-4xl">Admin Dashboard</h1>
+              <h1 className="font-devotional text-3xl md:text-4xl">
+                {profile?.role === 'moderator' ? 'Moderator Dashboard' : 'Admin Dashboard'}
+              </h1>
             </div>
             <p className="text-lg">
               Welcome back, {profile?.full_name || 'Admin'}! Manage your temple website content.
@@ -71,73 +116,66 @@ const Admin = () => {
         </div>
 
         <div className="container mx-auto px-4 py-8">
-          <Tabs defaultValue="events" className="w-full">
-            <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8">
-              <TabsTrigger value="events" className="flex items-center gap-2">
-                <Calendar className="h-4 w-4" />
-                Events
-              </TabsTrigger>
-              <TabsTrigger value="temple" className="flex items-center gap-2">
-                <MapPin className="h-4 w-4" />
-                Temple Info
-              </TabsTrigger>
-              <TabsTrigger value="schedule" className="flex items-center gap-2">
-                <Clock className="h-4 w-4" />
-                Daily Schedule
-              </TabsTrigger>
-              <TabsTrigger value="festivals" className="flex items-center gap-2">
-                <Calendar className="h-4 w-4" />
-                Festivals
-              </TabsTrigger>
-              <TabsTrigger value="hero" className="flex items-center gap-2">
-                <Shield className="h-4 w-4" />
-                Homepage
-              </TabsTrigger>
-              <TabsTrigger value="gallery" className="flex items-center gap-2">
-                <Camera className="h-4 w-4" />
-                Gallery
-              </TabsTrigger>
-              <TabsTrigger value="popup" className="flex items-center gap-2">
-                <MessageSquare className="h-4 w-4" />
-                Popup
-              </TabsTrigger>
-              <TabsTrigger value="users" className="flex items-center gap-2">
-                <Users className="h-4 w-4" />
-                Users
-              </TabsTrigger>
+          <Tabs defaultValue={defaultTab} className="w-full">
+            <TabsList className={`grid w-full grid-cols-${Math.min(availableTabs.length, 4)} lg:grid-cols-${availableTabs.length}`}>
+              {availableTabs.map((tab) => {
+                const Icon = tab.icon;
+                return (
+                  <TabsTrigger key={tab.value} value={tab.value} className="flex items-center gap-2">
+                    <Icon className="h-4 w-4" />
+                    {tab.label}
+                  </TabsTrigger>
+                );
+              })}
             </TabsList>
             
-            <TabsContent value="events" className="mt-6">
-              <AdminEvents />
-            </TabsContent>
+            {permissions.canViewEvents && (
+              <TabsContent value="events" className="mt-6">
+                <AdminEvents />
+              </TabsContent>
+            )}
             
-            <TabsContent value="temple" className="mt-6">
-              <AdminTempleInfo />
-            </TabsContent>
+            {permissions.canManageTempleInfo && (
+              <TabsContent value="temple" className="mt-6">
+                <AdminTempleInfo />
+              </TabsContent>
+            )}
             
-            <TabsContent value="schedule" className="mt-6">
-              <AdminSchedule />
-            </TabsContent>
+            {permissions.canManageSchedule && (
+              <TabsContent value="schedule" className="mt-6">
+                <AdminSchedule />
+              </TabsContent>
+            )}
             
-            <TabsContent value="festivals" className="mt-6">
-              <AdminFestivalCalendar />
-            </TabsContent>
+            {permissions.canManageFestivals && (
+              <TabsContent value="festivals" className="mt-6">
+                <AdminFestivalCalendar />
+              </TabsContent>
+            )}
             
-            <TabsContent value="hero" className="mt-6">
-              <AdminHero />
-            </TabsContent>
+            {permissions.canManageHero && (
+              <TabsContent value="hero" className="mt-6">
+                <AdminHero />
+              </TabsContent>
+            )}
             
-            <TabsContent value="gallery" className="mt-6">
-              <AdminGallery />
-            </TabsContent>
+            {permissions.canManageGallery && (
+              <TabsContent value="gallery" className="mt-6">
+                <AdminGallery />
+              </TabsContent>
+            )}
             
-            <TabsContent value="popup" className="mt-6">
-              <AdminPopupManager />
-            </TabsContent>
+            {permissions.canManagePopups && (
+              <TabsContent value="popup" className="mt-6">
+                <AdminPopupManager />
+              </TabsContent>
+            )}
             
-            <TabsContent value="users" className="mt-6">
-              <AdminUsers />
-            </TabsContent>
+            {permissions.canViewUsers && (
+              <TabsContent value="users" className="mt-6">
+                <AdminUsers />
+              </TabsContent>
+            )}
           </Tabs>
         </div>
       </main>
