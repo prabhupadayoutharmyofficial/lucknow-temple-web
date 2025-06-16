@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -331,13 +332,16 @@ const AdminEvents = () => {
               </div>
               {formData.image && (
                 <div className="mt-2">
+                  <p className="text-sm text-gray-600 mb-2">Image Preview:</p>
                   <img 
                     src={formData.image} 
-                    alt="Preview" 
-                    className="w-32 h-32 object-cover rounded-md border"
+                    alt="Event preview" 
+                    className="w-32 h-32 object-cover rounded-md border border-gray-300"
+                    onLoad={() => console.log('Image loaded successfully:', formData.image)}
                     onError={(e) => {
+                      console.error('Failed to load image:', formData.image);
                       const target = e.target as HTMLImageElement;
-                      target.style.display = 'none';
+                      target.src = `https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=400&h=400&fit=crop&crop=center`;
                     }}
                   />
                 </div>
