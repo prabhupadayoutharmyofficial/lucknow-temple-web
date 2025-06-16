@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
-import { Plus, Edit, Trash2, Save, X, Upload, Send, Calendar as CalendarIcon } from 'lucide-react';
+import { Plus, Edit, Trash2, Save, X, Upload, Send, Calendar as CalendarIcon, Check } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { usePermissions } from '@/hooks/usePermissions';
@@ -224,14 +223,19 @@ const AdminEvents = () => {
       ...event,
       highlights_text: event.highlights ? event.highlights.join('\n') : ''
     });
+    const [uploadSuccess, setUploadSuccess] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
       if (file) {
+        setUploadSuccess(false);
         const imageUrl = await uploadImage(file);
         if (imageUrl) {
           setFormData({ ...formData, image: imageUrl });
+          setUploadSuccess(true);
+          // Reset success indicator after 3 seconds
+          setTimeout(() => setUploadSuccess(false), 3000);
         }
       }
     };
@@ -297,9 +301,24 @@ const AdminEvents = () => {
                   variant="outline"
                   onClick={handleUploadButtonClick}
                   disabled={uploadingImage}
+                  className={uploadSuccess ? "border-green-500 bg-green-50" : ""}
                 >
-                  <Upload className="h-4 w-4 mr-2" />
-                  {uploadingImage ? 'Uploading...' : 'Upload'}
+                  {uploadingImage ? (
+                    <>
+                      <Upload className="h-4 w-4 mr-2 animate-spin" />
+                      Uploading...
+                    </>
+                  ) : uploadSuccess ? (
+                    <>
+                      <Check className="h-4 w-4 mr-2 text-green-600" />
+                      Uploaded!
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="h-4 w-4 mr-2" />
+                      Upload
+                    </>
+                  )}
                 </Button>
                 <input
                   ref={fileInputRef}
@@ -310,6 +329,19 @@ const AdminEvents = () => {
                   disabled={uploadingImage}
                 />
               </div>
+              {formData.image && (
+                <div className="mt-2">
+                  <img 
+                    src={formData.image} 
+                    alt="Preview" 
+                    className="w-32 h-32 object-cover rounded-md border"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                    }}
+                  />
+                </div>
+              )}
             </div>
           </div>
           
