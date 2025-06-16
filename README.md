@@ -1,126 +1,73 @@
+# Welcome to your Lovable project
 
-# ISKCON Lucknow Temple Website
+## Project info
 
-A modern, responsive website for ISKCON Lucknow temple built with React, TypeScript, and Supabase.
+**URL**: https://lovable.dev/projects/9ac98118-f09a-4750-b080-e88fff50a6e4
 
-## Features
+## How can I edit this code?
 
-- Event management system
-- Photo gallery with collections
-- Daily darshan schedule
-- Festival calendar
-- User authentication
-- Admin dashboard
-- Popup notifications
-- Responsive design
+There are several ways of editing your application.
 
-## Technologies Used
+**Use Lovable**
 
-- React 18
-- TypeScript
-- Tailwind CSS
-- Supabase (Backend & Database)
-- Vite (Build tool)
-- React Router (Navigation)
-- Shadcn/UI (UI Components)
+Simply visit the [Lovable Project](https://lovable.dev/projects/9ac98118-f09a-4750-b080-e88fff50a6e4) and start prompting.
 
-## Getting Started
+Changes made via Lovable will be committed automatically to this repo.
 
-### Prerequisites
+**Use your preferred IDE**
 
-- Node.js (v18 or higher)
-- npm or yarn
-- Supabase account
+If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
 
-### Installation
+The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
-1. Clone the repository:
-```bash
-git clone <your-repository-url>
-cd iskcon-lucknow-website
-```
+Follow these steps:
 
-2. Install dependencies:
-```bash
-npm install
-```
+```sh
+# Step 1: Clone the repository using the project's Git URL.
+git clone <YOUR_GIT_URL>
 
-3. Set up Supabase:
-   - Create a new project at [supabase.com](https://supabase.com)
-   - Copy your project URL and anon key
-   - Update `src/integrations/supabase/client.ts` with your credentials
-   - Update `supabase/config.toml` with your project ID
+# Step 2: Navigate to the project directory.
+cd <YOUR_PROJECT_NAME>
 
-4. Run the database migrations:
-   - Go to your Supabase dashboard
-   - Navigate to SQL Editor
-   - Run the migration files in the `supabase/migrations/` folder in order
+# Step 3: Install the necessary dependencies.
+npm i
 
-5. Start the development server:
-```bash
+# Step 4: Start the development server with auto-reloading and an instant preview.
 npm run dev
 ```
 
-## Project Structure
+**Edit a file directly in GitHub**
 
-```
-src/
-├── components/          # Reusable UI components
-├── pages/              # Page components
-├── hooks/              # Custom React hooks
-├── integrations/       # External service integrations
-├── lib/                # Utility functions
-└── App.tsx            # Main application component
+- Navigate to the desired file(s).
+- Click the "Edit" button (pencil icon) at the top right of the file view.
+- Make your changes and commit the changes.
 
-supabase/
-├── migrations/         # Database migration files
-└── config.toml        # Supabase configuration
-```
+**Use GitHub Codespaces**
 
-## Database Schema
+- Navigate to the main page of your repository.
+- Click on the "Code" button (green button) near the top right.
+- Select the "Codespaces" tab.
+- Click on "New codespace" to launch a new Codespace environment.
+- Edit files directly within the Codespace and commit and push your changes once you're done.
 
-The project uses the following main tables:
-- `events` - Event management
-- `gallery_photos` - Photo gallery
-- `festival_calendar` - Festival dates
-- `darshan_schedule` - Daily temple schedule
-- `admin_popup` - Admin notifications
-- `profiles` - User profiles
-- `temple_info` - Temple information
+## What technologies are used for this project?
 
-## Admin Features
+This project is built with:
 
-Admin users can:
-- Create and manage events
-- Upload and organize gallery photos
-- Update temple information
-- Manage daily schedules
-- Create popup notifications
-- View user management
+- Vite
+- TypeScript
+- React
+- shadcn-ui
+- Tailwind CSS
 
-## Authentication
+## How can I deploy this project?
 
-The project uses Supabase Auth for user authentication with email/password login.
+Simply open [Lovable](https://lovable.dev/projects/9ac98118-f09a-4750-b080-e88fff50a6e4) and click on Share -> Publish.
 
-## Deployment
+## Can I connect a custom domain to my Lovable project?
 
-The project can be deployed to any static hosting service:
+Yes, you can!
 
-1. Build the project:
-```bash
-npm run build
-```
+To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
-2. Deploy the `dist` folder to your hosting service
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
-
-## License
-
-This project is licensed under the MIT License.
+Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
