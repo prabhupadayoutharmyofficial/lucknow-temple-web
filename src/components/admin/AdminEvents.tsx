@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
-import { Plus, Edit, Trash2, Save, X, Upload, Send, Calendar as CalendarIcon, Check } from 'lucide-react';
+import { Plus, Edit, Trash2, Save, X, Upload, Send, Calendar as CalendarIcon, Check, Image } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { usePermissions } from '@/hooks/usePermissions';
@@ -229,15 +228,44 @@ const AdminEvents = () => {
 
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
-      if (file) {
-        setUploadSuccess(false);
-        const imageUrl = await uploadImage(file);
-        if (imageUrl) {
-          setFormData({ ...formData, image: imageUrl });
-          setUploadSuccess(true);
-          // Reset success indicator after 3 seconds
-          setTimeout(() => setUploadSuccess(false), 3000);
-        }
+      if (!file) return;
+
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        toast({
+          title: "Invalid File",
+          description: "Please select an image file",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "File Too Large",
+          description: "Please select an image smaller than 5MB",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setUploadSuccess(false);
+      const imageUrl = await uploadImage(file);
+      if (imageUrl) {
+        setFormData({ ...formData, image: imageUrl });
+        setUploadSuccess(true);
+        toast({
+          title: "Image Uploaded",
+          description: "Image uploaded successfully",
+        });
+        // Reset success indicator after 3 seconds
+        setTimeout(() => setUploadSuccess(false), 3000);
+      }
+
+      // Clear the file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
       }
     };
     
@@ -287,66 +315,41 @@ const AdminEvents = () => {
             </div>
           </div>
           
-          <div>
-            <Label htmlFor="image">Event Image</Label>
-            <div className="space-y-2">
+          <div className="space-y-2">
+            <Label htmlFor="image">Image URL (optional)</Label>
+            <div className="flex gap-2">
               <Input
                 id="image"
                 value={formData.image}
                 onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                placeholder="Image URL or upload below"
+                placeholder="Enter image URL or upload a file"
               />
-              <div className="flex items-center gap-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={handleUploadButtonClick}
-                  disabled={uploadingImage}
-                  className={uploadSuccess ? "border-green-500 bg-green-50" : ""}
-                >
-                  {uploadingImage ? (
-                    <>
-                      <Upload className="h-4 w-4 mr-2 animate-spin" />
-                      Uploading...
-                    </>
-                  ) : uploadSuccess ? (
-                    <>
-                      <Check className="h-4 w-4 mr-2 text-green-600" />
-                      Uploaded!
-                    </>
-                  ) : (
-                    <>
-                      <Upload className="h-4 w-4 mr-2" />
-                      Upload
-                    </>
-                  )}
-                </Button>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="hidden"
-                  disabled={uploadingImage}
-                />
-              </div>
-              {formData.image && (
-                <div className="mt-2">
-                  <p className="text-sm text-gray-600 mb-2">Image Preview:</p>
-                  <img 
-                    src={formData.image} 
-                    alt="Event preview" 
-                    className="w-32 h-32 object-cover rounded-md border border-gray-300"
-                    onLoad={() => console.log('Image loaded successfully:', formData.image)}
-                    onError={(e) => {
-                      console.error('Failed to load image:', formData.image);
-                      const target = e.target as HTMLImageElement;
-                      target.src = `https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=400&h=400&fit=crop&crop=center`;
-                    }}
-                  />
-                </div>
-              )}
+              <Button 
+                variant="outline" 
+                size="icon"
+                onClick={handleUploadButtonClick}
+                disabled={uploadingImage}
+              >
+                {uploadingImage ? (
+                  <Upload className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Image className="h-4 w-4" />
+                )}
+              </Button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="hidden"
+              />
             </div>
+            {uploadingImage && (
+              <p className="text-sm text-muted-foreground">Uploading image...</p>
+            )}
+            {uploadSuccess && (
+              <p className="text-sm text-green-600">Image uploaded successfully!</p>
+            )}
           </div>
           
           <div>
