@@ -1,21 +1,18 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Switch } from '@/components/ui/switch';
-import { Plus, Edit, Trash2, Save, X, Upload, Send, Calendar as CalendarIcon, Check, Image } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { usePermissions } from '@/hooks/usePermissions';
+import { EventForm } from './events/EventForm';
+import { EventList } from './events/EventList';
 
 const AdminEvents = () => {
   const [events, setEvents] = useState<any[]>([]);
   const [editingEvent, setEditingEvent] = useState<any>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [uploadingImage, setUploadingImage] = useState(false);
   const { toast } = useToast();
   const permissions = usePermissions();
 
@@ -54,38 +51,6 @@ const AdminEvents = () => {
       });
     } finally {
       setLoading(false);
-    }
-  };
-
-  const uploadImage = async (file: File) => {
-    if (!file) return null;
-
-    setUploadingImage(true);
-    try {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random()}.${fileExt}`;
-      const filePath = `event-images/${fileName}`;
-
-      const { data, error } = await supabase.storage
-        .from('events')
-        .upload(filePath, file);
-
-      if (error) throw error;
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('events')
-        .getPublicUrl(filePath);
-
-      return publicUrl;
-    } catch (error: any) {
-      toast({
-        title: "Error uploading image",
-        description: error.message,
-        variant: "destructive"
-      });
-      return null;
-    } finally {
-      setUploadingImage(false);
     }
   };
 
@@ -170,7 +135,6 @@ const AdminEvents = () => {
         
         toast({ title: "Event created successfully!" });
         
-        // Send notification if requested
         if (eventData.send_notification && eventData.is_published) {
           await sendNotification(data);
         }
@@ -218,217 +182,6 @@ const AdminEvents = () => {
     }
   };
 
-  const EventForm = ({ event, onSave, onCancel }: any) => {
-    const [formData, setFormData] = useState({
-      ...event,
-      highlights_text: event.highlights ? event.highlights.join('\n') : ''
-    });
-    const [uploadSuccess, setUploadSuccess] = useState(false);
-    const fileInputRef = useRef<HTMLInputElement>(null);
-
-    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
-      if (!file) return;
-
-      // Validate file type
-      if (!file.type.startsWith('image/')) {
-        toast({
-          title: "Invalid File",
-          description: "Please select an image file",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      // Validate file size (max 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        toast({
-          title: "File Too Large",
-          description: "Please select an image smaller than 5MB",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      setUploadSuccess(false);
-      const imageUrl = await uploadImage(file);
-      if (imageUrl) {
-        setFormData({ ...formData, image: imageUrl });
-        setUploadSuccess(true);
-        toast({
-          title: "Image Uploaded",
-          description: "Image uploaded successfully",
-        });
-        // Reset success indicator after 3 seconds
-        setTimeout(() => setUploadSuccess(false), 3000);
-      }
-
-      // Clear the file input
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
-    };
-    
-    const handleUploadButtonClick = () => {
-      fileInputRef.current?.click();
-    }
-
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>{event.id ? 'Edit Event' : 'Create New Event'}</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="title">Title</Label>
-              <Input
-                id="title"
-                value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              />
-            </div>
-            <div>
-              <Label htmlFor="date">Date</Label>
-              <Input
-                id="date"
-                type="date"
-                value={formData.date}
-                onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-              />
-            </div>
-            <div>
-              <Label htmlFor="time">Time</Label>
-              <Input
-                id="time"
-                value={formData.time}
-                onChange={(e) => setFormData({ ...formData, time: e.target.value })}
-              />
-            </div>
-            <div>
-              <Label htmlFor="location">Location</Label>
-              <Input
-                id="location"
-                value={formData.location}
-                onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-              />
-            </div>
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="image">Image URL (optional)</Label>
-            <div className="flex gap-2">
-              <Input
-                id="image"
-                value={formData.image}
-                onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                placeholder="Enter image URL or upload a file"
-              />
-              <Button 
-                variant="outline" 
-                size="icon"
-                onClick={handleUploadButtonClick}
-                disabled={uploadingImage}
-              >
-                {uploadingImage ? (
-                  <Upload className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Image className="h-4 w-4" />
-                )}
-              </Button>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-                className="hidden"
-              />
-            </div>
-            {uploadingImage && (
-              <p className="text-sm text-muted-foreground">Uploading image...</p>
-            )}
-            {uploadSuccess && (
-              <p className="text-sm text-green-600">Image uploaded successfully!</p>
-            )}
-          </div>
-          
-          <div>
-            <Label htmlFor="description">Short Description</Label>
-            <Textarea
-              id="description"
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-            />
-          </div>
-          
-          <div>
-            <Label htmlFor="full_description">Full Description</Label>
-            <Textarea
-              id="full_description"
-              value={formData.full_description}
-              onChange={(e) => setFormData({ ...formData, full_description: e.target.value })}
-              rows={4}
-            />
-          </div>
-          
-          <div>
-            <Label htmlFor="highlights">Highlights (one per line)</Label>
-            <Textarea
-              id="highlights"
-              value={formData.highlights_text}
-              onChange={(e) => setFormData({ ...formData, highlights_text: e.target.value })}
-              rows={4}
-              placeholder="Enter each highlight on a new line"
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="scheduled_publish">Scheduled Publish Date</Label>
-              <Input
-                id="scheduled_publish"
-                type="datetime-local"
-                value={formData.scheduled_publish || ''}
-                onChange={(e) => setFormData({ ...formData, scheduled_publish: e.target.value })}
-              />
-            </div>
-            <div className="space-y-4">
-              <div className="flex items-center space-x-2">
-                <Switch
-                  id="is_published"
-                  checked={formData.is_published}
-                  onCheckedChange={(checked) => setFormData({ ...formData, is_published: checked })}
-                />
-                <Label htmlFor="is_published">Publish immediately</Label>
-              </div>
-              {!event.id && (
-                <div className="flex items-center space-x-2">
-                  <Switch
-                    id="send_notification"
-                    checked={formData.send_notification}
-                    onCheckedChange={(checked) => setFormData({ ...formData, send_notification: checked })}
-                  />
-                  <Label htmlFor="send_notification">Send email notification</Label>
-                </div>
-              )}
-            </div>
-          </div>
-          
-          <div className="flex gap-2">
-            <Button onClick={() => onSave(formData)} className="bg-krishna-blue hover:bg-krishna-blue/80">
-              <Save className="h-4 w-4 mr-2" />
-              Save
-            </Button>
-            <Button variant="outline" onClick={onCancel}>
-              <X className="h-4 w-4 mr-2" />
-              Cancel
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  };
-
   if (loading) {
     return <div className="text-center py-8">Loading events...</div>;
   }
@@ -464,70 +217,17 @@ const AdminEvents = () => {
         />
       )}
 
-      <div className="grid gap-4">
-        {events.map((event) => (
-          <Card key={event.id}>
-            <CardHeader>
-              <div className="flex justify-between items-start">
-                <div>
-                  <CardTitle className="flex items-center gap-2">
-                    {event.title}
-                    {!event.is_published && (
-                      <span className="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded">Draft</span>
-                    )}
-                    {event.scheduled_publish && (
-                      <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded flex items-center gap-1">
-                        <CalendarIcon className="h-3 w-3" />
-                        Scheduled
-                      </span>
-                    )}
-                  </CardTitle>
-                  <CardDescription>{event.date} • {event.time}</CardDescription>
-                </div>
-                <div className="flex gap-2">
-                  {permissions.canSendNotifications && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => sendNotification(event)}
-                      disabled={!event.is_published}
-                    >
-                      <Send className="h-4 w-4" />
-                    </Button>
-                  )}
-                  {permissions.canEditEvents && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setEditingEvent(event)}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                  )}
-                  {permissions.canDeleteEvents && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleDelete(event.id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  )}
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">{event.description}</p>
-              {event.location && (
-                <p className="text-sm mt-2"><strong>Location:</strong> {event.location}</p>
-              )}
-              {event.scheduled_publish && (
-                <p className="text-sm mt-2"><strong>Scheduled for:</strong> {new Date(event.scheduled_publish).toLocaleString()}</p>
-              )}
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      <EventList
+        events={events}
+        onEdit={setEditingEvent}
+        onDelete={handleDelete}
+        onSendNotification={sendNotification}
+        permissions={{
+          canEditEvents: permissions.canEditEvents,
+          canDeleteEvents: permissions.canDeleteEvents,
+          canSendNotifications: permissions.canSendNotifications
+        }}
+      />
     </div>
   );
 };
