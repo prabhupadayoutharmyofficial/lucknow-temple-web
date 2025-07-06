@@ -14,6 +14,7 @@ interface AuthContextType {
   isAdmin: boolean;
   isModerator: boolean;
   hasAdminAccess: boolean;
+  hasCompletedRegistration: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -30,6 +31,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<any | null>(null);
+  const [hasCompletedRegistration, setHasCompletedRegistration] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -40,7 +42,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser(session?.user ?? null);
         
         if (session?.user) {
-          // Fetch user profile
+          // Fetch user profile and registration status
           setTimeout(async () => {
             const { data: profileData } = await supabase
               .from('profiles')
@@ -48,9 +50,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               .eq('id', session.user.id)
               .single();
             setProfile(profileData);
+
+            // Check devotee registration status
+            const { data: registrationData } = await supabase
+              .from('devotee_registrations')
+              .select('id')
+              .eq('user_id', session.user.id)
+              .single();
+            setHasCompletedRegistration(!!registrationData);
           }, 0);
         } else {
           setProfile(null);
+          setHasCompletedRegistration(false);
         }
         setLoading(false);
       }
@@ -110,7 +121,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     signOut,
     isAdmin,
     isModerator,
-    hasAdminAccess
+    hasAdminAccess,
+    hasCompletedRegistration
   };
 
   return (

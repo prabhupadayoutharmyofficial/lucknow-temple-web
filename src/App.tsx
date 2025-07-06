@@ -18,6 +18,7 @@ import Events from "./pages/Events";
 import EventDetail from "./pages/EventDetail";
 import Auth from "./pages/Auth";
 import Admin from "./pages/Admin";
+import DevoteeRegistration from "./pages/DevoteeRegistration";
 
 const queryClient = new QueryClient();
 
@@ -41,6 +42,7 @@ const App = () => (
             <Route path="/events/:id" element={<EventDetail />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/devotee-registration" element={<DevoteeRegistration />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </TooltipProvider>

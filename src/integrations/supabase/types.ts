@@ -77,6 +77,42 @@ export type Database = {
           },
         ]
       }
+      devotee_registrations: {
+        Row: {
+          address: string
+          created_at: string
+          email: string
+          id: string
+          mobile: string
+          name: string
+          reference_devotee: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address: string
+          created_at?: string
+          email: string
+          id?: string
+          mobile: string
+          name: string
+          reference_devotee?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address?: string
+          created_at?: string
+          email?: string
+          id?: string
+          mobile?: string
+          name?: string
+          reference_devotee?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       events: {
         Row: {
           created_at: string | null

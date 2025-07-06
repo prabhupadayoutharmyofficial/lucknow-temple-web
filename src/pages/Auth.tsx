@@ -16,15 +16,19 @@ const Auth = () => {
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [loading, setLoading] = useState(false);
-  const { signUp, signIn, user } = useAuth();
+  const { signUp, signIn, user, hasCompletedRegistration } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (user) {
-      navigate('/');
+      if (hasCompletedRegistration) {
+        navigate('/');
+      } else {
+        navigate('/devotee-registration');
+      }
     }
-  }, [user, navigate]);
+  }, [user, hasCompletedRegistration, navigate]);
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,7 +68,11 @@ const Auth = () => {
         title: "Welcome back!",
         description: "You have successfully signed in."
       });
-      navigate('/');
+      if (hasCompletedRegistration) {
+        navigate('/');
+      } else {
+        navigate('/devotee-registration');
+      }
     }
     setLoading(false);
   };
