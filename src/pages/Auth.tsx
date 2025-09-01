@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 
@@ -16,6 +17,7 @@ const Auth = () => {
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [loading, setLoading] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
   const { signUp, signIn, user, hasCompletedRegistration } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -77,6 +79,36 @@ const Auth = () => {
     setLoading(false);
   };
 
+  const handleResetPassword = async () => {
+    if (!email) {
+      toast({
+        title: "Email required",
+        description: "Please enter your email address to reset your password.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setResetLoading(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth`
+    });
+
+    if (error) {
+      toast({
+        title: "Reset failed",
+        description: error.message,
+        variant: "destructive"
+      });
+    } else {
+      toast({
+        title: "Reset email sent",
+        description: "Check your email for a password reset link."
+      });
+    }
+    setResetLoading(false);
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -98,8 +130,8 @@ const Auth = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <form onSubmit={handleSignIn} className="space-y-4">
-                    <div>
+                  <form onSubmit={handleSignIn} className="space-y-6">
+                    <div className="space-y-2">
                       <Label htmlFor="email">Email</Label>
                       <Input
                         id="email"
@@ -107,9 +139,10 @@ const Auth = () => {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
+                        className="h-12"
                       />
                     </div>
-                    <div>
+                    <div className="space-y-2">
                       <Label htmlFor="password">Password</Label>
                       <Input
                         id="password"
@@ -117,15 +150,34 @@ const Auth = () => {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
+                        className="h-12"
                       />
                     </div>
-                    <Button 
-                      type="submit" 
-                      className="w-full bg-krishna-blue hover:bg-krishna-blue/80" 
-                      disabled={loading}
-                    >
-                      {loading ? 'Signing in...' : 'Sign In'}
-                    </Button>
+                    <div className="space-y-4">
+                      <Button 
+                        type="submit" 
+                        className="w-full h-12 bg-krishna-blue hover:bg-krishna-blue/80 text-lg" 
+                        disabled={loading}
+                      >
+                        {loading ? 'Signing in...' : 'Sign In'}
+                      </Button>
+                      
+                      <Button 
+                        type="button"
+                        variant="ghost"
+                        className="w-full h-12 text-krishna-gold hover:text-krishna-saffron hover:bg-krishna-gold/10"
+                        onClick={handleResetPassword}
+                        disabled={resetLoading || !email}
+                      >
+                        {resetLoading ? 'Sending reset email...' : 'Forgot Password?'}
+                      </Button>
+                      
+                      {!email && (
+                        <p className="text-sm text-muted-foreground text-center">
+                          Enter your email above to reset your password
+                        </p>
+                      )}
+                    </div>
                   </form>
                 </CardContent>
               </Card>
@@ -140,8 +192,8 @@ const Auth = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <form onSubmit={handleSignUp} className="space-y-4">
-                    <div>
+                  <form onSubmit={handleSignUp} className="space-y-6">
+                    <div className="space-y-2">
                       <Label htmlFor="fullName">Full Name</Label>
                       <Input
                         id="fullName"
@@ -149,9 +201,10 @@ const Auth = () => {
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
                         required
+                        className="h-12"
                       />
                     </div>
-                    <div>
+                    <div className="space-y-2">
                       <Label htmlFor="email">Email</Label>
                       <Input
                         id="email"
@@ -159,9 +212,10 @@ const Auth = () => {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
+                        className="h-12"
                       />
                     </div>
-                    <div>
+                    <div className="space-y-2">
                       <Label htmlFor="password">Password</Label>
                       <Input
                         id="password"
@@ -170,11 +224,12 @@ const Auth = () => {
                         onChange={(e) => setPassword(e.target.value)}
                         required
                         minLength={6}
+                        className="h-12"
                       />
                     </div>
                     <Button 
                       type="submit" 
-                      className="w-full bg-krishna-gold hover:bg-krishna-saffron" 
+                      className="w-full h-12 bg-krishna-gold hover:bg-krishna-saffron text-lg" 
                       disabled={loading}
                     >
                       {loading ? 'Creating account...' : 'Sign Up'}
