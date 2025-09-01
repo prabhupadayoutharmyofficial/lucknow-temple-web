@@ -27,30 +27,31 @@ const Navbar = () => {
   return (
     <nav className="bg-white shadow-sm border-b sticky top-0 z-50">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between lg:justify-between h-16">
-          {/* Left Navigation - Hidden on mobile */}
-          <div className="hidden lg:flex items-center space-x-1">
-            {getLeftNavItems().map((item) => (
-              <NavLink key={item.name} item={item} />
-            ))}
+        <div className="flex items-center justify-between h-16">
+          {/* Left Section: Logo, Title, and Navigation */}
+          <div className="flex items-center space-x-6">
+            {/* Logo and Title */}
+            <div className="flex items-center space-x-3">
+              <Logo />
+              <div className="hidden sm:block">
+                <h1 className="text-xl font-devotional font-bold text-krishna-blue">
+                  ISKCON Lucknow
+                </h1>
+              </div>
+            </div>
+
+            {/* Navigation Items - Hidden on mobile */}
+            <div className="hidden lg:flex items-center space-x-1">
+              {[...getLeftNavItems(), ...getRightNavItems(user)].map((item) => (
+                <NavLink key={item.name} item={item} />
+              ))}
+            </div>
           </div>
 
-          {/* Hidden spacer for mobile to center logo */}
-          <div className="lg:hidden w-10"></div>
-
-          {/* Logo - Centered on mobile, positioned normally on desktop */}
-          <div className="flex-shrink-0 lg:flex-shrink-0">
-            <Logo />
-          </div>
-
-          {/* Right Navigation - Hidden on mobile */}
-          <div className="hidden lg:flex items-center space-x-1">
-            {getRightNavItems(user).map((item) => (
-              <NavLink key={item.name} item={item} />
-            ))}
-            
+          {/* Right Section: User Actions */}
+          <div className="hidden lg:flex items-center space-x-2">
             {user && (
-              <div className="flex items-center space-x-2 ml-4 pl-4 border-l border-gray-200">
+              <>
                 {hasAdminAccess && (
                   <Link to="/admin">
                     <Button 
@@ -72,7 +73,7 @@ const Navbar = () => {
                   <LogOut className="h-4 w-4 mr-2" />
                   Sign Out
                 </Button>
-              </div>
+              </>
             )}
           </div>
 
