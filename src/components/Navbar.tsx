@@ -31,8 +31,8 @@ const Navbar = () => {
       
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-18">
-          {/* Left Section: Logo, Title, and Navigation */}
-          <div className="flex items-center space-x-8">
+          {/* Left Section: Logo and Title */}
+          <div className="flex items-center">
             {/* Logo and Title */}
             <div className="flex items-center space-x-4 group">
               <div className="relative">
@@ -48,42 +48,45 @@ const Navbar = () => {
                 </p>
               </div>
             </div>
+          </div>
 
-            {/* Navigation Items - Hidden on mobile */}
-            <div className="hidden lg:flex items-center space-x-2 ml-8">
+          {/* Right Section: Navigation Items and User Actions */}
+          <div className="hidden lg:flex items-center space-x-6">
+            {/* Navigation Items */}
+            <div className="flex items-center space-x-2">
               {[...getLeftNavItems(), ...getRightNavItems(user)].map((item) => (
                 <NavLink key={item.name} item={item} />
               ))}
             </div>
-          </div>
-
-          {/* Right Section: User Actions */}
-          <div className="hidden lg:flex items-center space-x-3">
-            {user && (
-              <div className="flex items-center space-x-2 px-4 py-2 rounded-full bg-gradient-to-r from-krishna-gold/10 to-krishna-saffron/10 border border-krishna-gold/30">
-                {hasAdminAccess && (
-                  <Link to="/admin">
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="text-krishna-blue hover:text-white hover:bg-krishna-blue/90 transition-all duration-300 rounded-full px-4"
-                    >
-                      <Shield className="h-4 w-4 mr-2" />
-                      Admin
-                    </Button>
-                  </Link>
-                )}
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleSignOut}
-                  className="text-krishna-maroon hover:text-white hover:bg-krishna-maroon/90 transition-all duration-300 rounded-full px-4"
-                >
-                  <LogOut className="h-4 w-4 mr-2" />
-                  Sign Out
-                </Button>
-              </div>
-            )}
+            
+            {/* User Actions */}
+            <div className="flex items-center space-x-3">
+              {user && (
+                <div className="flex items-center space-x-2 px-4 py-2 rounded-full bg-gradient-to-r from-krishna-gold/10 to-krishna-saffron/10 border border-krishna-gold/30">
+                  {hasAdminAccess && (
+                    <Link to="/admin">
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="text-krishna-blue hover:text-white hover:bg-krishna-blue/90 transition-all duration-300 rounded-full px-4"
+                      >
+                        <Shield className="h-4 w-4 mr-2" />
+                        Admin
+                      </Button>
+                    </Link>
+                  )}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleSignOut}
+                    className="text-krishna-maroon hover:text-white hover:bg-krishna-maroon/90 transition-all duration-300 rounded-full px-4"
+                  >
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Sign Out
+                  </Button>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Mobile Menu - Visible only on mobile */}
