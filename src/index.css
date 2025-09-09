@@ -121,3 +121,105 @@
   border-top-left-radius: var(--radius);
   border-top-right-radius: var(--radius);
 }
+
+/* Peacock Feather Animations */
+@keyframes peacockFloat1 {
+  0%, 100% {
+    transform: translateX(0) translateY(0) rotate(15deg);
+  }
+  33% {
+    transform: translateX(20px) translateY(-10px) rotate(18deg);
+  }
+  66% {
+    transform: translateX(-15px) translateY(15px) rotate(12deg);
+  }
+}
+
+@keyframes peacockFloat2 {
+  0%, 100% {
+    transform: translateX(0) translateY(0) rotate(-10deg);
+  }
+  25% {
+    transform: translateX(-25px) translateY(20px) rotate(-15deg);
+  }
+  75% {
+    transform: translateX(30px) translateY(-25px) rotate(-5deg);
+  }
+}
+
+@keyframes peacockFloat3 {
+  0%, 100% {
+    transform: translateX(0) translateY(0) rotate(25deg);
+  }
+  50% {
+    transform: translateX(15px) translateY(-30px) rotate(30deg);
+  }
+}
+
+@keyframes colorShift {
+  0%, 100% {
+    filter: hue-rotate(0deg) saturate(1);
+  }
+  50% {
+    filter: hue-rotate(15deg) saturate(1.2);
+  }
+}
+
+.peacock-feather-1 {
+  position: absolute;
+  top: 10%;
+  left: 15%;
+  width: 300px;
+  height: 600px;
+  background: linear-gradient(45deg, 
+    transparent 0%, 
+    hsl(180 80% 70% / 0.3) 20%,
+    hsl(120 70% 60% / 0.4) 40%,
+    hsl(200 90% 50% / 0.5) 60%,
+    hsl(45 80% 60% / 0.4) 80%,
+    transparent 100%
+  );
+  border-radius: 50% 10% 50% 10%;
+  animation: peacockFloat1 20s ease-in-out infinite, colorShift 15s ease-in-out infinite;
+  clip-path: ellipse(40% 80% at 50% 50%);
+}
+
+.peacock-feather-2 {
+  position: absolute;
+  top: 30%;
+  right: 20%;
+  width: 250px;
+  height: 500px;
+  background: linear-gradient(-30deg,
+    transparent 0%,
+    hsl(160 70% 65% / 0.3) 25%,
+    hsl(200 80% 55% / 0.4) 45%,
+    hsl(240 70% 60% / 0.5) 65%,
+    hsl(60 75% 65% / 0.4) 85%,
+    transparent 100%
+  );
+  border-radius: 10% 50% 10% 50%;
+  animation: peacockFloat2 25s ease-in-out infinite, colorShift 18s ease-in-out infinite reverse;
+  clip-path: ellipse(45% 75% at 40% 60%);
+  animation-delay: -5s;
+}
+
+.peacock-feather-3 {
+  position: absolute;
+  bottom: 20%;
+  left: 60%;
+  width: 200px;
+  height: 400px;
+  background: linear-gradient(60deg,
+    transparent 0%,
+    hsl(140 60% 70% / 0.25) 30%,
+    hsl(180 70% 60% / 0.35) 50%,
+    hsl(220 80% 65% / 0.45) 70%,
+    hsl(50 70% 70% / 0.35) 90%,
+    transparent 100%
+  );
+  border-radius: 20% 80% 20% 80%;
+  animation: peacockFloat3 18s ease-in-out infinite, colorShift 22s ease-in-out infinite;
+  clip-path: ellipse(50% 70% at 60% 40%);
+  animation-delay: -8s;
+}
