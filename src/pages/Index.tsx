@@ -44,7 +44,7 @@ const Index = () => {
         {/* Welcome & About Section */}
         <section className="relative py-20 overflow-hidden">
           {/* Animated Peacock Feather Background */}
-          <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0 opacity-30">
             <div className="peacock-feather-1"></div>
             <div className="peacock-feather-2"></div>
             <div className="peacock-feather-3"></div>
