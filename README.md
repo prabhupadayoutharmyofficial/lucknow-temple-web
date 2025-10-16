@@ -1,22 +1,28 @@
-# Welcome to your Lovable project
+# ISKCON Lucknow Official Website
 
-## Project info
+Welcome to the official website repository of ISKCON Lucknow - Sri Sri Radha Krishna Temple.
 
-**URL**: https://lovable.dev/projects/9ac98118-f09a-4750-b080-e88fff50a6e4
+**Website**: https://iskconlucknow.in
+
+This website serves the spiritual community of ISKCON Lucknow, providing information about:
+- Temple darshan timings and schedules
+- Upcoming festivals and events
+- Spiritual programs and activities  
+- Photo galleries of temple celebrations
+- Contact information and location details
+- Devotee registration and services
+
+## About ISKCON Lucknow
+
+The International Society for Krishna Consciousness (ISKCON) Lucknow is dedicated to spreading Krishna consciousness and the teachings of the Bhagavad Gita. Our temple serves as a spiritual center for devotees and visitors seeking divine connection with Sri Sri Radha Krishna.
 
 ## How can I edit this code?
 
-There are several ways of editing your application.
-
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/9ac98118-f09a-4750-b080-e88fff50a6e4) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
+There are several ways of editing this application.
 
 **Use your preferred IDE**
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+If you want to work locally using your own IDE, you can clone this repo and push changes.
 
 The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
@@ -27,7 +33,7 @@ Follow these steps:
 git clone <YOUR_GIT_URL>
 
 # Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+cd iskcon-lucknow-website
 
 # Step 3: Install the necessary dependencies.
 npm i
@@ -59,15 +65,36 @@ This project is built with:
 - React
 - shadcn-ui
 - Tailwind CSS
+- Supabase (Database & Authentication)
 
-## How can I deploy this project?
+## Features
 
-Simply open [Lovable](https://lovable.dev/projects/9ac98118-f09a-4750-b080-e88fff50a6e4) and click on Share -> Publish.
+- **Responsive Design**: Optimized for all devices
+- **Event Management**: Admin panel for managing temple events
+- **Photo Gallery**: Showcase temple celebrations and activities
+- **Darshan Schedule**: Real-time temple timing information
+- **Festival Calendar**: Complete calendar of upcoming celebrations
+- **Devotee Registration**: Online registration system for community members
+- **Contact Forms**: Easy communication with temple management
+- **Authentication System**: Secure user login and admin access
 
-## Can I connect a custom domain to my Lovable project?
+## Contributing
 
-Yes, you can!
+We welcome contributions from the community to improve the website. Please feel free to:
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+- Report bugs or issues
+- Suggest new features
+- Submit pull requests
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+## Contact
+
+For technical issues or questions about the website, please contact the temple administration.
+
+**ISKCON Lucknow**  
+Sri Sri Radha Krishna Temple  
+Website: https://iskconlucknow.in  
+Email: info@iskconlucknow.in
+
+---
+
+*Hare Krishna! 🙏*
