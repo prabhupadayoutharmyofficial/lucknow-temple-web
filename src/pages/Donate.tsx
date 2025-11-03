@@ -40,6 +40,7 @@ const Donate = () => {
   const [step, setStep] = useState(1);
   const [showThankYou, setShowThankYou] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<'upi' | 'bank'>('upi');
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(step1Schema),
@@ -59,6 +60,7 @@ const Donate = () => {
 
   const onSubmitStep1 = (values: z.infer<typeof step1Schema>) => {
     console.log("Step 1 values:", values);
+    setSelectedPaymentMethod(values.paymentMethod);
     setStep(2);
     // Update form resolver for step 2
     form.clearErrors();
@@ -256,351 +258,342 @@ const Donate = () => {
                           Step 2 of 2: Make Payment
                         </p>
                       </div>
-                      <Tabs defaultValue={form.getValues("paymentMethod")}>
-                        <TabsList className="grid w-full grid-cols-2 mb-6">
-                          <TabsTrigger value="upi">UPI Payment</TabsTrigger>
-                          <TabsTrigger value="bank">Bank Transfer</TabsTrigger>
-                        </TabsList>
-                    
-                    <TabsContent value="upi">
-                      <div className="space-y-6">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                          {/* General Donations QR */}
-                          <Card>
-                            <CardHeader>
-                              <CardTitle className="text-lg font-devotional text-krishna-blue">General Donations</CardTitle>
-                              <p className="text-sm text-muted-foreground">For temple maintenance and daily activities</p>
-                            </CardHeader>
-                            <CardContent className="text-center">
-                              <img 
-                                src="/qr-codes/general-donation.png" 
-                                alt="General Donation QR Code"
-                                className="mx-auto w-48 h-48 object-contain"
-                              />
-                              <div className="mt-4 border rounded-lg p-3">
-                                <div className="flex justify-between items-center">
-                                  <p className="text-sm font-medium">UPI ID</p>
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="text-krishna-gold"
-                                    onClick={() => copyToClipboard('general@temple', 'General Donation UPI ID')}
-                                  >
-                                    <Copy className="h-4 w-4 mr-2" />
-                                    Copy
-                                  </Button>
+                      {selectedPaymentMethod === "upi" ? (
+                        <div className="space-y-6">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {/* General Donations QR */}
+                            <Card>
+                              <CardHeader>
+                                <CardTitle className="text-lg font-devotional text-krishna-blue">General Donations</CardTitle>
+                                <p className="text-sm text-muted-foreground">For temple maintenance and daily activities</p>
+                              </CardHeader>
+                              <CardContent className="text-center">
+                                <img 
+                                  src="/ISKCON PROJECTS.png" 
+                                  alt="General Donation QR Code"
+                                  className="mx-auto w-48 h-48 object-contain"
+                                />
+                                <div className="mt-4 border rounded-lg p-3">
+                                  <div className="flex justify-between items-center">
+                                    <p className="text-sm font-medium">UPI ID</p>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="text-krishna-gold"
+                                      onClick={() => copyToClipboard('your-general-upi-id', 'General Donation UPI ID')}
+                                    >
+                                      <Copy className="h-4 w-4 mr-2" />
+                                      Copy
+                                    </Button>
+                                  </div>
+                                  <p className="text-sm text-muted-foreground">your-general-upi-id</p>
                                 </div>
-                                <p className="text-sm text-muted-foreground">general@temple</p>
-                              </div>
-                            </CardContent>
-                          </Card>
+                              </CardContent>
+                            </Card>
 
-                          {/* Prasadam Seva QR */}
-                          <Card>
-                            <CardHeader>
-                              <CardTitle className="text-lg font-devotional text-krishna-blue">Prasadam Seva</CardTitle>
-                              <p className="text-sm text-muted-foreground">Support our food distribution program</p>
-                            </CardHeader>
-                            <CardContent className="text-center">
-                              <img 
-                                src="/qr-codes/prasadam-seva.png" 
-                                alt="Prasadam Seva QR Code"
-                                className="mx-auto w-48 h-48 object-contain"
-                              />
-                              <div className="mt-4 border rounded-lg p-3">
-                                <div className="flex justify-between items-center">
-                                  <p className="text-sm font-medium">UPI ID</p>
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="text-krishna-gold"
-                                    onClick={() => copyToClipboard('prasadam@temple', 'Prasadam Seva UPI ID')}
-                                  >
-                                    <Copy className="h-4 w-4 mr-2" />
-                                    Copy
-                                  </Button>
+                            {/* Prasadam Seva QR */}
+                            <Card>
+                              <CardHeader>
+                                <CardTitle className="text-lg font-devotional text-krishna-blue">Prasadam Seva</CardTitle>
+                                <p className="text-sm text-muted-foreground">Support our food distribution program</p>
+                              </CardHeader>
+                              <CardContent className="text-center">
+                                <img 
+                                  src="/prasadam.jpg" 
+                                  alt="Prasadam Seva QR Code"
+                                  className="mx-auto w-48 h-48 object-contain"
+                                />
+                                <div className="mt-4 border rounded-lg p-3">
+                                  <div className="flex justify-between items-center">
+                                    <p className="text-sm font-medium">UPI ID</p>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="text-krishna-gold"
+                                      onClick={() => copyToClipboard('your-prasadam-upi-id', 'Prasadam Seva UPI ID')}
+                                    >
+                                      <Copy className="h-4 w-4 mr-2" />
+                                      Copy
+                                    </Button>
+                                  </div>
+                                  <p className="text-sm text-muted-foreground">your-prasadam-upi-id</p>
                                 </div>
-                                <p className="text-sm text-muted-foreground">prasadam@temple</p>
-                              </div>
-                            </CardContent>
-                          </Card>
+                              </CardContent>
+                            </Card>
 
-                          {/* Festival Donations QR */}
-                          <Card>
-                            <CardHeader>
-                              <CardTitle className="text-lg font-devotional text-krishna-blue">Festival Donations</CardTitle>
-                              <p className="text-sm text-muted-foreground">Support temple festivals and celebrations</p>
-                            </CardHeader>
-                            <CardContent className="text-center">
-                              <img 
-                                src="/public/ISKCON FESTIVAL.png" 
-                                alt="Festival Donations QR Code"
-                                className="mx-auto w-48 h-48 object-contain"
-                              />
-                              <div className="mt-4 border rounded-lg p-3">
-                                <div className="flex justify-between items-center">
-                                  <p className="text-sm font-medium">UPI ID</p>
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="text-krishna-gold"
-                                    onClick={() => copyToClipboard('festival@temple', 'Festival Donation UPI ID')}
-                                  >
-                                    <Copy className="h-4 w-4 mr-2" />
-                                    Copy
-                                  </Button>
+                            {/* Festival Donations QR */}
+                            <Card>
+                              <CardHeader>
+                                <CardTitle className="text-lg font-devotional text-krishna-blue">Festival Donations</CardTitle>
+                                <p className="text-sm text-muted-foreground">Support temple festivals and celebrations</p>
+                              </CardHeader>
+                              <CardContent className="text-center">
+                                <img 
+                                  src="/public/ISKCON FESTIVAL.png" 
+                                  alt="Festival Donations QR Code"
+                                  className="mx-auto w-48 h-48 object-contain"
+                                />
+                                <div className="mt-4 border rounded-lg p-3">
+                                  <div className="flex justify-between items-center">
+                                    <p className="text-sm font-medium">UPI ID</p>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="text-krishna-gold"
+                                      onClick={() => copyToClipboard('your-festival-upi-id', 'Festival Donation UPI ID')}
+                                    >
+                                      <Copy className="h-4 w-4 mr-2" />
+                                      Copy
+                                    </Button>
+                                  </div>
+                                  <p className="text-sm text-muted-foreground">your-festival-upi-id</p>
                                 </div>
-                                <p className="text-sm text-muted-foreground">festival@temple</p>
-                              </div>
-                            </CardContent>
-                          </Card>
+                              </CardContent>
+                            </Card>
 
-                          {/* Goshala Donations QR */}
-                          <Card>
-                            <CardHeader>
-                              <CardTitle className="text-lg font-devotional text-krishna-blue">Goshala Seva</CardTitle>
-                              <p className="text-sm text-muted-foreground">Support our cow protection program</p>
-                            </CardHeader>
-                            <CardContent className="text-center">
-                              <img 
-                                src="/qr-codes/goshala.png" 
-                                alt="Goshala Seva QR Code"
-                                className="mx-auto w-48 h-48 object-contain"
-                              />
-                              <div className="mt-4 border rounded-lg p-3">
-                                <div className="flex justify-between items-center">
-                                  <p className="text-sm font-medium">UPI ID</p>
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="text-krishna-gold"
-                                    onClick={() => copyToClipboard('goshala@temple', 'Goshala Seva UPI ID')}
-                                  >
-                                    <Copy className="h-4 w-4 mr-2" />
-                                    Copy
-                                  </Button>
+                            {/* Goshala Donations QR */}
+                            <Card>
+                              <CardHeader>
+                                <CardTitle className="text-lg font-devotional text-krishna-blue">Goshala Seva</CardTitle>
+                                <p className="text-sm text-muted-foreground">Support our cow protection program</p>
+                              </CardHeader>
+                              <CardContent className="text-center">
+                                <img 
+                                  src="/ISKCON GAUSHALA.png" 
+                                  alt="Goshala Seva QR Code"
+                                  className="mx-auto w-48 h-48 object-contain"
+                                />
+                                <div className="mt-4 border rounded-lg p-3">
+                                  <div className="flex justify-between items-center">
+                                    <p className="text-sm font-medium">UPI ID</p>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="text-krishna-gold"
+                                      onClick={() => copyToClipboard('your-goshala-upi-id', 'Goshala Seva UPI ID')}
+                                    >
+                                      <Copy className="h-4 w-4 mr-2" />
+                                      Copy
+                                    </Button>
+                                  </div>
+                                  <p className="text-sm text-muted-foreground">your-goshala-upi-id</p>
                                 </div>
-                                <p className="text-sm text-muted-foreground">goshala@temple</p>
-                              </div>
-                            </CardContent>
-                          </Card>
+                              </CardContent>
+                            </Card>
+                          </div>
+                          
+                          <div className="bg-krishna-gold/5 rounded-lg p-4">
+                            <p className="text-sm text-muted-foreground">
+                              After making the donation, please take a screenshot of the payment confirmation 
+                              and WhatsApp it to <span className="font-medium">+91 0000000000</span> along with your name, 
+                              donation purpose, and PAN number (optional, for 80G certificate).
+                            </p>
+                          </div>
                         </div>
-                        
-                        <div className="bg-krishna-gold/5 rounded-lg p-4">
-                          <p className="text-sm text-muted-foreground">
-                            After making the donation, please take a screenshot of the payment confirmation 
-                            and WhatsApp it to <span className="font-medium">+91 9876543210</span> along with your name, 
-                            donation purpose, and PAN number (optional, for 80G certificate).
-                          </p>
-                        </div>
-                      </div>
-                    </TabsContent>
-                    
-                    <TabsContent value="bank">
-                      <div className="space-y-6">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                          {/* General Donations Account */}
-                          <Card>
-                            <CardHeader>
-                              <CardTitle className="text-lg font-devotional text-krishna-blue">General Donations</CardTitle>
-                              <p className="text-sm text-muted-foreground">For temple maintenance and daily activities</p>
-                            </CardHeader>
-                            <CardContent>
-                              <div className="space-y-3">
-                                <div className="grid grid-cols-2 gap-2">
-                                  <p className="text-sm text-muted-foreground">Account Name</p>
-                                  <p className="text-sm font-medium">Sri Krishna Temple Trust</p>
-                                </div>
-                                <div className="grid grid-cols-2 gap-2">
-                                  <p className="text-sm text-muted-foreground">Account Number</p>
-                                  <div className="flex justify-between items-center">
-                                    <p className="text-sm font-medium">1234567890</p>
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      className="text-krishna-gold"
-                                      onClick={() => copyToClipboard('1234567890', 'General Account Number')}
-                                    >
-                                      <Copy className="h-4 w-4" />
-                                    </Button>
+                      ) : (
+                        <div className="space-y-6">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {/* General Donations Account */}
+                            <Card>
+                              <CardHeader>
+                                <CardTitle className="text-lg font-devotional text-krishna-blue">General Donations</CardTitle>
+                                <p className="text-sm text-muted-foreground">For temple maintenance and daily activities</p>
+                              </CardHeader>
+                              <CardContent>
+                                <div className="space-y-3">
+                                  <div className="grid grid-cols-2 gap-2">
+                                    <p className="text-sm text-muted-foreground">Account Name</p>
+                                    <p className="text-sm font-medium">Your Account Name</p>
+                                  </div>
+                                  <div className="grid grid-cols-2 gap-2">
+                                    <p className="text-sm text-muted-foreground">Account Number</p>
+                                    <div className="flex justify-between items-center">
+                                      <p className="text-sm font-medium">000000000000</p>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="text-krishna-gold"
+                                        onClick={() => copyToClipboard('000000000000', 'General Account Number')}
+                                      >
+                                        <Copy className="h-4 w-4" />
+                                      </Button>
+                                    </div>
+                                  </div>
+                                  <div className="grid grid-cols-2 gap-2">
+                                    <p className="text-sm text-muted-foreground">IFSC Code</p>
+                                    <div className="flex justify-between items-center">
+                                      <p className="text-sm font-medium">ABCD0123456</p>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="text-krishna-gold"
+                                        onClick={() => copyToClipboard('ABCD0123456', 'General IFSC Code')}
+                                      >
+                                        <Copy className="h-4 w-4" />
+                                      </Button>
+                                    </div>
+                                  </div>
+                                  <div className="grid grid-cols-2 gap-2">
+                                    <p className="text-sm text-muted-foreground">Bank & Branch</p>
+                                    <p className="text-sm font-medium">Your Bank, Your Branch</p>
                                   </div>
                                 </div>
-                                <div className="grid grid-cols-2 gap-2">
-                                  <p className="text-sm text-muted-foreground">IFSC Code</p>
-                                  <div className="flex justify-between items-center">
-                                    <p className="text-sm font-medium">SBIN0123456</p>
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      className="text-krishna-gold"
-                                      onClick={() => copyToClipboard('SBIN0123456', 'General IFSC Code')}
-                                    >
-                                      <Copy className="h-4 w-4" />
-                                    </Button>
-                                  </div>
-                                </div>
-                                <div className="grid grid-cols-2 gap-2">
-                                  <p className="text-sm text-muted-foreground">Bank & Branch</p>
-                                  <p className="text-sm font-medium">SBI, Lucknow Main</p>
-                                </div>
-                              </div>
-                            </CardContent>
-                          </Card>
+                              </CardContent>
+                            </Card>
 
-                          {/* Prasadam Seva Account */}
-                          <Card>
-                            <CardHeader>
-                              <CardTitle className="text-lg font-devotional text-krishna-blue">Prasadam Seva</CardTitle>
-                              <p className="text-sm text-muted-foreground">Support our food distribution program</p>
-                            </CardHeader>
-                            <CardContent>
-                              <div className="space-y-3">
-                                <div className="grid grid-cols-2 gap-2">
-                                  <p className="text-sm text-muted-foreground">Account Name</p>
-                                  <p className="text-sm font-medium">Sri Krishna Temple Prasadam</p>
-                                </div>
-                                <div className="grid grid-cols-2 gap-2">
-                                  <p className="text-sm text-muted-foreground">Account Number</p>
-                                  <div className="flex justify-between items-center">
-                                    <p className="text-sm font-medium">2345678901</p>
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      className="text-krishna-gold"
-                                      onClick={() => copyToClipboard('2345678901', 'Prasadam Account Number')}
-                                    >
-                                      <Copy className="h-4 w-4" />
-                                    </Button>
+                            {/* Prasadam Seva Account */}
+                            <Card>
+                              <CardHeader>
+                                <CardTitle className="text-lg font-devotional text-krishna-blue">Prasadam Seva</CardTitle>
+                                <p className="text-sm text-muted-foreground">Support our food distribution program</p>
+                              </CardHeader>
+                              <CardContent>
+                                <div className="space-y-3">
+                                  <div className="grid grid-cols-2 gap-2">
+                                    <p className="text-sm text-muted-foreground">Account Name</p>
+                                    <p className="text-sm font-medium">Your Account Name</p>
+                                  </div>
+                                  <div className="grid grid-cols-2 gap-2">
+                                    <p className="text-sm text-muted-foreground">Account Number</p>
+                                    <div className="flex justify-between items-center">
+                                      <p className="text-sm font-medium">000000000000</p>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="text-krishna-gold"
+                                        onClick={() => copyToClipboard('000000000000', 'Prasadam Account Number')}
+                                      >
+                                        <Copy className="h-4 w-4" />
+                                      </Button>
+                                    </div>
+                                  </div>
+                                  <div className="grid grid-cols-2 gap-2">
+                                    <p className="text-sm text-muted-foreground">IFSC Code</p>
+                                    <div className="flex justify-between items-center">
+                                      <p className="text-sm font-medium">ABCD0123456</p>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="text-krishna-gold"
+                                        onClick={() => copyToClipboard('ABCD0123456', 'Prasadam IFSC Code')}
+                                      >
+                                        <Copy className="h-4 w-4" />
+                                      </Button>
+                                    </div>
+                                  </div>
+                                  <div className="grid grid-cols-2 gap-2">
+                                    <p className="text-sm text-muted-foreground">Bank & Branch</p>
+                                    <p className="text-sm font-medium">Your Bank, Your Branch</p>
                                   </div>
                                 </div>
-                                <div className="grid grid-cols-2 gap-2">
-                                  <p className="text-sm text-muted-foreground">IFSC Code</p>
-                                  <div className="flex justify-between items-center">
-                                    <p className="text-sm font-medium">SBIN0123457</p>
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      className="text-krishna-gold"
-                                      onClick={() => copyToClipboard('SBIN0123457', 'Prasadam IFSC Code')}
-                                    >
-                                      <Copy className="h-4 w-4" />
-                                    </Button>
-                                  </div>
-                                </div>
-                                <div className="grid grid-cols-2 gap-2">
-                                  <p className="text-sm text-muted-foreground">Bank & Branch</p>
-                                  <p className="text-sm font-medium">SBI, Lucknow Main</p>
-                                </div>
-                              </div>
-                            </CardContent>
-                          </Card>
+                              </CardContent>
+                            </Card>
 
-                          {/* Festival Account */}
-                          <Card>
-                            <CardHeader>
-                              <CardTitle className="text-lg font-devotional text-krishna-blue">Festival Donations</CardTitle>
-                              <p className="text-sm text-muted-foreground">Support temple festivals and celebrations</p>
-                            </CardHeader>
-                            <CardContent>
-                              <div className="space-y-3">
-                                <div className="grid grid-cols-2 gap-2">
-                                  <p className="text-sm text-muted-foreground">Account Name</p>
-                                  <p className="text-sm font-medium">Sri Krishna Temple Festivals</p>
-                                </div>
-                                <div className="grid grid-cols-2 gap-2">
-                                  <p className="text-sm text-muted-foreground">Account Number</p>
-                                  <div className="flex justify-between items-center">
-                                    <p className="text-sm font-medium">3456789012</p>
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      className="text-krishna-gold"
-                                      onClick={() => copyToClipboard('3456789012', 'Festival Account Number')}
-                                    >
-                                      <Copy className="h-4 w-4" />
-                                    </Button>
+                            {/* Festival Account */}
+                            <Card>
+                              <CardHeader>
+                                <CardTitle className="text-lg font-devotional text-krishna-blue">Festival Donations</CardTitle>
+                                <p className="text-sm text-muted-foreground">Support temple festivals and celebrations</p>
+                              </CardHeader>
+                              <CardContent>
+                                <div className="space-y-3">
+                                  <div className="grid grid-cols-2 gap-2">
+                                    <p className="text-sm text-muted-foreground">Account Name</p>
+                                    <p className="text-sm font-medium">Your Account Name</p>
+                                  </div>
+                                  <div className="grid grid-cols-2 gap-2">
+                                    <p className="text-sm text-muted-foreground">Account Number</p>
+                                    <div className="flex justify-between items-center">
+                                      <p className="text-sm font-medium">000000000000</p>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="text-krishna-gold"
+                                        onClick={() => copyToClipboard('000000000000', 'Festival Account Number')}
+                                      >
+                                        <Copy className="h-4 w-4" />
+                                      </Button>
+                                    </div>
+                                  </div>
+                                  <div className="grid grid-cols-2 gap-2">
+                                    <p className="text-sm text-muted-foreground">IFSC Code</p>
+                                    <div className="flex justify-between items-center">
+                                      <p className="text-sm font-medium">ABCD0123456</p>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="text-krishna-gold"
+                                        onClick={() => copyToClipboard('ABCD0123456', 'Festival IFSC Code')}
+                                      >
+                                        <Copy className="h-4 w-4" />
+                                      </Button>
+                                    </div>
+                                  </div>
+                                  <div className="grid grid-cols-2 gap-2">
+                                    <p className="text-sm text-muted-foreground">Bank & Branch</p>
+                                    <p className="text-sm font-medium">Your Bank, Your Branch</p>
                                   </div>
                                 </div>
-                                <div className="grid grid-cols-2 gap-2">
-                                  <p className="text-sm text-muted-foreground">IFSC Code</p>
-                                  <div className="flex justify-between items-center">
-                                    <p className="text-sm font-medium">SBIN0123458</p>
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      className="text-krishna-gold"
-                                      onClick={() => copyToClipboard('SBIN0123458', 'Festival IFSC Code')}
-                                    >
-                                      <Copy className="h-4 w-4" />
-                                    </Button>
-                                  </div>
-                                </div>
-                                <div className="grid grid-cols-2 gap-2">
-                                  <p className="text-sm text-muted-foreground">Bank & Branch</p>
-                                  <p className="text-sm font-medium">SBI, Lucknow Main</p>
-                                </div>
-                              </div>
-                            </CardContent>
-                          </Card>
+                              </CardContent>
+                            </Card>
 
-                          {/* Goshala Account */}
-                          <Card>
-                            <CardHeader>
-                              <CardTitle className="text-lg font-devotional text-krishna-blue">Goshala Seva</CardTitle>
-                              <p className="text-sm text-muted-foreground">Support our cow protection program</p>
-                            </CardHeader>
-                            <CardContent>
-                              <div className="space-y-3">
-                                <div className="grid grid-cols-2 gap-2">
-                                  <p className="text-sm text-muted-foreground">Account Name</p>
-                                  <p className="text-sm font-medium">Sri Krishna Temple Goshala</p>
-                                </div>
-                                <div className="grid grid-cols-2 gap-2">
-                                  <p className="text-sm text-muted-foreground">Account Number</p>
-                                  <div className="flex justify-between items-center">
-                                    <p className="text-sm font-medium">4567890123</p>
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      className="text-krishna-gold"
-                                      onClick={() => copyToClipboard('4567890123', 'Goshala Account Number')}
-                                    >
-                                      <Copy className="h-4 w-4" />
-                                    </Button>
+                            {/* Goshala Account */}
+                            <Card>
+                              <CardHeader>
+                                <CardTitle className="text-lg font-devotional text-krishna-blue">Goshala Seva</CardTitle>
+                                <p className="text-sm text-muted-foreground">Support our cow protection program</p>
+                              </CardHeader>
+                              <CardContent>
+                                <div className="space-y-3">
+                                  <div className="grid grid-cols-2 gap-2">
+                                    <p className="text-sm text-muted-foreground">Account Name</p>
+                                    <p className="text-sm font-medium">Your Account Name</p>
+                                  </div>
+                                  <div className="grid grid-cols-2 gap-2">
+                                    <p className="text-sm text-muted-foreground">Account Number</p>
+                                    <div className="flex justify-between items-center">
+                                      <p className="text-sm font-medium">000000000000</p>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="text-krishna-gold"
+                                        onClick={() => copyToClipboard('000000000000', 'Goshala Account Number')}
+                                      >
+                                        <Copy className="h-4 w-4" />
+                                      </Button>
+                                    </div>
+                                  </div>
+                                  <div className="grid grid-cols-2 gap-2">
+                                    <p className="text-sm text-muted-foreground">IFSC Code</p>
+                                    <div className="flex justify-between items-center">
+                                      <p className="text-sm font-medium">ABCD0123456</p>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="text-krishna-gold"
+                                        onClick={() => copyToClipboard('ABCD0123456', 'Goshala IFSC Code')}
+                                      >
+                                        <Copy className="h-4 w-4" />
+                                      </Button>
+                                    </div>
+                                  </div>
+                                  <div className="grid grid-cols-2 gap-2">
+                                    <p className="text-sm text-muted-foreground">Bank & Branch</p>
+                                    <p className="text-sm font-medium">Your Bank, Your Branch</p>
                                   </div>
                                 </div>
-                                <div className="grid grid-cols-2 gap-2">
-                                  <p className="text-sm text-muted-foreground">IFSC Code</p>
-                                  <div className="flex justify-between items-center">
-                                    <p className="text-sm font-medium">SBIN0123459</p>
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      className="text-krishna-gold"
-                                      onClick={() => copyToClipboard('SBIN0123459', 'Goshala IFSC Code')}
-                                    >
-                                      <Copy className="h-4 w-4" />
-                                    </Button>
-                                  </div>
-                                </div>
-                                <div className="grid grid-cols-2 gap-2">
-                                  <p className="text-sm text-muted-foreground">Bank & Branch</p>
-                                  <p className="text-sm font-medium">SBI, Lucknow Main</p>
-                                </div>
-                              </div>
-                            </CardContent>
-                          </Card>
+                              </CardContent>
+                            </Card>
+                          </div>
+                          
+                          <div className="bg-krishna-gold/5 rounded-lg p-4">
+                            <p className="text-sm text-muted-foreground">
+                              After making the bank transfer, please email the transaction details along with your name, 
+                              donation purpose, and PAN number (optional, for 80G certificate) to <span className="font-medium">your-email@example.com</span>
+                            </p>
+                          </div>
                         </div>
-                        
-                        <div className="bg-krishna-gold/5 rounded-lg p-4">
-                          <p className="text-sm text-muted-foreground">
-                            After making the bank transfer, please email the transaction details along with your name, 
-                            donation purpose, and PAN number (optional, for 80G certificate) to <span className="font-medium">donations@temple.org</span>
-                          </p>
-                        </div>
-                      </div>
-                    </TabsContent>
-                  </Tabs>
+                      )}
 
                   <div className="mt-6">
                     <Form {...form}>
@@ -721,7 +714,7 @@ const Donate = () => {
               (if applicable) and send it to your email address.
             </p>
             <p className="text-sm text-muted-foreground">
-              For any queries, please contact us at donations@temple.org
+              For any queries, please contact us at your-email@example.com
             </p>
             <Button 
               className="bg-krishna-gold hover:bg-krishna-saffron"
