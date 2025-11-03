@@ -1,226 +1,268 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import {
-  HeartHandshake,
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { 
+  HeartHandshake, 
+  Calendar, 
   ChevronRight,
-  ChevronLeft,
   CheckCircle2,
-  AlertCircle,
+  Copy,
+  ArrowRight
 } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import { useState } from 'react';
+import axios from 'axios';
+
+const step1Schema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  email: z.string().email("Please enter a valid email"),
+  phone: z.string().min(10, "Please enter a valid phone number"),
+  pan: z.string().optional(),
+  paymentMethod: z.enum(["upi", "bank"])
+});
+
+const formSchema = step1Schema.extend({
+  transactionId: z.string().min(1, "Transaction ID is required").regex(/^[a-zA-Z0-9-_]+$/, "Transaction ID can only contain letters, numbers, hyphens and underscores")
+});
 
 const Donate = () => {
   const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    phone: '',
-    pan: '',
-    paymentMethod: 'upi',
-  });
-  const [errors, setErrors] = useState({
-    fullName: '',
-    email: '',
-    phone: '',
-  });
-  const [transactionId, setTransactionId] = useState('');
   const [showThankYou, setShowThankYou] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleNextStep = () => {
-    const newErrors = {
-      fullName: '',
-      email: '',
-      phone: '',
-    };
-    let hasError = false;
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(step1Schema),
+    defaultValues: {
+      paymentMethod: "upi",
+    },
+    mode: "onBlur"
+  });
 
-    if (!formData.fullName) {
-      newErrors.fullName = 'Full Name is required';
-      hasError = true;
-    }
-    if (!formData.email) {
-      newErrors.email = 'Email Address is required';
-      hasError = true;
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email address is invalid';
-      hasError = true;
-    }
-    if (!formData.phone) {
-      newErrors.phone = 'Phone Number is required';
-      hasError = true;
-    }
-
-    setErrors(newErrors);
-
-    if (!hasError) {
-      setStep(2);
-    }
-  };
-
-  const handleCompleteDonation = () => {
-    if (!transactionId) {
-      toast({
-        title: 'Transaction ID Required',
-        description: 'Please enter the transaction ID to complete the process.',
-        variant: 'destructive',
-      });
-      return;
-    }
-    setShowThankYou(true);
-  };
-
-  const handleReset = () => {
-    setStep(1);
-    setFormData({
-      fullName: '',
-      email: '',
-      phone: '',
-      pan: '',
-      paymentMethod: 'upi',
+  const copyToClipboard = (text: string, type: string) => {
+    navigator.clipboard.writeText(text);
+    toast({
+      title: "Copied to clipboard",
+      description: `${type} details have been copied to your clipboard.`,
     });
-    setTransactionId('');
-    setShowThankYou(false);
   };
 
+  const onSubmitStep1 = (values: z.infer<typeof step1Schema>) => {
+    console.log("Step 1 values:", values);
+    setStep(2);
+    // Update form resolver for step 2
+    form.clearErrors();
+    form.setResolver(zodResolver(formSchema));
+  };
+
+  const onSubmitTransaction = async (values: z.infer<typeof formSchema>) => {
+    try {
+      setIsSubmitting(true);
+      
+      const formData = {
+        access_key: import.meta.env.VITE_WEB3FORMS_KEY,
+        name: values.name,
+        email: values.email,
+        phone: values.phone,
+        pan: values.pan || "Not Provided",
+        payment_method: values.paymentMethod,
+        transaction_id: values.transactionId,
+        subject: `New Temple Donation from ${values.name}`,
+        message: `
+          Donation Details:
+          Name: ${values.name}
+          Email: ${values.email}
+          Phone: ${values.phone}
+          PAN: ${values.pan || "Not Provided"}
+          Payment Method: ${values.paymentMethod.toUpperCase()}
+          Transaction ID: ${values.transactionId}
+        `
+      };
+
+      const response = await axios.post(
+        'https://api.web3forms.com/submit',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }
+        }
+      );
+
+      if (response.data.success) {
+        setShowThankYou(true);
+        form.reset();
+      } else {
+        throw new Error("Submission failed");
+      }
+    } catch (error) {
+      console.error("Submission error:", error);
+      toast({
+        title: "Error",
+        description: "There was a problem submitting your donation. Please try again or contact support.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
+      
       <main className="flex-grow">
         {/* Hero Section */}
-        <div
-          className="relative h-[50vh] bg-cover bg-center flex items-center justify-center"
-          style={{
-            backgroundImage:
-              "url('https://images.unsplash.com/photo-1532466901723-63cd96b3bcb2?q=80&w=2070&auto=format&fit=crop')",
-          }}
-        >
+        <div className="relative h-[50vh] bg-cover bg-center flex items-center justify-center" 
+          style={{ 
+            backgroundImage: "url('https://images.unsplash.com/photo-1532466901723-63cd96b3bcb2?q=80&w=2070&auto=format&fit=crop')",
+          }}>
           <div className="absolute inset-0 bg-black/40"></div>
           <div className="relative text-center text-white z-10">
-            <h1 className="font-devotional text-5xl font-bold mb-4">
-              Support Our Mission
-            </h1>
-            <p className="text-xl max-w-3xl mx-auto">
-              Your donations help us spread spiritual knowledge and serve the
-              community
-            </p>
+            <h1 className="font-devotional text-5xl font-bold mb-4">Support Our Mission</h1>
+            <p className="text-xl max-w-3xl mx-auto">Your donations help us spread spiritual knowledge and serve the community</p>
           </div>
         </div>
-
+        
         {/* Donation Content */}
         <section className="container mx-auto px-4 py-16">
-          <div className="max-w-4xl mx-auto">
-            <Card>
-              <CardHeader>
-                <CardTitle className="font-devotional text-3xl text-krishna-blue flex items-center gap-3">
-                  <HeartHandshake className="text-krishna-gold" />
-                  Make a Donation
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {step === 1 && (
-                  <div>
-                    <h3 className="text-xl font-semibold mb-6">Step 1: Your Information</h3>
-                    <div className="space-y-4">
-                      <div>
-                        <Label htmlFor="fullName">Full Name</Label>
-                        <Input
-                          id="fullName"
-                          value={formData.fullName}
-                          onChange={(e) =>
-                            setFormData({ ...formData, fullName: e.target.value })
-                          }
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2">
+              <h2 className="font-devotional text-3xl font-semibold text-krishna-blue mb-8 flex items-center gap-3">
+                <HeartHandshake className="text-krishna-gold" />
+                Make a Donation
+              </h2>
+              
+              <Card>
+                <CardContent className="pt-6">
+                  {step === 1 ? (
+                    <Form {...form}>
+                      <form onSubmit={form.handleSubmit(onSubmitStep1)} className="space-y-6">
+                        <FormField
+                          control={form.control}
+                          name="name"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Full Name</FormLabel>
+                              <FormControl>
+                                <Input placeholder="Enter your full name" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
                         />
-                        {errors.fullName && (
-                          <p className="text-red-500 text-sm mt-1">{errors.fullName}</p>
-                        )}
-                      </div>
-                      <div>
-                        <Label htmlFor="email">Email Address</Label>
-                        <Input
-                          id="email"
-                          type="email"
-                          value={formData.email}
-                          onChange={(e) =>
-                            setFormData({ ...formData, email: e.target.value })
-                          }
-                        />
-                        {errors.email && (
-                          <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-                        )}
-                      </div>
-                      <div>
-                        <Label htmlFor="phone">Phone Number</Label>
-                        <Input
-                          id="phone"
-                          value={formData.phone}
-                          onChange={(e) =>
-                            setFormData({ ...formData, phone: e.target.value })
-                          }
-                        />
-                        {errors.phone && (
-                          <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
-                        )}
-                      </div>
-                      <div>
-                        <Label htmlFor="pan">PAN Number (for 80G)</Label>
-                        <Input
-                          id="pan"
-                          value={formData.pan}
-                          onChange={(e) =>
-                            setFormData({ ...formData, pan: e.target.value })
-                          }
-                        />
-                      </div>
-                      <div>
-                        <Label>Payment Method</Label>
-                        <RadioGroup
-                          defaultValue="upi"
-                          className="flex gap-4 mt-2"
-                          onValueChange={(value) =>
-                            setFormData({ ...formData, paymentMethod: value })
-                          }
-                        >
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="upi" id="upi" />
-                            <Label htmlFor="upi">UPI</Label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="bank" id="bank" />
-                            <Label htmlFor="bank">Bank Transfer</Label>
-                          </div>
-                        </RadioGroup>
-                      </div>
-                      <Button onClick={handleNextStep} className="w-full">
-                        Next Step <ChevronRight className="ml-2 h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                )}
 
-                {step === 2 && (
-                  <div>
-                    <h3 className="text-xl font-semibold mb-6">
-                      Step 2: Payment Details
-                    </h3>
-                    {formData.paymentMethod === 'upi' ? (
+                        <FormField
+                          control={form.control}
+                          name="email"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Email Address</FormLabel>
+                              <FormControl>
+                                <Input placeholder="Enter your email" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name="phone"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Phone Number</FormLabel>
+                              <FormControl>
+                                <Input placeholder="Enter your phone number" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name="pan"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>PAN Number (Optional, for 80G)</FormLabel>
+                              <FormControl>
+                                <Input placeholder="Enter your PAN number" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name="paymentMethod"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Payment Method</FormLabel>
+                              <FormControl>
+                                <RadioGroup
+                                  onValueChange={field.onChange}
+                                  defaultValue={field.value}
+                                  className="grid grid-cols-2 gap-4"
+                                >
+                                  <FormItem className="flex items-center space-x-3 space-y-0">
+                                    <FormControl>
+                                      <RadioGroupItem value="upi" />
+                                    </FormControl>
+                                    <FormLabel className="font-normal">UPI Payment</FormLabel>
+                                  </FormItem>
+                                  <FormItem className="flex items-center space-x-3 space-y-0">
+                                    <FormControl>
+                                      <RadioGroupItem value="bank" />
+                                    </FormControl>
+                                    <FormLabel className="font-normal">Bank Transfer</FormLabel>
+                                  </FormItem>
+                                </RadioGroup>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <Button type="submit" className="w-full bg-krishna-gold hover:bg-krishna-saffron">
+                          Next Step
+                          <ArrowRight className="ml-2 h-4 w-4" />
+                        </Button>
+                      </form>
+                    </Form>
+                  ) : (
+                    <>
+                      <div className="mb-6 flex justify-between items-center">
+                        <Button 
+                          variant="outline" 
+                          onClick={() => setStep(1)}
+                          className="mb-4"
+                        >
+                          Back to Form
+                        </Button>
+                        <p className="text-sm text-muted-foreground">
+                          Step 2 of 2: Make Payment
+                        </p>
+                      </div>
+                      <Tabs defaultValue={form.getValues("paymentMethod")}>
+                        <TabsList className="grid w-full grid-cols-2 mb-6">
+                          <TabsTrigger value="upi">UPI Payment</TabsTrigger>
+                          <TabsTrigger value="bank">Bank Transfer</TabsTrigger>
+                        </TabsList>
+                    
+                    <TabsContent value="upi">
                       <div className="space-y-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                           {/* General Donations QR */}
@@ -231,16 +273,24 @@ const Donate = () => {
                             </CardHeader>
                             <CardContent className="text-center">
                               <img 
-                                src="/public/lovable-uploads/646139b0-b5ec-4cdc-bac5-b47d4efd1854.png" 
+                                src="/qr-codes/general-donation.png" 
                                 alt="General Donation QR Code"
                                 className="mx-auto w-48 h-48 object-contain"
                               />
                               <div className="mt-4 border rounded-lg p-3">
                                 <div className="flex justify-between items-center">
                                   <p className="text-sm font-medium">UPI ID</p>
-
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="text-krishna-gold"
+                                    onClick={() => copyToClipboard('general@temple', 'General Donation UPI ID')}
+                                  >
+                                    <Copy className="h-4 w-4 mr-2" />
+                                    Copy
+                                  </Button>
                                 </div>
-                                <p className="text-sm text-muted-foreground">your-general-upi-id</p>
+                                <p className="text-sm text-muted-foreground">general@temple</p>
                               </div>
                             </CardContent>
                           </Card>
@@ -253,16 +303,24 @@ const Donate = () => {
                             </CardHeader>
                             <CardContent className="text-center">
                               <img 
-                                src="/public/prasadam.jpg" 
+                                src="/qr-codes/prasadam-seva.png" 
                                 alt="Prasadam Seva QR Code"
                                 className="mx-auto w-48 h-48 object-contain"
                               />
                               <div className="mt-4 border rounded-lg p-3">
                                 <div className="flex justify-between items-center">
                                   <p className="text-sm font-medium">UPI ID</p>
-
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="text-krishna-gold"
+                                    onClick={() => copyToClipboard('prasadam@temple', 'Prasadam Seva UPI ID')}
+                                  >
+                                    <Copy className="h-4 w-4 mr-2" />
+                                    Copy
+                                  </Button>
                                 </div>
-                                <p className="text-sm text-muted-foreground">your-prasadam-upi-id</p>
+                                <p className="text-sm text-muted-foreground">prasadam@temple</p>
                               </div>
                             </CardContent>
                           </Card>
@@ -282,9 +340,17 @@ const Donate = () => {
                               <div className="mt-4 border rounded-lg p-3">
                                 <div className="flex justify-between items-center">
                                   <p className="text-sm font-medium">UPI ID</p>
-
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="text-krishna-gold"
+                                    onClick={() => copyToClipboard('festival@temple', 'Festival Donation UPI ID')}
+                                  >
+                                    <Copy className="h-4 w-4 mr-2" />
+                                    Copy
+                                  </Button>
                                 </div>
-                                <p className="text-sm text-muted-foreground">your-festival-upi-id</p>
+                                <p className="text-sm text-muted-foreground">festival@temple</p>
                               </div>
                             </CardContent>
                           </Card>
@@ -297,23 +363,42 @@ const Donate = () => {
                             </CardHeader>
                             <CardContent className="text-center">
                               <img 
-                                src="/public/ISKCON GAUSHALA.png" 
+                                src="/qr-codes/goshala.png" 
                                 alt="Goshala Seva QR Code"
                                 className="mx-auto w-48 h-48 object-contain"
                               />
                               <div className="mt-4 border rounded-lg p-3">
                                 <div className="flex justify-between items-center">
                                   <p className="text-sm font-medium">UPI ID</p>
-
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="text-krishna-gold"
+                                    onClick={() => copyToClipboard('goshala@temple', 'Goshala Seva UPI ID')}
+                                  >
+                                    <Copy className="h-4 w-4 mr-2" />
+                                    Copy
+                                  </Button>
                                 </div>
-                                <p className="text-sm text-muted-foreground">your-goshala-upi-id</p>
+                                <p className="text-sm text-muted-foreground">goshala@temple</p>
                               </div>
                             </CardContent>
                           </Card>
                         </div>
+                        
+                        <div className="bg-krishna-gold/5 rounded-lg p-4">
+                          <p className="text-sm text-muted-foreground">
+                            After making the donation, please take a screenshot of the payment confirmation 
+                            and WhatsApp it to <span className="font-medium">+91 9876543210</span> along with your name, 
+                            donation purpose, and PAN number (optional, for 80G certificate).
+                          </p>
+                        </div>
                       </div>
-                    ) : (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    </TabsContent>
+                    
+                    <TabsContent value="bank">
+                      <div className="space-y-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                           {/* General Donations Account */}
                           <Card>
                             <CardHeader>
@@ -329,15 +414,29 @@ const Donate = () => {
                                 <div className="grid grid-cols-2 gap-2">
                                   <p className="text-sm text-muted-foreground">Account Number</p>
                                   <div className="flex justify-between items-center">
-                                    <p className="text-sm font-medium">YOUR_ACCOUNT_NUMBER</p>
-
+                                    <p className="text-sm font-medium">1234567890</p>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="text-krishna-gold"
+                                      onClick={() => copyToClipboard('1234567890', 'General Account Number')}
+                                    >
+                                      <Copy className="h-4 w-4" />
+                                    </Button>
                                   </div>
                                 </div>
                                 <div className="grid grid-cols-2 gap-2">
                                   <p className="text-sm text-muted-foreground">IFSC Code</p>
                                   <div className="flex justify-between items-center">
-                                    <p className="text-sm font-medium">YOUR_IFSC_CODE</p>
-
+                                    <p className="text-sm font-medium">SBIN0123456</p>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="text-krishna-gold"
+                                      onClick={() => copyToClipboard('SBIN0123456', 'General IFSC Code')}
+                                    >
+                                      <Copy className="h-4 w-4" />
+                                    </Button>
                                   </div>
                                 </div>
                                 <div className="grid grid-cols-2 gap-2">
@@ -363,15 +462,29 @@ const Donate = () => {
                                 <div className="grid grid-cols-2 gap-2">
                                   <p className="text-sm text-muted-foreground">Account Number</p>
                                   <div className="flex justify-between items-center">
-                                    <p className="text-sm font-medium">YOUR_ACCOUNT_NUMBER</p>
-
+                                    <p className="text-sm font-medium">2345678901</p>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="text-krishna-gold"
+                                      onClick={() => copyToClipboard('2345678901', 'Prasadam Account Number')}
+                                    >
+                                      <Copy className="h-4 w-4" />
+                                    </Button>
                                   </div>
                                 </div>
                                 <div className="grid grid-cols-2 gap-2">
                                   <p className="text-sm text-muted-foreground">IFSC Code</p>
                                   <div className="flex justify-between items-center">
-                                    <p className="text-sm font-medium">YOUR_IFSC_CODE</p>
-
+                                    <p className="text-sm font-medium">SBIN0123457</p>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="text-krishna-gold"
+                                      onClick={() => copyToClipboard('SBIN0123457', 'Prasadam IFSC Code')}
+                                    >
+                                      <Copy className="h-4 w-4" />
+                                    </Button>
                                   </div>
                                 </div>
                                 <div className="grid grid-cols-2 gap-2">
@@ -397,15 +510,29 @@ const Donate = () => {
                                 <div className="grid grid-cols-2 gap-2">
                                   <p className="text-sm text-muted-foreground">Account Number</p>
                                   <div className="flex justify-between items-center">
-                                    <p className="text-sm font-medium">YOUR_ACCOUNT_NUMBER</p>
-
+                                    <p className="text-sm font-medium">3456789012</p>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="text-krishna-gold"
+                                      onClick={() => copyToClipboard('3456789012', 'Festival Account Number')}
+                                    >
+                                      <Copy className="h-4 w-4" />
+                                    </Button>
                                   </div>
                                 </div>
                                 <div className="grid grid-cols-2 gap-2">
                                   <p className="text-sm text-muted-foreground">IFSC Code</p>
                                   <div className="flex justify-between items-center">
-                                    <p className="text-sm font-medium">YOUR_IFSC_CODE</p>
-
+                                    <p className="text-sm font-medium">SBIN0123458</p>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="text-krishna-gold"
+                                      onClick={() => copyToClipboard('SBIN0123458', 'Festival IFSC Code')}
+                                    >
+                                      <Copy className="h-4 w-4" />
+                                    </Button>
                                   </div>
                                 </div>
                                 <div className="grid grid-cols-2 gap-2">
@@ -431,15 +558,29 @@ const Donate = () => {
                                 <div className="grid grid-cols-2 gap-2">
                                   <p className="text-sm text-muted-foreground">Account Number</p>
                                   <div className="flex justify-between items-center">
-                                    <p className="text-sm font-medium">YOUR_ACCOUNT_NUMBER</p>
-
+                                    <p className="text-sm font-medium">4567890123</p>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="text-krishna-gold"
+                                      onClick={() => copyToClipboard('4567890123', 'Goshala Account Number')}
+                                    >
+                                      <Copy className="h-4 w-4" />
+                                    </Button>
                                   </div>
                                 </div>
                                 <div className="grid grid-cols-2 gap-2">
                                   <p className="text-sm text-muted-foreground">IFSC Code</p>
                                   <div className="flex justify-between items-center">
-                                    <p className="text-sm font-medium">YOUR_IFSC_CODE</p>
-
+                                    <p className="text-sm font-medium">SBIN0123459</p>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="text-krishna-gold"
+                                      onClick={() => copyToClipboard('SBIN0123459', 'Goshala IFSC Code')}
+                                    >
+                                      <Copy className="h-4 w-4" />
+                                    </Button>
                                   </div>
                                 </div>
                                 <div className="grid grid-cols-2 gap-2">
@@ -450,61 +591,151 @@ const Donate = () => {
                             </CardContent>
                           </Card>
                         </div>
-                    )}
-                    <div className="mt-6">
-                      <Label htmlFor="transactionId">Transaction ID</Label>
-                      <Input
-                        id="transactionId"
-                        value={transactionId}
-                        onChange={(e) => setTransactionId(e.target.value)}
-                      />
-                    </div>
-                    <div className="flex justify-between mt-6">
-                      <Button variant="outline" onClick={() => setStep(1)}>
-                        <ChevronLeft className="mr-2 h-4 w-4" /> Back to Form
-                      </Button>
-                      <Button onClick={handleCompleteDonation}>
-                        Complete Donation Process
-                      </Button>
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
+                        
+                        <div className="bg-krishna-gold/5 rounded-lg p-4">
+                          <p className="text-sm text-muted-foreground">
+                            After making the bank transfer, please email the transaction details along with your name, 
+                            donation purpose, and PAN number (optional, for 80G certificate) to <span className="font-medium">donations@temple.org</span>
+                          </p>
+                        </div>
+                      </div>
+                    </TabsContent>
+                  </Tabs>
 
+                  <div className="mt-6">
+                    <Form {...form}>
+                      <form onSubmit={form.handleSubmit(onSubmitTransaction)} className="space-y-4">
+                        <FormField
+                          control={form.control}
+                          name="transactionId"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Transaction ID *</FormLabel>
+                              <FormControl>
+                                <Input 
+                                  placeholder="Enter your payment transaction ID" 
+                                  {...field} 
+                                  required
+                                />
+                              </FormControl>
+                              <FormDescription>
+                                Please enter the transaction ID from your payment confirmation. This is required to verify your donation.
+                              </FormDescription>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <Button 
+                          type="submit" 
+                          className="w-full bg-krishna-gold hover:bg-krishna-saffron"
+                          disabled={isSubmitting}
+                        >
+                          {isSubmitting ? (
+                            <div className="flex items-center gap-2">
+                              <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                              Processing...
+                            </div>
+                          ) : (
+                            "Complete Donation Process"
+                          )}
+                        </Button>
+                      </form>
+                    </Form>
+                  </div>
+                </>
+                )}
+                </CardContent>
+              </Card>
+            </div>
+            
+            <div className="space-y-8">
+              <Card className="decorative-border overflow-hidden">
+                <CardHeader className="bg-krishna-gold/10">
+                  <CardTitle className="font-devotional text-krishna-blue">Why Donate?</CardTitle>
+                </CardHeader>
+                <CardContent className="pt-6">
+                  <p className="mb-4">Your generous donations support:</p>
+                  <ul className="space-y-2">
+                    {[
+                      "Daily worship of the deities",
+                      "Temple maintenance and operations",
+                      "Food for Life program to feed the needy",
+                      "Spiritual education and outreach",
+                      "Festival celebrations throughout the year"
+                    ].map((item, index) => (
+                      <li key={index} className="flex items-start gap-2">
+                        <CheckCircle2 className="h-5 w-5 text-krishna-gold shrink-0 mt-0.5" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Donation FAQs</CardTitle>
+                </CardHeader>
+                <CardContent className="text-sm space-y-4">
+                  <div>
+                    <p className="font-semibold">Is my donation tax-deductible?</p>
+                    <p className="text-muted-foreground">Yes, donations are eligible for tax exemption under Section 80G.</p>
+                  </div>
+                  <div>
+                    <p className="font-semibold">Can I donate items instead of money?</p>
+                    <p className="text-muted-foreground">Yes, the temple accepts various items. Please contact us for details.</p>
+                  </div>
+                  <div>
+                    <p className="font-semibold">How will my donation be used?</p>
+                    <p className="text-muted-foreground">Your donation supports temple maintenance, deity worship, prasadam distribution, and community services.</p>
+                  </div>
+                </CardContent>
+                <CardFooter>
+                  <Button variant="outline" className="w-full" asChild>
+                    <a href="/faq">
+                      More FAQs
+                      <ChevronRight className="ml-2 h-4 w-4" />
+                    </a>
+                  </Button>
+                </CardFooter>
+              </Card>
+            </div>
+          </div>
         </section>
       </main>
+
       <Footer />
 
-      <AlertDialog open={showThankYou} onOpenChange={setShowThankYou}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle className="flex items-center gap-2">
-              <CheckCircle2 className="h-6 w-6 text-green-500" />
-              Donation Completed Successfully!
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              Thank you for your generous donation, {formData.fullName}. Your support is invaluable to us.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <div className="text-sm">
-            <p className="font-semibold">80G Certificate Information:</p>
+      {/* Thank You Dialog */}
+      <Dialog open={showThankYou} onOpenChange={setShowThankYou}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="text-center font-devotional text-2xl text-krishna-blue">
+              Thank You for Your Donation
+            </DialogTitle>
+          </DialogHeader>
+          <div className="text-center space-y-4 py-4">
+            <CheckCircle2 className="mx-auto h-12 w-12 text-green-500" />
             <p>
-              If you have provided your PAN number, your 80G certificate will be sent to your email address ({formData.email}) within 30 days.
+              Your donation has been recorded successfully. We will process your 80G certificate
+              (if applicable) and send it to your email address.
             </p>
-            <p className="mt-4 font-semibold">For any queries, please contact us at:</p>
-            <p>Email: your-email@example.com</p>
-            <p>Phone: +91 1234567890</p>
+            <p className="text-sm text-muted-foreground">
+              For any queries, please contact us at donations@temple.org
+            </p>
+            <Button 
+              className="bg-krishna-gold hover:bg-krishna-saffron"
+              onClick={() => {
+                setShowThankYou(false);
+                form.reset();
+                setStep(1);
+              }}
+            >
+              Close
+            </Button>
           </div>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => window.location.href = '/'}>Close</AlertDialogCancel>
-            <AlertDialogAction onClick={handleReset}>
-              Make another donation
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
