@@ -6,47 +6,21 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
-  CreditCard, 
-  Landmark, 
   HeartHandshake, 
   Calendar, 
   ChevronRight,
-  CheckCircle2
+  CheckCircle2,
+  Copy
 } from 'lucide-react';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
 import { toast } from '@/components/ui/use-toast';
 
-const donationSchema = z.object({
-  amount: z.string().min(1, "Please select or enter an amount"),
-  name: z.string().min(2, "Please enter your name"),
-  email: z.string().email("Please enter a valid email"),
-  phone: z.string().optional(),
-  pan: z.string().optional(),
-  paymentMethod: z.enum(["card", "bank", "upi"])
-});
-
 const Donate = () => {
-  const form = useForm<z.infer<typeof donationSchema>>({
-    resolver: zodResolver(donationSchema),
-    defaultValues: {
-      amount: "1100",
-      paymentMethod: "card"
-    }
-  });
-
-  const onSubmit = (values: z.infer<typeof donationSchema>) => {
-    // This would be connected to a payment gateway in production
-    console.log(values);
+  const copyToClipboard = (text: string, type: string) => {
+    navigator.clipboard.writeText(text);
     toast({
-      title: "Donation Initiated",
-      description: `Thank you for your donation of ₹${values.amount}. You will be redirected to the payment gateway.`,
+      title: "Copied to clipboard",
+      description: `${type} details have been copied to your clipboard.`,
     });
-    // Here you would redirect to payment gateway
   };
 
   return (
@@ -77,178 +51,348 @@ const Donate = () => {
               
               <Card>
                 <CardContent className="pt-6">
-                  <Tabs defaultValue="one-time">
+                  <Tabs defaultValue="upi">
                     <TabsList className="grid w-full grid-cols-2 mb-6">
-                      <TabsTrigger value="one-time">One-time Donation</TabsTrigger>
-                      <TabsTrigger value="recurring">Monthly Support</TabsTrigger>
+                      <TabsTrigger value="upi">UPI Payment</TabsTrigger>
+                      <TabsTrigger value="bank">Bank Transfer</TabsTrigger>
                     </TabsList>
                     
-                    <TabsContent value="one-time">
-                      <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                          <FormField
-                            control={form.control}
-                            name="amount"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Select Donation Amount</FormLabel>
-                                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
-                                  {["501", "1100", "2100", "5100"].map((amount) => (
-                                    <Button
-                                      key={amount}
-                                      type="button"
-                                      variant={field.value === amount ? "default" : "outline"}
-                                      className={field.value === amount ? "bg-krishna-gold hover:bg-krishna-gold/90" : ""}
-                                      onClick={() => field.onChange(amount)}
-                                    >
-                                      ₹{amount}
-                                    </Button>
-                                  ))}
-                                </div>
-                                <FormControl>
-                                  <div className="relative">
-                                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                                      <span className="text-muted-foreground">₹</span>
-                                    </div>
-                                    <Input 
-                                      placeholder="Custom Amount" 
-                                      className="pl-8" 
-                                      {...field} 
-                                    />
-                                  </div>
-                                </FormControl>
-                                <FormDescription>
-                                  All donations are eligible for tax exemption under Section 80G
-                                </FormDescription>
-                              </FormItem>
-                            )}
-                          />
-                          
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <FormField
-                              control={form.control}
-                              name="name"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Full Name</FormLabel>
-                                  <FormControl>
-                                    <Input placeholder="Enter your name" {...field} />
-                                  </FormControl>
-                                </FormItem>
-                              )}
-                            />
-                            
-                            <FormField
-                              control={form.control}
-                              name="email"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Email Address</FormLabel>
-                                  <FormControl>
-                                    <Input placeholder="Enter your email" {...field} />
-                                  </FormControl>
-                                </FormItem>
-                              )}
-                            />
-                            
-                            <FormField
-                              control={form.control}
-                              name="phone"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Phone Number (Optional)</FormLabel>
-                                  <FormControl>
-                                    <Input placeholder="Enter your phone number" {...field} />
-                                  </FormControl>
-                                </FormItem>
-                              )}
-                            />
-                            
-                            <FormField
-                              control={form.control}
-                              name="pan"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>PAN Number (Optional, for 80G)</FormLabel>
-                                  <FormControl>
-                                    <Input placeholder="Enter PAN for tax benefit" {...field} />
-                                  </FormControl>
-                                </FormItem>
-                              )}
-                            />
-                          </div>
-                          
-                          <FormField
-                            control={form.control}
-                            name="paymentMethod"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Payment Method</FormLabel>
-                                <FormControl>
-                                  <RadioGroup 
-                                    className="grid grid-cols-3 gap-4"
-                                    value={field.value}
-                                    onValueChange={field.onChange}
+                    <TabsContent value="upi">
+                      <div className="space-y-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          {/* General Donations QR */}
+                          <Card>
+                            <CardHeader>
+                              <CardTitle className="text-lg font-devotional text-krishna-blue">General Donations</CardTitle>
+                              <p className="text-sm text-muted-foreground">For temple maintenance and daily activities</p>
+                            </CardHeader>
+                            <CardContent className="text-center">
+                              <img 
+                                src="/qr-codes/general-donation.png" 
+                                alt="General Donation QR Code"
+                                className="mx-auto w-48 h-48 object-contain"
+                              />
+                              <div className="mt-4 border rounded-lg p-3">
+                                <div className="flex justify-between items-center">
+                                  <p className="text-sm font-medium">UPI ID</p>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="text-krishna-gold"
+                                    onClick={() => copyToClipboard('general@temple', 'General Donation UPI ID')}
                                   >
-                                    <FormItem className="flex flex-col items-center space-y-2">
-                                      <FormControl>
-                                        <RadioGroupItem value="card" className="sr-only" />
-                                      </FormControl>
-                                      <div className={`flex flex-col items-center justify-between rounded-md border-2 border-muted p-4 w-full ${field.value === 'card' ? 'border-krishna-gold bg-krishna-gold/5' : ''}`}>
-                                        <CreditCard className={`mb-2 ${field.value === 'card' ? 'text-krishna-gold' : ''}`} />
-                                        <span className="text-sm font-medium">Credit/Debit Card</span>
-                                      </div>
-                                    </FormItem>
-                                    
-                                    <FormItem className="flex flex-col items-center space-y-2">
-                                      <FormControl>
-                                        <RadioGroupItem value="bank" className="sr-only" />
-                                      </FormControl>
-                                      <div className={`flex flex-col items-center justify-between rounded-md border-2 border-muted p-4 w-full ${field.value === 'bank' ? 'border-krishna-gold bg-krishna-gold/5' : ''}`}>
-                                        <Landmark className={`mb-2 ${field.value === 'bank' ? 'text-krishna-gold' : ''}`} />
-                                        <span className="text-sm font-medium">Bank Transfer</span>
-                                      </div>
-                                    </FormItem>
-                                    
-                                    <FormItem className="flex flex-col items-center space-y-2">
-                                      <FormControl>
-                                        <RadioGroupItem value="upi" className="sr-only" />
-                                      </FormControl>
-                                      <div className={`flex flex-col items-center justify-between rounded-md border-2 border-muted p-4 w-full ${field.value === 'upi' ? 'border-krishna-gold bg-krishna-gold/5' : ''}`}>
-                                        <svg 
-                                          className={`w-6 h-6 mb-2 ${field.value === 'upi' ? 'text-krishna-gold' : ''}`} 
-                                          viewBox="0 0 24 24" 
-                                          fill="currentColor"
-                                        >
-                                          <path d="M21 9V3H15V9H21M21 21V15H15V21H21M3 21H9V15H3V21M3 9H9V3H3V9Z" />
-                                        </svg>
-                                        <span className="text-sm font-medium">UPI</span>
-                                      </div>
-                                    </FormItem>
-                                  </RadioGroup>
-                                </FormControl>
-                              </FormItem>
-                            )}
-                          />
-                          
-                          <Button type="submit" className="w-full bg-krishna-gold hover:bg-krishna-saffron text-white">
-                            Proceed to Donation
-                          </Button>
-                        </form>
-                      </Form>
+                                    <Copy className="h-4 w-4 mr-2" />
+                                    Copy
+                                  </Button>
+                                </div>
+                                <p className="text-sm text-muted-foreground">general@temple</p>
+                              </div>
+                            </CardContent>
+                          </Card>
+
+                          {/* Prasadam Seva QR */}
+                          <Card>
+                            <CardHeader>
+                              <CardTitle className="text-lg font-devotional text-krishna-blue">Prasadam Seva</CardTitle>
+                              <p className="text-sm text-muted-foreground">Support our food distribution program</p>
+                            </CardHeader>
+                            <CardContent className="text-center">
+                              <img 
+                                src="/qr-codes/prasadam-seva.png" 
+                                alt="Prasadam Seva QR Code"
+                                className="mx-auto w-48 h-48 object-contain"
+                              />
+                              <div className="mt-4 border rounded-lg p-3">
+                                <div className="flex justify-between items-center">
+                                  <p className="text-sm font-medium">UPI ID</p>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="text-krishna-gold"
+                                    onClick={() => copyToClipboard('prasadam@temple', 'Prasadam Seva UPI ID')}
+                                  >
+                                    <Copy className="h-4 w-4 mr-2" />
+                                    Copy
+                                  </Button>
+                                </div>
+                                <p className="text-sm text-muted-foreground">prasadam@temple</p>
+                              </div>
+                            </CardContent>
+                          </Card>
+
+                          {/* Festival Donations QR */}
+                          <Card>
+                            <CardHeader>
+                              <CardTitle className="text-lg font-devotional text-krishna-blue">Festival Donations</CardTitle>
+                              <p className="text-sm text-muted-foreground">Support temple festivals and celebrations</p>
+                            </CardHeader>
+                            <CardContent className="text-center">
+                              <img 
+                                src="/qr-codes/festival.png" 
+                                alt="Festival Donations QR Code"
+                                className="mx-auto w-48 h-48 object-contain"
+                              />
+                              <div className="mt-4 border rounded-lg p-3">
+                                <div className="flex justify-between items-center">
+                                  <p className="text-sm font-medium">UPI ID</p>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="text-krishna-gold"
+                                    onClick={() => copyToClipboard('festival@temple', 'Festival Donation UPI ID')}
+                                  >
+                                    <Copy className="h-4 w-4 mr-2" />
+                                    Copy
+                                  </Button>
+                                </div>
+                                <p className="text-sm text-muted-foreground">festival@temple</p>
+                              </div>
+                            </CardContent>
+                          </Card>
+
+                          {/* Goshala Donations QR */}
+                          <Card>
+                            <CardHeader>
+                              <CardTitle className="text-lg font-devotional text-krishna-blue">Goshala Seva</CardTitle>
+                              <p className="text-sm text-muted-foreground">Support our cow protection program</p>
+                            </CardHeader>
+                            <CardContent className="text-center">
+                              <img 
+                                src="/qr-codes/goshala.png" 
+                                alt="Goshala Seva QR Code"
+                                className="mx-auto w-48 h-48 object-contain"
+                              />
+                              <div className="mt-4 border rounded-lg p-3">
+                                <div className="flex justify-between items-center">
+                                  <p className="text-sm font-medium">UPI ID</p>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="text-krishna-gold"
+                                    onClick={() => copyToClipboard('goshala@temple', 'Goshala Seva UPI ID')}
+                                  >
+                                    <Copy className="h-4 w-4 mr-2" />
+                                    Copy
+                                  </Button>
+                                </div>
+                                <p className="text-sm text-muted-foreground">goshala@temple</p>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        </div>
+                        
+                        <div className="bg-krishna-gold/5 rounded-lg p-4">
+                          <p className="text-sm text-muted-foreground">
+                            After making the donation, please take a screenshot of the payment confirmation 
+                            and WhatsApp it to <span className="font-medium">+91 9876543210</span> along with your name, 
+                            donation purpose, and PAN number (optional, for 80G certificate).
+                          </p>
+                        </div>
+                      </div>
                     </TabsContent>
                     
-                    <TabsContent value="recurring">
-                      <div className="text-center py-8">
-                        <Calendar className="mx-auto h-12 w-12 text-krishna-gold opacity-75" />
-                        <h3 className="mt-4 text-lg font-semibold">Monthly Donation Programs</h3>
-                        <p className="mt-2 text-muted-foreground">
-                          Become a monthly supporter of our various temple programs. 
-                          Please visit the temple office or contact us for setting up recurring donations.
-                        </p>
-                        <Button className="mt-6 bg-krishna-gold hover:bg-krishna-saffron" asChild>
-                          <a href="/contact">Contact Us</a>
-                        </Button>
+                    <TabsContent value="bank">
+                      <div className="space-y-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          {/* General Donations Account */}
+                          <Card>
+                            <CardHeader>
+                              <CardTitle className="text-lg font-devotional text-krishna-blue">General Donations</CardTitle>
+                              <p className="text-sm text-muted-foreground">For temple maintenance and daily activities</p>
+                            </CardHeader>
+                            <CardContent>
+                              <div className="space-y-3">
+                                <div className="grid grid-cols-2 gap-2">
+                                  <p className="text-sm text-muted-foreground">Account Name</p>
+                                  <p className="text-sm font-medium">Sri Krishna Temple Trust</p>
+                                </div>
+                                <div className="grid grid-cols-2 gap-2">
+                                  <p className="text-sm text-muted-foreground">Account Number</p>
+                                  <div className="flex justify-between items-center">
+                                    <p className="text-sm font-medium">1234567890</p>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="text-krishna-gold"
+                                      onClick={() => copyToClipboard('1234567890', 'General Account Number')}
+                                    >
+                                      <Copy className="h-4 w-4" />
+                                    </Button>
+                                  </div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-2">
+                                  <p className="text-sm text-muted-foreground">IFSC Code</p>
+                                  <div className="flex justify-between items-center">
+                                    <p className="text-sm font-medium">SBIN0123456</p>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="text-krishna-gold"
+                                      onClick={() => copyToClipboard('SBIN0123456', 'General IFSC Code')}
+                                    >
+                                      <Copy className="h-4 w-4" />
+                                    </Button>
+                                  </div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-2">
+                                  <p className="text-sm text-muted-foreground">Bank & Branch</p>
+                                  <p className="text-sm font-medium">SBI, Lucknow Main</p>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+
+                          {/* Prasadam Seva Account */}
+                          <Card>
+                            <CardHeader>
+                              <CardTitle className="text-lg font-devotional text-krishna-blue">Prasadam Seva</CardTitle>
+                              <p className="text-sm text-muted-foreground">Support our food distribution program</p>
+                            </CardHeader>
+                            <CardContent>
+                              <div className="space-y-3">
+                                <div className="grid grid-cols-2 gap-2">
+                                  <p className="text-sm text-muted-foreground">Account Name</p>
+                                  <p className="text-sm font-medium">Sri Krishna Temple Prasadam</p>
+                                </div>
+                                <div className="grid grid-cols-2 gap-2">
+                                  <p className="text-sm text-muted-foreground">Account Number</p>
+                                  <div className="flex justify-between items-center">
+                                    <p className="text-sm font-medium">2345678901</p>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="text-krishna-gold"
+                                      onClick={() => copyToClipboard('2345678901', 'Prasadam Account Number')}
+                                    >
+                                      <Copy className="h-4 w-4" />
+                                    </Button>
+                                  </div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-2">
+                                  <p className="text-sm text-muted-foreground">IFSC Code</p>
+                                  <div className="flex justify-between items-center">
+                                    <p className="text-sm font-medium">SBIN0123457</p>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="text-krishna-gold"
+                                      onClick={() => copyToClipboard('SBIN0123457', 'Prasadam IFSC Code')}
+                                    >
+                                      <Copy className="h-4 w-4" />
+                                    </Button>
+                                  </div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-2">
+                                  <p className="text-sm text-muted-foreground">Bank & Branch</p>
+                                  <p className="text-sm font-medium">SBI, Lucknow Main</p>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+
+                          {/* Festival Account */}
+                          <Card>
+                            <CardHeader>
+                              <CardTitle className="text-lg font-devotional text-krishna-blue">Festival Donations</CardTitle>
+                              <p className="text-sm text-muted-foreground">Support temple festivals and celebrations</p>
+                            </CardHeader>
+                            <CardContent>
+                              <div className="space-y-3">
+                                <div className="grid grid-cols-2 gap-2">
+                                  <p className="text-sm text-muted-foreground">Account Name</p>
+                                  <p className="text-sm font-medium">Sri Krishna Temple Festivals</p>
+                                </div>
+                                <div className="grid grid-cols-2 gap-2">
+                                  <p className="text-sm text-muted-foreground">Account Number</p>
+                                  <div className="flex justify-between items-center">
+                                    <p className="text-sm font-medium">3456789012</p>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="text-krishna-gold"
+                                      onClick={() => copyToClipboard('3456789012', 'Festival Account Number')}
+                                    >
+                                      <Copy className="h-4 w-4" />
+                                    </Button>
+                                  </div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-2">
+                                  <p className="text-sm text-muted-foreground">IFSC Code</p>
+                                  <div className="flex justify-between items-center">
+                                    <p className="text-sm font-medium">SBIN0123458</p>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="text-krishna-gold"
+                                      onClick={() => copyToClipboard('SBIN0123458', 'Festival IFSC Code')}
+                                    >
+                                      <Copy className="h-4 w-4" />
+                                    </Button>
+                                  </div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-2">
+                                  <p className="text-sm text-muted-foreground">Bank & Branch</p>
+                                  <p className="text-sm font-medium">SBI, Lucknow Main</p>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+
+                          {/* Goshala Account */}
+                          <Card>
+                            <CardHeader>
+                              <CardTitle className="text-lg font-devotional text-krishna-blue">Goshala Seva</CardTitle>
+                              <p className="text-sm text-muted-foreground">Support our cow protection program</p>
+                            </CardHeader>
+                            <CardContent>
+                              <div className="space-y-3">
+                                <div className="grid grid-cols-2 gap-2">
+                                  <p className="text-sm text-muted-foreground">Account Name</p>
+                                  <p className="text-sm font-medium">Sri Krishna Temple Goshala</p>
+                                </div>
+                                <div className="grid grid-cols-2 gap-2">
+                                  <p className="text-sm text-muted-foreground">Account Number</p>
+                                  <div className="flex justify-between items-center">
+                                    <p className="text-sm font-medium">4567890123</p>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="text-krishna-gold"
+                                      onClick={() => copyToClipboard('4567890123', 'Goshala Account Number')}
+                                    >
+                                      <Copy className="h-4 w-4" />
+                                    </Button>
+                                  </div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-2">
+                                  <p className="text-sm text-muted-foreground">IFSC Code</p>
+                                  <div className="flex justify-between items-center">
+                                    <p className="text-sm font-medium">SBIN0123459</p>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="text-krishna-gold"
+                                      onClick={() => copyToClipboard('SBIN0123459', 'Goshala IFSC Code')}
+                                    >
+                                      <Copy className="h-4 w-4" />
+                                    </Button>
+                                  </div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-2">
+                                  <p className="text-sm text-muted-foreground">Bank & Branch</p>
+                                  <p className="text-sm font-medium">SBI, Lucknow Main</p>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        </div>
+                        
+                        <div className="bg-krishna-gold/5 rounded-lg p-4">
+                          <p className="text-sm text-muted-foreground">
+                            After making the bank transfer, please email the transaction details along with your name, 
+                            donation purpose, and PAN number (optional, for 80G certificate) to <span className="font-medium">donations@temple.org</span>
+                          </p>
+                        </div>
                       </div>
                     </TabsContent>
                   </Tabs>
