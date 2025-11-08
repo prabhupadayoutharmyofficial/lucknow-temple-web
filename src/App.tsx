@@ -21,6 +21,7 @@ import EventDetail from "./pages/EventDetail";
 import Auth from "./pages/Auth";
 import Admin from "./pages/Admin";
 import DevoteeRegistration from "./pages/DevoteeRegistration";
+import SrilaPrabhupada from "./pages/SrilaPrabhupada"; // Import the new page
 
 const queryClient = new QueryClient();
 
@@ -51,6 +52,7 @@ const App = () => {
               <Route path="/auth" element={<Auth />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="/devotee-registration" element={<DevoteeRegistration />} />
+              <Route path="/srila-prabhupada" element={<SrilaPrabhupada />} /> {/* Add the new route */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </TooltipProvider>

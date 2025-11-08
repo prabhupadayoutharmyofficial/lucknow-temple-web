@@ -1,9 +1,13 @@
 
 import React from 'react';
 
-const HistorySection = () => {
+interface HistorySectionProps {
+  id?: string;
+}
+
+const HistorySection: React.FC<HistorySectionProps> = ({ id }) => {
   return (
-    <div className="space-y-6 text-lg">
+    <div id={id} className="space-y-6 text-lg">
       <h2 className="font-devotional text-3xl font-semibold text-krishna-blue mb-8">Our History</h2>
       <p>
         The International Society for Krishna Consciousness (ISKCON) was established in 1966 by His Divine Grace 

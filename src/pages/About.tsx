@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import AboutHero from '@/components/about/AboutHero';
@@ -12,6 +12,15 @@ import AboutSidebar from '@/components/about/AboutSidebar';
 import TemplePresidentSection from '@/components/about/TemplePresidentSection';
 
 const About = () => {
+  useEffect(() => {
+    if (window.location.hash === '#founder') {
+      const founderSection = document.getElementById('founder');
+      if (founderSection) {
+        founderSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -24,7 +33,7 @@ const About = () => {
         <section className="container mx-auto px-4 py-16">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
-              <HistorySection />
+              <HistorySection id="founder" />
               <TempleConstructionSection />
               <ProgramsSection />
               <FacilitiesSection />
