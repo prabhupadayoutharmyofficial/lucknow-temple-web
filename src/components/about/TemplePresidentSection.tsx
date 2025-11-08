@@ -18,12 +18,12 @@ const TemplePresidentSection = () => {
           </AvatarFallback>
         </Avatar>
         <div>
-          <h4 className="text-xl font-semibold text-krishna-blue">Swami Pranavananda Das</h4>
+          <h4 className="text-xl font-semibold text-krishna-blue">H.G Aparimay Shyam Das</h4>
           <p className="text-gray-600">Spiritual Leader and Temple President</p>
         </div>
       </div>
       <p>
-        Swami Pranavananda Das has been guiding the ISKCON Lucknow temple since 2010, 
+        H.G Aparimay Shyam Das has been guiding the ISKCON Lucknow temple since 2014, 
         bringing decades of spiritual experience and dedication to the community. 
         His leadership focuses on spreading the message of Krishna consciousness, 
         promoting spiritual education, and serving the local community.
