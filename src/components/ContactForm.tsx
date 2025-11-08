@@ -22,39 +22,33 @@ const ContactForm = () => {
     setIsSubmitting(true);
     
     try {
-      const formData = new FormData(e.currentTarget);
+      const form = e.currentTarget;
+      const formData = new FormData(form);
       
-      // Combine all form data into a message string
+      // Add the access key to FormData
+      formData.append('access_key', '2a0dbe30-f719-41eb-853d-55d60824a1de');
+      
+      // Add all form fields to a combined message
       const messageDetails = `
 Purpose: ${formData.get('purpose')}
 Phone: ${formData.get('phone')}
 Preferred Contact: ${formData.get('preferredContact')}
 Best Time: ${formData.get('bestTime')}
 Address: ${formData.get('address')}
-Message: ${formData.get('message')}
+Additional Message: ${formData.get('message')}
       `;
       
-      // Prepare the data for Web3Forms
-      const apiData = {
-        access_key: '2a0dbe30-f719-41eb-853d-55d60824a1de', // Replace with your Web3Forms access key
-        name: formData.get('name'),
-        email: formData.get('email'),
-        subject: formData.get('subject'),
-        message: messageDetails,
-      };
+      // Update the message field with combined details
+      formData.set('message', messageDetails);
 
       const response = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify(apiData)
+        body: formData
       });
 
-      const result = await response.json();
+      const data = await response.json();
       
-      if (result.success) {
+      if (data.success) {
         toast({
           title: "Message Sent Successfully",
           description: "Thank you for contacting us. We will get back to you soon.",
@@ -64,11 +58,12 @@ Message: ${formData.get('message')}
             </div>
           ),
         });
-        e.currentTarget.reset();
+        form.reset();
       } else {
-        throw new Error('Form submission failed');
+        throw new Error(data.message || 'Form submission failed');
       }
     } catch (error) {
+      console.error('Form submission error:', error);
       toast({
         title: "Error",
         description: "There was a problem sending your message. Please try again.",
