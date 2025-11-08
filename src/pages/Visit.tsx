@@ -73,19 +73,7 @@ const Visit = () => {
                     </CardContent>
                   </Card>
                   
-                  <Card>
-                    <CardContent className="p-6">
-                      <div className="flex gap-3 items-center mb-4">
-                        <div className="bg-krishna-gold/10 p-2 rounded-full">
-                          <Bus className="text-krishna-blue" size={24} />
-                        </div>
-                        <h3 className="text-xl font-medium">By Bus</h3>
-                      </div>
-                      <p className="text-muted-foreground">
-                        Take city bus routes 15, 33, or 45 to Aliganj Market stop. The temple is a 5-minute walk from there.
-                      </p>
-                    </CardContent>
-                  </Card>
+
                   
                   <Card>
                     <CardContent className="p-6">
@@ -157,15 +145,11 @@ const Visit = () => {
                       <p className="text-sm">Bhajan, Kirtan, Lecture and Prasadam</p>
                     </div>
                     <div>
-                      <h4 className="font-medium">Tuesday Bhagavad Gita Class</h4>
-                      <p className="text-sm text-muted-foreground">6:00 PM - 7:30 PM</p>
-                      <p className="text-sm">Discourse on Bhagavad Gita followed by Prasadam</p>
+                      <h4 className="font-medium">Sunday Bhagavad Gita Class</h4>
+                      <p className="text-sm text-muted-foreground">9:00 PM - 11:30 PM</p>
+                      <p className="text-sm">Online Discourse on Bhagavad Gita</p>
                     </div>
-                    <div>
-                      <h4 className="font-medium">Friday Bhajan Night</h4>
-                      <p className="text-sm text-muted-foreground">7:00 PM - 9:00 PM</p>
-                      <p className="text-sm">Devotional singing and chanting</p>
-                    </div>
+
                   </div>
                 </CardContent>
               </Card>

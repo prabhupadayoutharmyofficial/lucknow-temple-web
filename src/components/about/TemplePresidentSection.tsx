@@ -8,7 +8,7 @@ const TemplePresidentSection = () => {
     <div className="space-y-6 text-lg">
       <h3 className="font-devotional text-2xl font-semibold text-krishna-blue mt-12 mb-4">Temple President</h3>
       <div className="flex items-center space-x-6">
-        <Avatar className="h-32 w-32">
+        <Avatar className="h-48 w-48">
           <AvatarImage 
             src="https://images.unsplash.com/photo-1522529599102-193c0d76b5b6?q=80&w=1000&auto=format&fit=crop" 
             alt="Temple President" 

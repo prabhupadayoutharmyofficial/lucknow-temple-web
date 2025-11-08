@@ -27,10 +27,7 @@ const TempleConstructionSection = () => {
             <h5 className="font-devotional text-krishna-blue mb-2">Construction Phases</h5>
             <ul className="list-disc ml-6 space-y-1">
               <li>Foundation ceremony: 1995</li>
-              <li>Main structure completion: 1998</li>
-              <li>Interior work: 1998-2000</li>
-              <li>Deity installation: 2001</li>
-              <li>Grand opening: 2002</li>
+              <li>Grand opening: 2027 (expected)</li>
             </ul>
           </div>
         </div>
