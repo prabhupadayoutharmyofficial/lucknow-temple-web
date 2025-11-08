@@ -11,6 +11,7 @@ import FloatingDonateButton from '@/components/FloatingDonateButton';
 import AdminPopup from '@/components/AdminPopup';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, MapPin } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Index = () => {
   const scrollToContent = () => {
@@ -95,9 +96,11 @@ const Index = () => {
               Your generous donations help us maintain the temple services, organize festivals, 
               and distribute free meals through our Food for Life program.
             </p>
-            <Button className="bg-krishna-gold hover:bg-krishna-saffron text-white text-lg px-8 py-6">
-              Make a Donation
-            </Button>
+            <Link to="/donate">
+              <Button className="bg-krishna-gold hover:bg-krishna-saffron text-white text-lg px-8 py-6">
+                Make a Donation
+              </Button>
+            </Link>
           </div>
         </section>
       </main>
