@@ -36,7 +36,7 @@ Message: ${formData.get('message')}
       
       // Prepare the data for Web3Forms
       const apiData = {
-        access_key: 'YOUR_WEB3FORMS_ACCESS_KEY', // Replace with your Web3Forms access key
+        access_key: '2a0dbe30-f719-41eb-853d-55d60824a1de', // Replace with your Web3Forms access key
         name: formData.get('name'),
         email: formData.get('email'),
         subject: formData.get('subject'),
