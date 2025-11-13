@@ -261,16 +261,16 @@ const Donate = () => {
                       {selectedPaymentMethod === "upi" ? (
                         <div className="space-y-6">
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {/* General Donations QR */}
+                            {/* ISKCON PROJECTS QR Code */}
                             <Card>
                               <CardHeader>
-                                <CardTitle className="text-lg font-devotional text-krishna-blue">General Donations</CardTitle>
+                                <CardTitle className="text-lg font-devotional text-krishna-blue">ISKCON PROJECTS QR CODE</CardTitle>
                                 <p className="text-sm text-muted-foreground">For temple maintenance and daily activities</p>
                               </CardHeader>
                               <CardContent className="text-center">
                                 <img 
                                   src="/ISKCON PROJECTS.png" 
-                                  alt="General Donation QR Code"
+                                  alt="ISKCON PROJECTS QR Code"
                                   className="mx-auto w-48 h-48 object-contain"
                                 />
                                 <div className="mt-4 border rounded-lg p-3">
@@ -280,13 +280,13 @@ const Donate = () => {
                                       variant="ghost"
                                       size="sm"
                                       className="text-krishna-gold"
-                                      onClick={() => copyToClipboard('your-general-upi-id', 'General Donation UPI ID')}
+                                      onClick={() => copyToClipboard('iskconprojects@indianbk', 'Iskcon Projects')}
                                     >
                                       <Copy className="h-4 w-4 mr-2" />
                                       Copy
                                     </Button>
                                   </div>
-                                  <p className="text-sm text-muted-foreground">your-general-upi-id</p>
+                                  <p className="text-sm text-muted-foreground">iskconprojects@indianbk</p>
                                 </div>
                               </CardContent>
                             </Card>
@@ -294,7 +294,7 @@ const Donate = () => {
                             {/* Prasadam Seva QR */}
                             <Card>
                               <CardHeader>
-                                <CardTitle className="text-lg font-devotional text-krishna-blue">Prasadam Seva</CardTitle>
+                                <CardTitle className="text-lg font-devotional text-krishna-blue">ISKCON FOOD FOR LIFE QR CODE</CardTitle>
                                 <p className="text-sm text-muted-foreground">Support our food distribution program</p>
                               </CardHeader>
                               <CardContent className="text-center">
@@ -310,13 +310,13 @@ const Donate = () => {
                                       variant="ghost"
                                       size="sm"
                                       className="text-krishna-gold"
-                                      onClick={() => copyToClipboard('your-prasadam-upi-id', 'Prasadam Seva UPI ID')}
+                                      onClick={() => copyToClipboard('internationalsocietyforkrishnaconsciousness@icici', 'ISKCON FOOD FOR LIFE QR CODE')}
                                     >
                                       <Copy className="h-4 w-4 mr-2" />
                                       Copy
                                     </Button>
                                   </div>
-                                  <p className="text-sm text-muted-foreground">your-prasadam-upi-id</p>
+                                  <p className="text-sm text-muted-foreground">internationalsocietyforkrishnaconsciousness@icici</p>
                                 </div>
                               </CardContent>
                             </Card>
@@ -324,7 +324,7 @@ const Donate = () => {
                             {/* Festival Donations QR */}
                             <Card>
                               <CardHeader>
-                                <CardTitle className="text-lg font-devotional text-krishna-blue">Festival Donations</CardTitle>
+                                <CardTitle className="text-lg font-devotional text-krishna-blue">FESTIVAL DONATIONS QR CODE</CardTitle>
                                 <p className="text-sm text-muted-foreground">Support temple festivals and celebrations</p>
                               </CardHeader>
                               <CardContent className="text-center">
@@ -340,13 +340,13 @@ const Donate = () => {
                                       variant="ghost"
                                       size="sm"
                                       className="text-krishna-gold"
-                                      onClick={() => copyToClipboard('your-festival-upi-id', 'Festival Donation UPI ID')}
+                                      onClick={() => copyToClipboard('iskconfestival@indianbk', 'Festival Donation UPI ID')}
                                     >
                                       <Copy className="h-4 w-4 mr-2" />
                                       Copy
                                     </Button>
                                   </div>
-                                  <p className="text-sm text-muted-foreground">your-festival-upi-id</p>
+                                  <p className="text-sm text-muted-foreground">iskconfestival@indianbk</p>
                                 </div>
                               </CardContent>
                             </Card>
@@ -354,7 +354,7 @@ const Donate = () => {
                             {/* Goshala Donations QR */}
                             <Card>
                               <CardHeader>
-                                <CardTitle className="text-lg font-devotional text-krishna-blue">Goshala Seva</CardTitle>
+                                <CardTitle className="text-lg font-devotional text-krishna-blue">GOSHALA SEWA QR CODE</CardTitle>
                                 <p className="text-sm text-muted-foreground">Support our cow protection program</p>
                               </CardHeader>
                               <CardContent className="text-center">
@@ -370,13 +370,13 @@ const Donate = () => {
                                       variant="ghost"
                                       size="sm"
                                       className="text-krishna-gold"
-                                      onClick={() => copyToClipboard('your-goshala-upi-id', 'Goshala Seva UPI ID')}
+                                      onClick={() => copyToClipboard('iskcongaushala@indianbk', 'Goshala Seva UPI ID')}
                                     >
                                       <Copy className="h-4 w-4 mr-2" />
                                       Copy
                                     </Button>
                                   </div>
-                                  <p className="text-sm text-muted-foreground">your-goshala-upi-id</p>
+                                  <p className="text-sm text-muted-foreground">iskcongaushala@indianbk</p>
                                 </div>
                               </CardContent>
                             </Card>
@@ -393,10 +393,10 @@ const Donate = () => {
                       ) : (
                         <div className="space-y-6">
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {/* General Donations Account */}
+                            {/* ISKCON PROJECTS QR Code Account */}
                             <Card>
                               <CardHeader>
-                                <CardTitle className="text-lg font-devotional text-krishna-blue">General Donations</CardTitle>
+                                <CardTitle className="text-lg font-devotional text-krishna-blue">ISKCON PROJECTS QR CODE</CardTitle>
                                 <p className="text-sm text-muted-foreground">For temple maintenance and daily activities</p>
                               </CardHeader>
                               <CardContent>
@@ -441,7 +441,7 @@ const Donate = () => {
                               </CardContent>
                             </Card>
 
-                            {/* Prasadam Seva Account */}
+                            {/* ISKCON FOOD FOR LIFE Account */}
                             <Card>
                               <CardHeader>
                                 <CardTitle className="text-lg font-devotional text-krishna-blue">Prasadam Seva</CardTitle>
