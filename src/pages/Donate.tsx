@@ -403,17 +403,17 @@ const Donate = () => {
                                 <div className="space-y-3">
                                   <div className="grid grid-cols-2 gap-2">
                                     <p className="text-sm text-muted-foreground">Account Name</p>
-                                    <p className="text-sm font-medium">Your Account Name</p>
+                                    <p className="text-sm font-medium">ISKCON PROJECT</p>
                                   </div>
                                   <div className="grid grid-cols-2 gap-2">
                                     <p className="text-sm text-muted-foreground">Account Number</p>
                                     <div className="flex justify-between items-center">
-                                      <p className="text-sm font-medium">000000000000</p>
+                                      <p className="text-sm font-medium">50278005410</p>
                                       <Button
                                         variant="ghost"
                                         size="sm"
                                         className="text-krishna-gold"
-                                        onClick={() => copyToClipboard('000000000000', 'General Account Number')}
+                                        onClick={() => copyToClipboard('50278005410', 'General Account Number')}
                                       >
                                         <Copy className="h-4 w-4" />
                                       </Button>
@@ -422,12 +422,12 @@ const Donate = () => {
                                   <div className="grid grid-cols-2 gap-2">
                                     <p className="text-sm text-muted-foreground">IFSC Code</p>
                                     <div className="flex justify-between items-center">
-                                      <p className="text-sm font-medium">ABCD0123456</p>
+                                      <p className="text-sm font-medium">IDIB000A532</p>
                                       <Button
                                         variant="ghost"
                                         size="sm"
                                         className="text-krishna-gold"
-                                        onClick={() => copyToClipboard('ABCD0123456', 'General IFSC Code')}
+                                        onClick={() => copyToClipboard('IDIB000A532', 'General IFSC Code')}
                                       >
                                         <Copy className="h-4 w-4" />
                                       </Button>
@@ -435,7 +435,7 @@ const Donate = () => {
                                   </div>
                                   <div className="grid grid-cols-2 gap-2">
                                     <p className="text-sm text-muted-foreground">Bank & Branch</p>
-                                    <p className="text-sm font-medium">Your Bank, Your Branch</p>
+                                    <p className="text-sm font-medium">Indian Bank, Ahimamau</p>
                                   </div>
                                 </div>
                               </CardContent>
@@ -451,17 +451,17 @@ const Donate = () => {
                                 <div className="space-y-3">
                                   <div className="grid grid-cols-2 gap-2">
                                     <p className="text-sm text-muted-foreground">Account Name</p>
-                                    <p className="text-sm font-medium">Your Account Name</p>
+                                    <p className="text-sm font-medium">INTERNATIONAL SOCIETY FOR KRISHNA CONSCIOUSNESS (ISKCON)</p>
                                   </div>
                                   <div className="grid grid-cols-2 gap-2">
                                     <p className="text-sm text-muted-foreground">Account Number</p>
                                     <div className="flex justify-between items-center">
-                                      <p className="text-sm font-medium">000000000000</p>
+                                      <p className="text-sm font-medium">740701000482</p>
                                       <Button
                                         variant="ghost"
                                         size="sm"
                                         className="text-krishna-gold"
-                                        onClick={() => copyToClipboard('000000000000', 'Prasadam Account Number')}
+                                        onClick={() => copyToClipboard('740701000482', 'Prasadam Account Number')}
                                       >
                                         <Copy className="h-4 w-4" />
                                       </Button>
@@ -470,12 +470,12 @@ const Donate = () => {
                                   <div className="grid grid-cols-2 gap-2">
                                     <p className="text-sm text-muted-foreground">IFSC Code</p>
                                     <div className="flex justify-between items-center">
-                                      <p className="text-sm font-medium">ABCD0123456</p>
+                                      <p className="text-sm font-medium">ICIC0007407</p>
                                       <Button
                                         variant="ghost"
                                         size="sm"
                                         className="text-krishna-gold"
-                                        onClick={() => copyToClipboard('ABCD0123456', 'Prasadam IFSC Code')}
+                                        onClick={() => copyToClipboard('ICIC0007407', 'Prasadam IFSC Code')}
                                       >
                                         <Copy className="h-4 w-4" />
                                       </Button>
@@ -483,7 +483,7 @@ const Donate = () => {
                                   </div>
                                   <div className="grid grid-cols-2 gap-2">
                                     <p className="text-sm text-muted-foreground">Bank & Branch</p>
-                                    <p className="text-sm font-medium">Your Bank, Your Branch</p>
+                                    <p className="text-sm font-medium">ICICI BANK, SUSHANT GOLF CITY</p>
                                   </div>
                                 </div>
                               </CardContent>
@@ -499,17 +499,17 @@ const Donate = () => {
                                 <div className="space-y-3">
                                   <div className="grid grid-cols-2 gap-2">
                                     <p className="text-sm text-muted-foreground">Account Name</p>
-                                    <p className="text-sm font-medium">Your Account Name</p>
+                                    <p className="text-sm font-medium">ISKCON FESTIVAL</p>
                                   </div>
                                   <div className="grid grid-cols-2 gap-2">
                                     <p className="text-sm text-muted-foreground">Account Number</p>
                                     <div className="flex justify-between items-center">
-                                      <p className="text-sm font-medium">000000000000</p>
+                                      <p className="text-sm font-medium">50278006139</p>
                                       <Button
                                         variant="ghost"
                                         size="sm"
                                         className="text-krishna-gold"
-                                        onClick={() => copyToClipboard('000000000000', 'Festival Account Number')}
+                                        onClick={() => copyToClipboard('50278006139', 'Festival Account Number')}
                                       >
                                         <Copy className="h-4 w-4" />
                                       </Button>
@@ -518,12 +518,12 @@ const Donate = () => {
                                   <div className="grid grid-cols-2 gap-2">
                                     <p className="text-sm text-muted-foreground">IFSC Code</p>
                                     <div className="flex justify-between items-center">
-                                      <p className="text-sm font-medium">ABCD0123456</p>
+                                      <p className="text-sm font-medium">IDIB000A532</p>
                                       <Button
                                         variant="ghost"
                                         size="sm"
                                         className="text-krishna-gold"
-                                        onClick={() => copyToClipboard('ABCD0123456', 'Festival IFSC Code')}
+                                        onClick={() => copyToClipboard('IDIB000A532', 'Festival IFSC Code')}
                                       >
                                         <Copy className="h-4 w-4" />
                                       </Button>
@@ -531,7 +531,7 @@ const Donate = () => {
                                   </div>
                                   <div className="grid grid-cols-2 gap-2">
                                     <p className="text-sm text-muted-foreground">Bank & Branch</p>
-                                    <p className="text-sm font-medium">Your Bank, Your Branch</p>
+                                    <p className="text-sm font-medium">Indian Bank, Ahimamau</p>
                                   </div>
                                 </div>
                               </CardContent>
@@ -557,7 +557,7 @@ const Donate = () => {
                                         variant="ghost"
                                         size="sm"
                                         className="text-krishna-gold"
-                                        onClick={() => copyToClipboard('000000000000', 'Goshala Account Number')}
+                                        onClick={() => copyToClipboard('50278006571', 'Goshala Account Number')}
                                       >
                                         <Copy className="h-4 w-4" />
                                       </Button>
@@ -571,7 +571,7 @@ const Donate = () => {
                                         variant="ghost"
                                         size="sm"
                                         className="text-krishna-gold"
-                                        onClick={() => copyToClipboard('ABCD0123456', 'Goshala IFSC Code')}
+                                        onClick={() => copyToClipboard('IDIB000A532', 'Goshala IFSC Code')}
                                       >
                                         <Copy className="h-4 w-4" />
                                       </Button>
@@ -579,7 +579,7 @@ const Donate = () => {
                                   </div>
                                   <div className="grid grid-cols-2 gap-2">
                                     <p className="text-sm text-muted-foreground">Bank & Branch</p>
-                                    <p className="text-sm font-medium">Ahimamau</p>
+                                    <p className="text-sm font-medium">Indian Bank ,Ahimamau</p>
                                   </div>
                                 </div>
                               </CardContent>
