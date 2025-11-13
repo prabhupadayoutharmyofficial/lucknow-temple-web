@@ -299,7 +299,7 @@ const Donate = () => {
                               </CardHeader>
                               <CardContent className="text-center">
                                 <img 
-                                  src="/prasadam.jpg" 
+                                  src="/public/ISKCON FOOD FOR LIFE.jpg"
                                   alt="Prasadam Seva QR Code"
                                   className="mx-auto w-48 h-48 object-contain"
                                 />
