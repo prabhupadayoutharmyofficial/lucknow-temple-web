@@ -396,7 +396,7 @@ const Donate = () => {
                             {/* ISKCON PROJECTS QR Code Account */}
                             <Card>
                               <CardHeader>
-                                <CardTitle className="text-lg font-devotional text-krishna-blue">ISKCON PROJECTS QR CODE</CardTitle>
+                                <CardTitle className="text-lg font-devotional text-krishna-blue">Iskcon Projects</CardTitle>
                                 <p className="text-sm text-muted-foreground">For temple maintenance and daily activities</p>
                               </CardHeader>
                               <CardContent>
@@ -444,7 +444,7 @@ const Donate = () => {
                             {/* ISKCON FOOD FOR LIFE Account */}
                             <Card>
                               <CardHeader>
-                                <CardTitle className="text-lg font-devotional text-krishna-blue">Prasadam Seva</CardTitle>
+                                <CardTitle className="text-lg font-devotional text-krishna-blue">Food For Life</CardTitle>
                                 <p className="text-sm text-muted-foreground">Support our food distribution program</p>
                               </CardHeader>
                               <CardContent>
@@ -547,12 +547,12 @@ const Donate = () => {
                                 <div className="space-y-3">
                                   <div className="grid grid-cols-2 gap-2">
                                     <p className="text-sm text-muted-foreground">Account Name</p>
-                                    <p className="text-sm font-medium">Your Account Name</p>
+                                    <p className="text-sm font-medium">ISKCON GAUSHALA</p>
                                   </div>
                                   <div className="grid grid-cols-2 gap-2">
                                     <p className="text-sm text-muted-foreground">Account Number</p>
                                     <div className="flex justify-between items-center">
-                                      <p className="text-sm font-medium">000000000000</p>
+                                      <p className="text-sm font-medium">50278006571</p>
                                       <Button
                                         variant="ghost"
                                         size="sm"
@@ -566,7 +566,7 @@ const Donate = () => {
                                   <div className="grid grid-cols-2 gap-2">
                                     <p className="text-sm text-muted-foreground">IFSC Code</p>
                                     <div className="flex justify-between items-center">
-                                      <p className="text-sm font-medium">ABCD0123456</p>
+                                      <p className="text-sm font-medium">IDIB000A532</p>
                                       <Button
                                         variant="ghost"
                                         size="sm"
@@ -579,7 +579,7 @@ const Donate = () => {
                                   </div>
                                   <div className="grid grid-cols-2 gap-2">
                                     <p className="text-sm text-muted-foreground">Bank & Branch</p>
-                                    <p className="text-sm font-medium">Your Bank, Your Branch</p>
+                                    <p className="text-sm font-medium">Ahimamau</p>
                                   </div>
                                 </div>
                               </CardContent>
