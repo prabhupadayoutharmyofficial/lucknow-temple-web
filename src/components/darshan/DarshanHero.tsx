@@ -5,7 +5,9 @@ const DarshanHero = () => {
   return (
     <div className="relative h-[50vh] bg-cover bg-center flex items-center justify-center" 
       style={{ 
-        backgroundImage: "url('')"
+        backgroundImage: "url('https://jjiyqxfotpfwdiwdexzp.supabase.co/storage/v1/object/public/Media/temple-schedule%20BACKGROUND2.png')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
       }}>
       <div className="absolute inset-0 bg-black/40"></div>
       <div className="relative text-center text-white z-10">
