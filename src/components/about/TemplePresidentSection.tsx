@@ -10,7 +10,7 @@ const TemplePresidentSection = () => {
       <div className="flex items-center space-x-6">
         <Avatar className="h-48 w-48">
           <AvatarImage 
-            src="https://images.unsplash.com/photo-1522529599102-193c0d76b5b6?q=80&w=1000&auto=format&fit=crop" 
+            src="https://jjiyqxfotpfwdiwdexzp.supabase.co/storage/v1/object/public/Media/TP.webp" 
             alt="Temple President" 
           />
           <AvatarFallback>

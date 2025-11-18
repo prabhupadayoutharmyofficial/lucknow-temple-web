@@ -12,7 +12,7 @@ const AboutSidebar = () => {
         <h3 className="font-devotional text-xl text-krishna-blue mb-4 text-center">Founder Acharya</h3>
         <div className="flex flex-col items-center mb-6">
           <img 
-            src="https://images.unsplash.com/photo-1562157937-6935df0ddedc?q=80&w=1035&auto=format&fit=crop" 
+            src="https://jjiyqxfotpfwdiwdexzp.supabase.co/storage/v1/object/public/Media/SrilaPrabhupada.jpg" 
             alt="Srila Prabhupada" 
             className="w-48 h-48 rounded-full object-cover mb-4 border-4 border-krishna-gold"
           />
