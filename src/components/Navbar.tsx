@@ -39,8 +39,8 @@ const Navbar = () => {
                 <Logo />
                 <div className="absolute -inset-1 bg-gradient-to-r from-krishna-gold/30 to-krishna-saffron/30 rounded-full blur opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </div>
-              <div className="hidden sm:block">
-                <h1 className="text-2xl font-devotional font-bold bg-gradient-to-r from-krishna-blue to-krishna-maroon bg-clip-text text-transparent">
+              <div className="block">
+                <h1 className="text-lg sm:text-2xl font-devotional font-bold bg-gradient-to-r from-krishna-blue to-krishna-maroon bg-clip-text text-transparent">
                   ISKCON Lucknow
                 </h1>
                 <p className="text-xs text-krishna-gold font-medium -mt-1">
