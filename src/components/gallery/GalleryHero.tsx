@@ -3,9 +3,9 @@ import React from 'react';
 
 const GalleryHero = () => {
   return (
-    <div className="relative h-[40vh] bg-cover bg-center flex items-center justify-center" 
+    <div className="relative h-[80vh] bg-cover bg-center flex items-center justify-center" 
       style={{ 
-        backgroundImage: "url('https://images.unsplash.com/photo-1583291277511-f2dbcced05b3?q=80&w=2069&auto=format&fit=crop')"
+        backgroundImage: "url('https://jjiyqxfotpfwdiwdexzp.supabase.co/storage/v1/object/public/Media/g03-sri-lord-krishna-1200x800.jpg')"
       }}>
       <div className="absolute inset-0 bg-black/60"></div>
       <div className="relative text-center text-white z-10">

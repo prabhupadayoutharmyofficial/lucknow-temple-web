@@ -3,7 +3,7 @@ import React from 'react';
 
 const DarshanHero = () => {
   return (
-    <div className="relative h-[50vh] bg-cover bg-center flex items-center justify-center" 
+    <div className="relative h-[80vh] bg-cover bg-center flex items-center justify-center" 
       style={{ 
         backgroundImage: "url('https://jjiyqxfotpfwdiwdexzp.supabase.co/storage/v1/object/public/Media/temple-schedule%20BACKGROUND2.png')",
         backgroundSize: "cover",

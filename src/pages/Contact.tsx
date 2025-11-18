@@ -13,9 +13,9 @@ const Contact = () => {
       
       <main className="flex-grow">
         {/* Hero Section */}
-        <div className="relative h-[40vh] bg-cover bg-center flex items-center justify-center" 
+        <div className="relative h-[80vh] bg-cover bg-center flex items-center justify-center" 
           style={{ 
-            backgroundImage: "url('')"
+            backgroundImage: "url('https://jjiyqxfotpfwdiwdexzp.supabase.co/storage/v1/object/public/Media/contact.jpeg')"
           }}>
           <div className="absolute inset-0 bg-black/50"></div>
           <div className="relative text-center text-white z-10">

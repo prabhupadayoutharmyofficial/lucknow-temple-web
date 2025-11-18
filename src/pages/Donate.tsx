@@ -126,9 +126,9 @@ const Donate = () => {
       
       <main className="flex-grow">
         {/* Hero Section */}
-        <div className="relative h-[50vh] bg-cover bg-center flex items-center justify-center" 
+        <div className="relative h-[80vh] bg-cover bg-center flex items-center justify-center" 
           style={{ 
-            backgroundImage: "url('https://images.unsplash.com/photo-1532466901723-63cd96b3bcb2?q=80&w=2070&auto=format&fit=crop')",
+            backgroundImage: "url('https://jjiyqxfotpfwdiwdexzp.supabase.co/storage/v1/object/public/Media/Donate.jpg')",
           }}>
           <div className="absolute inset-0 bg-black/40"></div>
           <div className="relative text-center text-white z-10">
