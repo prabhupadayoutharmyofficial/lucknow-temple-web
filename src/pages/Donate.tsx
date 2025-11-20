@@ -1,315 +1,604 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  CreditCard, 
-  Landmark, 
-  HeartHandshake, 
-  Calendar, 
-  ChevronRight,
-  CheckCircle2
-} from 'lucide-react';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { toast } from '@/components/ui/use-toast';
+import { Copy } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 
-const donationSchema = z.object({
-  amount: z.string().min(1, "Please select or enter an amount"),
-  name: z.string().min(2, "Please enter your name"),
+const receiptFormSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Please enter a valid email"),
-  phone: z.string().optional(),
+  phone: z.string().min(10, "Please enter a valid phone number"),
   pan: z.string().optional(),
-  paymentMethod: z.enum(["card", "bank", "upi"])
+});
+
+const updatedReceiptFormSchema = receiptFormSchema.extend({
+  transactionId: z.string().min(1, "Transaction ID is required"),
+  amount: z.preprocess((value) => {
+    if (typeof value === "string" || typeof value === "number") {
+      const parsed = parseFloat(value as string);
+      return isNaN(parsed) ? undefined : parsed;
+    }
+    return undefined;
+  }, z.number().min(1, "Amount must be greater than 0")),
 });
 
 const Donate = () => {
-  const form = useForm<z.infer<typeof donationSchema>>({
-    resolver: zodResolver(donationSchema),
-    defaultValues: {
-      amount: "1100",
-      paymentMethod: "card"
-    }
+  const [showPopup, setShowPopup] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const copyToClipboard = (text: string, type: string) => {
+    navigator.clipboard.writeText(text);
+    toast({
+      title: "Copied to clipboard",
+      description: `${type} details have been copied to your clipboard.`,
+    });
+  };
+
+  const receiptForm = useForm<z.infer<typeof receiptFormSchema>>({
+    resolver: zodResolver(receiptFormSchema),
+    defaultValues: {},
+    mode: "onBlur",
   });
 
-  const onSubmit = (values: z.infer<typeof donationSchema>) => {
-    // This would be connected to a payment gateway in production
-    console.log(values);
+  const updatedReceiptForm = useForm<z.infer<typeof updatedReceiptFormSchema>>({
+    resolver: zodResolver(updatedReceiptFormSchema),
+    defaultValues: {},
+    mode: "onBlur",
+  });
+
+  const onSubmitReceiptForm = (values: z.infer<typeof receiptFormSchema>) => {
+    console.log("80G Receipt Request Submitted:", values);
     toast({
-      title: "Donation Initiated",
-      description: `Thank you for your donation of ₹${values.amount}. You will be redirected to the payment gateway.`,
+      title: "Request Submitted",
+      description: "Your request for an 80G receipt has been submitted successfully.",
     });
-    // Here you would redirect to payment gateway
+    receiptForm.reset();
+  };
+
+  const onSubmitUpdatedReceiptForm = async (values: z.infer<typeof updatedReceiptFormSchema>) => {
+    try {
+      setIsSubmitting(true);
+      const formData = {
+        access_key: import.meta.env.VITE_WEB3FORMS_KEY,
+        name: values.name,
+        email: values.email,
+        phone: values.phone,
+        pan: values.pan || "Not Provided",
+        transaction_id: values.transactionId,
+        amount: values.amount,
+        subject: `80G Receipt Request from ${values.name}`,
+        message: `
+          80G Receipt Request Details:
+          Name: ${values.name}
+          Email: ${values.email}
+          Phone: ${values.phone}
+          PAN: ${values.pan || "Not Provided"}
+          Transaction ID: ${values.transactionId}
+          Amount: ${values.amount}
+        `,
+      };
+
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setShowPopup(true);
+        updatedReceiptForm.reset();
+      } else {
+        throw new Error("Submission failed");
+      }
+    } catch (error) {
+      console.error("Error submitting 80G receipt request:", error);
+      alert("There was an error submitting your request. Please try again later.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      
+
       <main className="flex-grow">
-        {/* Hero Section */}
-        <div className="relative h-[50vh] bg-cover bg-center flex items-center justify-center" 
-          style={{ 
-            backgroundImage: "url('https://images.unsplash.com/photo-1532466901723-63cd96b3bcb2?q=80&w=2070&auto=format&fit=crop')",
-          }}>
-          <div className="absolute inset-0 bg-black/40"></div>
-          <div className="relative text-center text-white z-10">
-            <h1 className="font-devotional text-5xl font-bold mb-4">Support Our Mission</h1>
-            <p className="text-xl max-w-3xl mx-auto">Your donations help us spread spiritual knowledge and serve the community</p>
-          </div>
-        </div>
-        
-        {/* Donation Content */}
         <section className="container mx-auto px-4 py-16">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2">
-              <h2 className="font-devotional text-3xl font-semibold text-krishna-blue mb-8 flex items-center gap-3">
-                <HeartHandshake className="text-krishna-gold" />
-                Make a Donation
-              </h2>
-              
-              <Card>
-                <CardContent className="pt-6">
-                  <Tabs defaultValue="one-time">
-                    <TabsList className="grid w-full grid-cols-2 mb-6">
-                      <TabsTrigger value="one-time">One-time Donation</TabsTrigger>
-                      <TabsTrigger value="recurring">Monthly Support</TabsTrigger>
-                    </TabsList>
-                    
-                    <TabsContent value="one-time">
-                      <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                          <FormField
-                            control={form.control}
-                            name="amount"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Select Donation Amount</FormLabel>
-                                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
-                                  {["501", "1100", "2100", "5100"].map((amount) => (
-                                    <Button
-                                      key={amount}
-                                      type="button"
-                                      variant={field.value === amount ? "default" : "outline"}
-                                      className={field.value === amount ? "bg-krishna-gold hover:bg-krishna-gold/90" : ""}
-                                      onClick={() => field.onChange(amount)}
-                                    >
-                                      ₹{amount}
-                                    </Button>
-                                  ))}
-                                </div>
-                                <FormControl>
-                                  <div className="relative">
-                                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                                      <span className="text-muted-foreground">₹</span>
-                                    </div>
-                                    <Input 
-                                      placeholder="Custom Amount" 
-                                      className="pl-8" 
-                                      {...field} 
-                                    />
-                                  </div>
-                                </FormControl>
-                                <FormDescription>
-                                  All donations are eligible for tax exemption under Section 80G
-                                </FormDescription>
-                              </FormItem>
-                            )}
-                          />
-                          
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <FormField
-                              control={form.control}
-                              name="name"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Full Name</FormLabel>
-                                  <FormControl>
-                                    <Input placeholder="Enter your name" {...field} />
-                                  </FormControl>
-                                </FormItem>
-                              )}
-                            />
-                            
-                            <FormField
-                              control={form.control}
-                              name="email"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Email Address</FormLabel>
-                                  <FormControl>
-                                    <Input placeholder="Enter your email" {...field} />
-                                  </FormControl>
-                                </FormItem>
-                              )}
-                            />
-                            
-                            <FormField
-                              control={form.control}
-                              name="phone"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Phone Number (Optional)</FormLabel>
-                                  <FormControl>
-                                    <Input placeholder="Enter your phone number" {...field} />
-                                  </FormControl>
-                                </FormItem>
-                              )}
-                            />
-                            
-                            <FormField
-                              control={form.control}
-                              name="pan"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>PAN Number (Optional, for 80G)</FormLabel>
-                                  <FormControl>
-                                    <Input placeholder="Enter PAN for tax benefit" {...field} />
-                                  </FormControl>
-                                </FormItem>
-                              )}
-                            />
-                          </div>
-                          
-                          <FormField
-                            control={form.control}
-                            name="paymentMethod"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Payment Method</FormLabel>
-                                <FormControl>
-                                  <RadioGroup 
-                                    className="grid grid-cols-3 gap-4"
-                                    value={field.value}
-                                    onValueChange={field.onChange}
-                                  >
-                                    <FormItem className="flex flex-col items-center space-y-2">
-                                      <FormControl>
-                                        <RadioGroupItem value="card" className="sr-only" />
-                                      </FormControl>
-                                      <div className={`flex flex-col items-center justify-between rounded-md border-2 border-muted p-4 w-full ${field.value === 'card' ? 'border-krishna-gold bg-krishna-gold/5' : ''}`}>
-                                        <CreditCard className={`mb-2 ${field.value === 'card' ? 'text-krishna-gold' : ''}`} />
-                                        <span className="text-sm font-medium">Credit/Debit Card</span>
-                                      </div>
-                                    </FormItem>
-                                    
-                                    <FormItem className="flex flex-col items-center space-y-2">
-                                      <FormControl>
-                                        <RadioGroupItem value="bank" className="sr-only" />
-                                      </FormControl>
-                                      <div className={`flex flex-col items-center justify-between rounded-md border-2 border-muted p-4 w-full ${field.value === 'bank' ? 'border-krishna-gold bg-krishna-gold/5' : ''}`}>
-                                        <Landmark className={`mb-2 ${field.value === 'bank' ? 'text-krishna-gold' : ''}`} />
-                                        <span className="text-sm font-medium">Bank Transfer</span>
-                                      </div>
-                                    </FormItem>
-                                    
-                                    <FormItem className="flex flex-col items-center space-y-2">
-                                      <FormControl>
-                                        <RadioGroupItem value="upi" className="sr-only" />
-                                      </FormControl>
-                                      <div className={`flex flex-col items-center justify-between rounded-md border-2 border-muted p-4 w-full ${field.value === 'upi' ? 'border-krishna-gold bg-krishna-gold/5' : ''}`}>
-                                        <svg 
-                                          className={`w-6 h-6 mb-2 ${field.value === 'upi' ? 'text-krishna-gold' : ''}`} 
-                                          viewBox="0 0 24 24" 
-                                          fill="currentColor"
-                                        >
-                                          <path d="M21 9V3H15V9H21M21 21V15H15V21H21M3 21H9V15H3V21M3 9H9V3H3V9Z" />
-                                        </svg>
-                                        <span className="text-sm font-medium">UPI</span>
-                                      </div>
-                                    </FormItem>
-                                  </RadioGroup>
-                                </FormControl>
-                              </FormItem>
-                            )}
-                          />
-                          
-                          <Button type="submit" className="w-full bg-krishna-gold hover:bg-krishna-saffron text-white">
-                            Proceed to Donation
-                          </Button>
-                        </form>
-                      </Form>
-                    </TabsContent>
-                    
-                    <TabsContent value="recurring">
-                      <div className="text-center py-8">
-                        <Calendar className="mx-auto h-12 w-12 text-krishna-gold opacity-75" />
-                        <h3 className="mt-4 text-lg font-semibold">Monthly Donation Programs</h3>
-                        <p className="mt-2 text-muted-foreground">
-                          Become a monthly supporter of our various temple programs. 
-                          Please visit the temple office or contact us for setting up recurring donations.
-                        </p>
-                        <Button className="mt-6 bg-krishna-gold hover:bg-krishna-saffron" asChild>
-                          <a href="/contact">Contact Us</a>
+          <h2 className="font-devotional text-3xl font-semibold text-krishna-blue mb-8">
+            Donation Options
+          </h2>
+
+          <Tabs defaultValue="upi">
+            <TabsList>
+              <TabsTrigger value="upi">UPI</TabsTrigger>
+              <TabsTrigger value="bank">Bank Details</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="upi">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg font-devotional text-krishna-blue">ISKCON PROJECTS QR CODE</CardTitle>
+                  </CardHeader>
+                  <CardContent className="text-center">
+                    <img 
+                      src="/ISKCON PROJECTS.png" 
+                      alt="ISKCON PROJECTS QR Code"
+                      className="mx-auto w-48 h-48 object-contain"
+                    />
+                    <div className="mt-4 border rounded-lg p-3">
+                      <div className="flex justify-between items-center">
+                        <p className="text-sm font-medium">UPI ID</p>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-krishna-gold"
+                          onClick={() => copyToClipboard('iskconprojects@indianbk', 'Iskcon Projects')}
+                        >
+                          <Copy className="h-4 w-4 mr-2" />
+                          Copy
                         </Button>
                       </div>
-                    </TabsContent>
-                  </Tabs>
-                </CardContent>
-              </Card>
-            </div>
-            
-            <div className="space-y-8">
-              <Card className="decorative-border overflow-hidden">
-                <CardHeader className="bg-krishna-gold/10">
-                  <CardTitle className="font-devotional text-krishna-blue">Why Donate?</CardTitle>
-                </CardHeader>
-                <CardContent className="pt-6">
-                  <p className="mb-4">Your generous donations support:</p>
-                  <ul className="space-y-2">
-                    {[
-                      "Daily worship of the deities",
-                      "Temple maintenance and operations",
-                      "Food for Life program to feed the needy",
-                      "Spiritual education and outreach",
-                      "Festival celebrations throughout the year"
-                    ].map((item, index) => (
-                      <li key={index} className="flex items-start gap-2">
-                        <CheckCircle2 className="h-5 w-5 text-krishna-gold shrink-0 mt-0.5" />
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">Donation FAQs</CardTitle>
-                </CardHeader>
-                <CardContent className="text-sm space-y-4">
-                  <div>
-                    <p className="font-semibold">Is my donation tax-deductible?</p>
-                    <p className="text-muted-foreground">Yes, donations are eligible for tax exemption under Section 80G.</p>
-                  </div>
-                  <div>
-                    <p className="font-semibold">Can I donate items instead of money?</p>
-                    <p className="text-muted-foreground">Yes, the temple accepts various items. Please contact us for details.</p>
-                  </div>
-                  <div>
-                    <p className="font-semibold">How will my donation be used?</p>
-                    <p className="text-muted-foreground">Your donation supports temple maintenance, deity worship, prasadam distribution, and community services.</p>
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <Button variant="outline" className="w-full" asChild>
-                    <a href="/faq">
-                      More FAQs
-                      <ChevronRight className="ml-2 h-4 w-4" />
-                    </a>
-                  </Button>
-                </CardFooter>
-              </Card>
-            </div>
-          </div>
+                      <p className="text-sm text-muted-foreground">iskconprojects@indianbk</p>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Prasadam Seva QR */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg font-devotional text-krishna-blue">ISKCON FOOD FOR LIFE QR CODE</CardTitle>
+                    <p className="text-sm text-muted-foreground">Support our food distribution program</p>
+                  </CardHeader>
+                  <CardContent className="text-center">
+                    <img 
+                      src="/public/ISKCON FOOD FOR LIFE.jpg"
+                      alt="Prasadam Seva QR Code"
+                      className="mx-auto w-48 h-48 object-contain"
+                    />
+                    <div className="mt-4 border rounded-lg p-3">
+                      <div className="flex justify-between items-center">
+                        <p className="text-sm font-medium">UPI ID</p>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-krishna-gold"
+                          onClick={() => copyToClipboard('internationalsocietyforkrishnaconsciousness@icici', 'ISKCON FOOD FOR LIFE QR CODE')}
+                        >
+                          <Copy className="h-4 w-4 mr-2" />
+                          Copy
+                        </Button>
+                      </div>
+                      <p className="text-sm text-muted-foreground">internationalsocietyforkrishnaconsciousness@icici</p>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Festival Donations QR */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg font-devotional text-krishna-blue">FESTIVAL DONATIONS QR CODE</CardTitle>
+                    <p className="text-sm text-muted-foreground">Support temple festivals and celebrations</p>
+                  </CardHeader>
+                  <CardContent className="text-center">
+                    <img 
+                      src="/public/ISKCON FESTIVAL.png" 
+                      alt="Festival Donations QR Code"
+                      className="mx-auto w-48 h-48 object-contain"
+                    />
+                    <div className="mt-4 border rounded-lg p-3">
+                      <div className="flex justify-between items-center">
+                        <p className="text-sm font-medium">UPI ID</p>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-krishna-gold"
+                          onClick={() => copyToClipboard('iskconfestival@indianbk', 'Festival Donation UPI ID')}
+                        >
+                          <Copy className="h-4 w-4 mr-2" />
+                          Copy
+                        </Button>
+                      </div>
+                      <p className="text-sm text-muted-foreground">iskconfestival@indianbk</p>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Goshala Donations QR */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg font-devotional text-krishna-blue">GOSHALA SEWA QR CODE</CardTitle>
+                    <p className="text-sm text-muted-foreground">Support our cow protection program</p>
+                  </CardHeader>
+                  <CardContent className="text-center">
+                    <img 
+                      src="/ISKCON GAUSHALA.png" 
+                      alt="Goshala Seva QR Code"
+                      className="mx-auto w-48 h-48 object-contain"
+                    />
+                    <div className="mt-4 border rounded-lg p-3">
+                      <div className="flex justify-between items-center">
+                        <p className="text-sm font-medium">UPI ID</p>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-krishna-gold"
+                          onClick={() => copyToClipboard('iskcongaushala@indianbk', 'Goshala Seva UPI ID')}
+                        >
+                          <Copy className="h-4 w-4 mr-2" />
+                          Copy
+                        </Button>
+                      </div>
+                      <p className="text-sm text-muted-foreground">iskcongaushala@indianbk</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="bank">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg font-devotional text-krishna-blue">Iskcon Projects</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      <div className="grid grid-cols-2 gap-2">
+                        <p className="text-sm text-muted-foreground">Account Name</p>
+                        <p className="text-sm font-medium">ISKCON PROJECT</p>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <p className="text-sm text-muted-foreground">Account Number</p>
+                        <div className="flex justify-between items-center">
+                          <p className="text-sm font-medium">50278005410</p>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-krishna-gold"
+                            onClick={() => copyToClipboard('50278005410', 'General Account Number')}
+                          >
+                            <Copy className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <p className="text-sm text-muted-foreground">IFSC Code</p>
+                        <div className="flex justify-between items-center">
+                          <p className="text-sm font-medium">IDIB000A532</p>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-krishna-gold"
+                            onClick={() => copyToClipboard('IDIB000A532', 'General IFSC Code')}
+                          >
+                            <Copy className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <p className="text-sm text-muted-foreground">Bank & Branch</p>
+                        <p className="text-sm font-medium">Indian Bank, Ahimamau</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* ISKCON FOOD FOR LIFE Account */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg font-devotional text-krishna-blue">Food For Life</CardTitle>
+                    <p className="text-sm text-muted-foreground">Support our food distribution program</p>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      <div className="grid grid-cols-2 gap-2">
+                        <p className="text-sm text-muted-foreground">Account Name</p>
+                        <p className="text-sm font-medium">INTERNATIONAL SOCIETY FOR KRISHNA CONSCIOUSNESS (ISKCON)</p>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <p className="text-sm text-muted-foreground">Account Number</p>
+                        <div className="flex justify-between items-center">
+                          <p className="text-sm font-medium">740701000482</p>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-krishna-gold"
+                            onClick={() => copyToClipboard('740701000482', 'Prasadam Account Number')}
+                          >
+                            <Copy className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <p className="text-sm text-muted-foreground">IFSC Code</p>
+                        <div className="flex justify-between items-center">
+                          <p className="text-sm font-medium">ICIC0007407</p>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-krishna-gold"
+                            onClick={() => copyToClipboard('ICIC0007407', 'Prasadam IFSC Code')}
+                          >
+                            <Copy className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <p className="text-sm text-muted-foreground">Bank & Branch</p>
+                        <p className="text-sm font-medium">ICICI BANK, SUSHANT GOLF CITY</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Festival Account */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg font-devotional text-krishna-blue">Festival Donations</CardTitle>
+                    <p className="text-sm text-muted-foreground">Support temple festivals and celebrations</p>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      <div className="grid grid-cols-2 gap-2">
+                        <p className="text-sm text-muted-foreground">Account Name</p>
+                        <p className="text-sm font-medium">ISKCON FESTIVAL</p>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <p className="text-sm text-muted-foreground">Account Number</p>
+                        <div className="flex justify-between items-center">
+                          <p className="text-sm font-medium">50278006139</p>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-krishna-gold"
+                            onClick={() => copyToClipboard('50278006139', 'Festival Account Number')}
+                          >
+                            <Copy className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <p className="text-sm text-muted-foreground">IFSC Code</p>
+                        <div className="flex justify-between items-center">
+                          <p className="text-sm font-medium">IDIB000A532</p>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-krishna-gold"
+                            onClick={() => copyToClipboard('IDIB000A532', 'Festival IFSC Code')}
+                          >
+                            <Copy className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <p className="text-sm text-muted-foreground">Bank & Branch</p>
+                        <p className="text-sm font-medium">Indian Bank, Ahimamau</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Goshala Account */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg font-devotional text-krishna-blue">Goshala Seva</CardTitle>
+                    <p className="text-sm text-muted-foreground">Support our cow protection program</p>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      <div className="grid grid-cols-2 gap-2">
+                        <p className="text-sm text-muted-foreground">Account Name</p>
+                        <p className="text-sm font-medium">ISKCON GAUSHALA</p>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <p className="text-sm text-muted-foreground">Account Number</p>
+                        <div className="flex justify-between items-center">
+                          <p className="text-sm font-medium">50278006571</p>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-krishna-gold"
+                            onClick={() => copyToClipboard('50278006571', 'Goshala Account Number')}
+                          >
+                            <Copy className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <p className="text-sm text-muted-foreground">IFSC Code</p>
+                        <div className="flex justify-between items-center">
+                          <p className="text-sm font-medium">IDIB000A532</p>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-krishna-gold"
+                            onClick={() => copyToClipboard('IDIB000A532', 'Goshala IFSC Code')}
+                          >
+                            <Copy className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <p className="text-sm text-muted-foreground">Bank & Branch</p>
+                        <p className="text-sm font-medium">Indian Bank ,Ahimamau</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+          </Tabs>
         </section>
+
+        <section className="container mx-auto px-4 py-16">
+          <h3 className="font-devotional text-3xl font-semibold text-red-600 mb-6">
+            Request 80G Receipt
+          </h3>
+          <p className="text-sm text-gray-600 mb-4">
+            The receipt can only be requested if the payment has been made. Please ensure you fill in the transaction ID and the amount paid.
+          </p>
+          <Form {...updatedReceiptForm}>
+            <form onSubmit={updatedReceiptForm.handleSubmit(onSubmitUpdatedReceiptForm)} className="space-y-6">
+              <FormField
+                control={updatedReceiptForm.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Full Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter your full name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={updatedReceiptForm.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email Address</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter your email" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={updatedReceiptForm.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Phone Number</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter your phone number" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={updatedReceiptForm.control}
+                name="pan"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>PAN Number (Optional)</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter your PAN number" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={updatedReceiptForm.control}
+                name="transactionId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Transaction ID</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter your transaction ID" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={updatedReceiptForm.control}
+                name="amount"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Amount Paid</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder="Enter the amount paid"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <Button
+                type="submit"
+                className="w-full bg-krishna-gold hover:bg-krishna-saffron"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <div className="flex items-center gap-2">
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                    Submitting...
+                  </div>
+                ) : (
+                  "Submit Request"
+                )}
+              </Button>
+            </form>
+          </Form>
+        </section>
+
+        <Dialog open={showPopup} onOpenChange={setShowPopup}>
+          <DialogContent className="bg-white rounded-lg shadow-lg p-6 max-w-md mx-auto">
+            <DialogHeader>
+              <DialogTitle className="text-2xl font-bold text-krishna-blue text-center">
+                🎉 Request Submitted Successfully!
+              </DialogTitle>
+            </DialogHeader>
+            <div className="text-center space-y-4">
+              <p className="text-gray-700">
+                Thank you for submitting your request for an 80G receipt. We will process your request and get back to you shortly.
+              </p>
+              <div className="flex justify-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="mx-auto w-20 h-20 text-green-500 drop-shadow-lg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="#e6ffe6" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M9 12l2 2 4-4"
+                    stroke="#22c55e"
+                    strokeWidth="2"
+                    fill="none"
+                  />
+                </svg>
+              </div>
+              <Button
+                className="bg-krishna-gold hover:bg-krishna-saffron text-white px-4 py-2 rounded-md"
+                onClick={() => setShowPopup(false)}
+              >
+                Close
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </main>
 
       <Footer />

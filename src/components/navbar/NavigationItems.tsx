@@ -12,7 +12,7 @@ export const getRightNavItems = (user: any) => {
     { name: 'Visit', path: '/visit' },
     { name: 'FAQ', path: '/faq' },
     { name: 'Donate', path: '/donate' },
-    { name: 'Contact', path: '/contact' },
+    { name: 'Contact Us', path: '/contact' },
   ];
 
   if (!user) {

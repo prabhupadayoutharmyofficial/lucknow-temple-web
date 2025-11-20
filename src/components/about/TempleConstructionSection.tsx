@@ -12,9 +12,7 @@ const TempleConstructionSection = () => {
           <h4 className="font-devotional text-xl text-krishna-blue">Sacred Architecture</h4>
         </div>
         <p>
-          The ISKCON Lucknow temple construction began in 1995 and was completed in 2002 after seven years of 
-          dedicated effort. The temple was designed by renowned architect Sri Ramchandra Das, who incorporated 
-          traditional Nagara-style Vedic architecture with modern construction techniques.
+          The ISKCON Lucknow temple construction began in 2014 and is expected to completed in 2028.
         </p>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
@@ -22,19 +20,14 @@ const TempleConstructionSection = () => {
             <h5 className="font-devotional text-krishna-blue mb-2">Design Elements</h5>
             <ul className="list-disc ml-6 space-y-1">
               <li>Traditional shikhara (spire) reaching 75 feet high</li>
-              <li>Hand-carved stone mandapam (hall)</li>
-              <li>Ornate marble work from Rajasthan</li>
-              <li>Intricately designed pillars narrating Krishna's pastimes</li>
+              <li>Makrana marble work from Uttar Pradesh</li>
             </ul>
           </div>
           <div className="bg-white/80 p-4 rounded shadow-sm">
             <h5 className="font-devotional text-krishna-blue mb-2">Construction Phases</h5>
             <ul className="list-disc ml-6 space-y-1">
               <li>Foundation ceremony: 1995</li>
-              <li>Main structure completion: 1998</li>
-              <li>Interior work: 1998-2000</li>
-              <li>Deity installation: 2001</li>
-              <li>Grand opening: 2002</li>
+              <li>Grand opening: 2027 (expected)</li>
             </ul>
           </div>
         </div>

@@ -6,12 +6,15 @@ import { Link } from 'react-router-dom';
 
 const Hero = () => {
   return (
-    <div className="relative h-[90vh]">
+    <div className="relative h-[100vh]">
       {/* Background image with overlay */}
       <div 
         className="absolute inset-0 bg-cover bg-center"
-        style={{ 
-          backgroundImage: "url('/public/background.jpg')", 
+        style={{
+          backgroundImage: "url('https://jjiyqxfotpfwdiwdexzp.supabase.co/storage/v1/object/public/Media/background.jpg')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
         }}
       >
         <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/60"></div>

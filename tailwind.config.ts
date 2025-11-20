@@ -19,6 +19,11 @@ export default {
 			}
 		},
 		extend: {
+			backgroundImage: {
+				'om-pattern': "url('/patterns/om-pattern.svg')",
+				'mandala': "url('/patterns/mandala.svg')",
+				'lotus': "url('/patterns/lotus.svg')",
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -78,8 +83,10 @@ export default {
 			},
 			fontFamily: {
 				sans: ['Inter', 'sans-serif'],
-				serif: ['Playfair Display', 'serif'],
-				devotional: ['Playfair Display', 'serif']
+				serif: ['Gelasio', 'serif'],
+				heading: ['Gelasio', 'serif'],
+				body: ['Inter', 'sans-serif'],
+				decorative: ['Playfair Display', 'serif']
 			},
 			keyframes: {
 				'accordion-down': {

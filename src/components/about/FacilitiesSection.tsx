@@ -36,17 +36,6 @@ const FacilitiesSection = () => {
           </div>
 
           <div className="bg-white p-4 rounded shadow-md flex items-start gap-3">
-            <BookOpen className="text-krishna-blue h-6 w-6 shrink-0 mt-1" />
-            <div>
-              <h4 className="font-medium text-krishna-blue">Library</h4>
-              <p className="text-sm text-gray-600">
-                Extensive collection of spiritual books, manuscripts, and multimedia resources 
-                for study and research.
-              </p>
-            </div>
-          </div>
-
-          <div className="bg-white p-4 rounded shadow-md flex items-start gap-3">
             <ShoppingBag className="text-krishna-blue h-6 w-6 shrink-0 mt-1" />
             <div>
               <h4 className="font-medium text-krishna-blue">Gift Shop</h4>
@@ -64,17 +53,6 @@ const FacilitiesSection = () => {
               <p className="text-sm text-gray-600">
                 Spacious hall where free prasadam is distributed to devotees, especially 
                 during festivals and weekly Sunday feasts.
-              </p>
-            </div>
-          </div>
-
-          <div className="bg-white p-4 rounded shadow-md flex items-start gap-3">
-            <Wifi className="text-krishna-blue h-6 w-6 shrink-0 mt-1" />
-            <div>
-              <h4 className="font-medium text-krishna-blue">Free Wi-Fi</h4>
-              <p className="text-sm text-gray-600">
-                Complimentary Wi-Fi available throughout the temple premises for devotees 
-                and visitors.
               </p>
             </div>
           </div>
