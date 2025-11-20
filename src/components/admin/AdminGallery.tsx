@@ -20,6 +20,7 @@ interface GalleryPhoto {
   display_order: number;
   collection_id: string | null;
   created_at: string;
+  media_type: 'image' | 'video';
 }
 
 interface PhotoCollection {
@@ -62,7 +63,12 @@ const AdminGallery = () => {
         .order('display_order', { ascending: true });
 
       if (error) throw error;
-      setPhotos(data || []);
+      // Type assertion to ensure media_type is correct
+      const typedData = (data || []).map(photo => ({
+        ...photo,
+        media_type: (photo.media_type || 'image') as 'image' | 'video'
+      }));
+      setPhotos(typedData);
     } catch (error) {
       console.error('Error fetching photos:', error);
       toast({
@@ -94,20 +100,21 @@ const AdminGallery = () => {
     }
   };
 
-  const uploadFile = async (file: File): Promise<string | null> => {
+  const uploadFile = async (file: File, mediaType: 'image' | 'video'): Promise<string | null> => {
     try {
       const fileExt = file.name.split('.').pop();
       const fileName = `${Math.random()}.${fileExt}`;
       const filePath = `${fileName}`;
+      const bucket = mediaType === 'video' ? 'gallery-videos' : 'gallery-images';
 
       const { data, error } = await supabase.storage
-        .from('gallery-images')
+        .from(bucket)
         .upload(filePath, file);
 
       if (error) throw error;
 
       const { data: { publicUrl } } = supabase.storage
-        .from('gallery-images')
+        .from(bucket)
         .getPublicUrl(filePath);
 
       return publicUrl;
@@ -115,7 +122,7 @@ const AdminGallery = () => {
       console.error('Error uploading file:', error);
       toast({
         title: "Upload Error",
-        description: "Failed to upload image",
+        description: `Failed to upload ${mediaType}`,
         variant: "destructive",
       });
       return null;
@@ -128,6 +135,7 @@ const AdminGallery = () => {
     alt: string;
     display_order: number;
     collection_id: string | null;
+    media_type: 'image' | 'video';
   }) => {
     try {
       if (editingPhoto) {
@@ -270,6 +278,7 @@ const AdminGallery = () => {
       alt: string;
       display_order: number;
       collection_id: string | null;
+      media_type: 'image' | 'video';
     }) => void;
     onCancel: () => void;
   }) => {
@@ -278,7 +287,8 @@ const AdminGallery = () => {
       url: photo?.url || '',
       alt: photo?.alt || '',
       display_order: photo?.display_order || 1,
-      collection_id: photo?.collection_id || 'none'
+      collection_id: photo?.collection_id || 'none',
+      media_type: (photo?.media_type || 'image') as 'image' | 'video'
     });
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [uploadMethod, setUploadMethod] = useState<'url' | 'upload'>('url');
@@ -288,7 +298,12 @@ const AdminGallery = () => {
       const file = e.target.files?.[0];
       if (file) {
         setSelectedFile(file);
-        setFormData({ ...formData, alt: file.name.split('.')[0] });
+        const isVideo = file.type.startsWith('video/');
+        setFormData({ 
+          ...formData, 
+          alt: file.name.split('.')[0],
+          media_type: isVideo ? 'video' : 'image'
+        });
       }
     };
 
@@ -299,7 +314,7 @@ const AdminGallery = () => {
       
       if (uploadMethod === 'upload' && selectedFile) {
         setUploading(true);
-        const uploadedUrl = await uploadFile(selectedFile);
+        const uploadedUrl = await uploadFile(selectedFile, formData.media_type);
         setUploading(false);
         
         if (!uploadedUrl) return;
@@ -309,7 +324,7 @@ const AdminGallery = () => {
       if (!finalUrl) {
         toast({
           title: "Error",
-          description: "Please provide an image URL or upload a file",
+          description: `Please provide a ${formData.media_type} URL or upload a file`,
           variant: "destructive",
         });
         return;
@@ -318,7 +333,8 @@ const AdminGallery = () => {
       onSave({
         ...formData,
         url: finalUrl,
-        collection_id: formData.collection_id === 'none' ? null : formData.collection_id
+        collection_id: formData.collection_id === 'none' ? null : formData.collection_id,
+        media_type: formData.media_type
       });
     };
 
@@ -361,7 +377,20 @@ const AdminGallery = () => {
         </div>
         
         <div>
-          <Label>Image Source</Label>
+          <Label>Media Type</Label>
+          <Select value={formData.media_type} onValueChange={(value: 'image' | 'video') => setFormData({ ...formData, media_type: value })}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="image">Image</SelectItem>
+              <SelectItem value="video">Video</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div>
+          <Label>Media Source</Label>
           <Tabs value={uploadMethod} onValueChange={(value) => setUploadMethod(value as 'url' | 'upload')} className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="url" className="flex items-center gap-2">
@@ -376,12 +405,12 @@ const AdminGallery = () => {
             
             <TabsContent value="url" className="mt-4">
               <div>
-                <Label htmlFor="url">Image URL</Label>
+                <Label htmlFor="url">{formData.media_type === 'video' ? 'Video' : 'Image'} URL</Label>
                 <Input
                   id="url"
                   value={formData.url}
                   onChange={(e) => setFormData({ ...formData, url: e.target.value })}
-                  placeholder="https://images.unsplash.com/..."
+                  placeholder={formData.media_type === 'video' ? 'https://example.com/video.mp4' : 'https://images.unsplash.com/...'}
                   required={uploadMethod === 'url'}
                 />
               </div>
@@ -389,11 +418,11 @@ const AdminGallery = () => {
             
             <TabsContent value="upload" className="mt-4">
               <div>
-                <Label htmlFor="file">Upload Image</Label>
+                <Label htmlFor="file">Upload {formData.media_type === 'video' ? 'Video' : 'Image'}</Label>
                 <Input
                   id="file"
                   type="file"
-                  accept="image/*"
+                  accept={formData.media_type === 'video' ? 'video/*' : 'image/*'}
                   onChange={handleFileChange}
                   required={uploadMethod === 'upload'}
                 />
@@ -535,7 +564,7 @@ const AdminGallery = () => {
               Gallery Management
             </CardTitle>
             <CardDescription>
-              Manage photos in different gallery categories and collections. Upload files or use external URLs.
+              Manage photos and videos in different gallery categories and collections. Upload files or use external URLs.
             </CardDescription>
           </div>
           <div className="flex gap-2">
@@ -684,6 +713,7 @@ const AdminGallery = () => {
                     <TableHeader>
                       <TableRow>
                         <TableHead>Preview</TableHead>
+                        <TableHead>Type</TableHead>
                         <TableHead>Alt Text</TableHead>
                         <TableHead>Collection</TableHead>
                         <TableHead>Order</TableHead>
@@ -696,11 +726,14 @@ const AdminGallery = () => {
                         return (
                           <TableRow key={photo.id}>
                             <TableCell>
-                              <img
-                                src={photo.url}
-                                alt={photo.alt}
-                                className="w-16 h-16 object-cover rounded"
-                              />
+                              {photo.media_type === 'video' ? (
+                                <video src={photo.url} className="w-16 h-16 object-cover rounded" />
+                              ) : (
+                                <img src={photo.url} alt={photo.alt} className="w-16 h-16 object-cover rounded" />
+                              )}
+                            </TableCell>
+                            <TableCell>
+                              <span className="text-xs font-medium uppercase">{photo.media_type}</span>
                             </TableCell>
                             <TableCell className="max-w-xs">
                               <div className="truncate">{photo.alt}</div>
