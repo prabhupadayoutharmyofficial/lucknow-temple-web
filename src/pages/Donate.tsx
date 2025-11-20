@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Copy } from 'lucide-react';
-import { toast } from '@/components/ui/use-toast';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
@@ -21,10 +21,19 @@ const receiptFormSchema = z.object({
 
 const updatedReceiptFormSchema = receiptFormSchema.extend({
   transactionId: z.string().min(1, "Transaction ID is required"),
-  amount: z.number().min(1, "Amount must be greater than 0"),
+  amount: z.preprocess((value) => {
+    if (typeof value === "string" || typeof value === "number") {
+      const parsed = parseFloat(value as string);
+      return isNaN(parsed) ? undefined : parsed;
+    }
+    return undefined;
+  }, z.number().min(1, "Amount must be greater than 0")),
 });
 
 const Donate = () => {
+  const [showPopup, setShowPopup] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const copyToClipboard = (text: string, type: string) => {
     navigator.clipboard.writeText(text);
     toast({
@@ -54,13 +63,51 @@ const Donate = () => {
     receiptForm.reset();
   };
 
-  const onSubmitUpdatedReceiptForm = (values: z.infer<typeof updatedReceiptFormSchema>) => {
-    console.log("Updated 80G Receipt Request Submitted:", values);
-    toast({
-      title: "Request Submitted",
-      description: "Your request for an 80G receipt has been submitted successfully.",
-    });
-    updatedReceiptForm.reset();
+  const onSubmitUpdatedReceiptForm = async (values: z.infer<typeof updatedReceiptFormSchema>) => {
+    try {
+      setIsSubmitting(true);
+      const formData = {
+        access_key: import.meta.env.VITE_WEB3FORMS_KEY,
+        name: values.name,
+        email: values.email,
+        phone: values.phone,
+        pan: values.pan || "Not Provided",
+        transaction_id: values.transactionId,
+        amount: values.amount,
+        subject: `80G Receipt Request from ${values.name}`,
+        message: `
+          80G Receipt Request Details:
+          Name: ${values.name}
+          Email: ${values.email}
+          Phone: ${values.phone}
+          PAN: ${values.pan || "Not Provided"}
+          Transaction ID: ${values.transactionId}
+          Amount: ${values.amount}
+        `,
+      };
+
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setShowPopup(true);
+        updatedReceiptForm.reset();
+      } else {
+        throw new Error("Submission failed");
+      }
+    } catch (error) {
+      console.error("Error submitting 80G receipt request:", error);
+      alert("There was an error submitting your request. Please try again later.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -494,12 +541,64 @@ const Donate = () => {
                 )}
               />
 
-              <Button type="submit" className="w-full bg-krishna-gold hover:bg-krishna-saffron">
-                Submit Request
+              <Button
+                type="submit"
+                className="w-full bg-krishna-gold hover:bg-krishna-saffron"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <div className="flex items-center gap-2">
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                    Submitting...
+                  </div>
+                ) : (
+                  "Submit Request"
+                )}
               </Button>
             </form>
           </Form>
         </section>
+
+        <Dialog open={showPopup} onOpenChange={setShowPopup}>
+          <DialogContent className="bg-white rounded-lg shadow-lg p-6 max-w-md mx-auto">
+            <DialogHeader>
+              <DialogTitle className="text-2xl font-bold text-krishna-blue text-center">
+                🎉 Request Submitted Successfully!
+              </DialogTitle>
+            </DialogHeader>
+            <div className="text-center space-y-4">
+              <p className="text-gray-700">
+                Thank you for submitting your request for an 80G receipt. We will process your request and get back to you shortly.
+              </p>
+              <div className="flex justify-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="mx-auto w-20 h-20 text-green-500 drop-shadow-lg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="#e6ffe6" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M9 12l2 2 4-4"
+                    stroke="#22c55e"
+                    strokeWidth="2"
+                    fill="none"
+                  />
+                </svg>
+              </div>
+              <Button
+                className="bg-krishna-gold hover:bg-krishna-saffron text-white px-4 py-2 rounded-md"
+                onClick={() => setShowPopup(false)}
+              >
+                Close
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </main>
 
       <Footer />
