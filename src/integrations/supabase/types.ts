@@ -215,6 +215,7 @@ export type Database = {
           created_at: string | null
           display_order: number
           id: string
+          media_type: string | null
           url: string
         }
         Insert: {
@@ -224,6 +225,7 @@ export type Database = {
           created_at?: string | null
           display_order?: number
           id?: string
+          media_type?: string | null
           url: string
         }
         Update: {
@@ -233,6 +235,7 @@ export type Database = {
           created_at?: string | null
           display_order?: number
           id?: string
+          media_type?: string | null
           url?: string
         }
         Relationships: [

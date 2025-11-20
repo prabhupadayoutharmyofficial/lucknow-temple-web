@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { useToast } from "@/hooks/use-toast";
 
 const receiptFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -19,20 +20,19 @@ const receiptFormSchema = z.object({
   pan: z.string().optional(),
 });
 
-const updatedReceiptFormSchema = receiptFormSchema.extend({
+const updatedReceiptFormSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  email: z.string().email("Please enter a valid email"),
+  phone: z.string().min(10, "Please enter a valid phone number"),
+  pan: z.string().optional(),
   transactionId: z.string().min(1, "Transaction ID is required"),
-  amount: z.preprocess((value) => {
-    if (typeof value === "string" || typeof value === "number") {
-      const parsed = parseFloat(value as string);
-      return isNaN(parsed) ? undefined : parsed;
-    }
-    return undefined;
-  }, z.number().min(1, "Amount must be greater than 0")),
+  amount: z.number().min(1, "Amount must be greater than 0"),
 });
 
 const Donate = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
 
   const copyToClipboard = (text: string, type: string) => {
     navigator.clipboard.writeText(text);
