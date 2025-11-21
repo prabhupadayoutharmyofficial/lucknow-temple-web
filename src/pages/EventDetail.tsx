@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import PhotoGallery from '@/components/PhotoGallery';
 import { Button } from '@/components/ui/button';
 import { Calendar, Clock, ArrowLeft, MapPin } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
@@ -10,6 +11,7 @@ import { supabase } from '@/integrations/supabase/client';
 const EventDetail = () => {
   const { id } = useParams();
   const [event, setEvent] = useState<any>(null);
+  const [media, setMedia] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -28,6 +30,15 @@ const EventDetail = () => {
 
       if (error) throw error;
       setEvent(data);
+
+      // Fetch event media
+      const { data: mediaData } = await supabase
+        .from('event_media')
+        .select('*')
+        .eq('event_id', eventId)
+        .order('display_order');
+
+      setMedia(mediaData || []);
     } catch (error) {
       console.error('Error fetching event:', error);
     } finally {
@@ -119,6 +130,20 @@ const EventDetail = () => {
                   <p className="text-lg leading-relaxed mb-8 text-gray-700">
                     {event.full_description || event.description}
                   </p>
+
+                  {media.length > 0 && (
+                    <div className="mt-12">
+                      <h2 className="text-2xl font-bold mb-6">Event Gallery</h2>
+                      <PhotoGallery 
+                        photos={media.map((m, idx) => ({
+                          id: idx,
+                          url: m.url,
+                          alt: `${event.title} - Media ${idx + 1}`,
+                          media_type: m.media_type
+                        }))} 
+                      />
+                    </div>
+                  )}
                 </div>
 
                 <div className="lg:col-span-1">
