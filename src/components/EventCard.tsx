@@ -17,11 +17,11 @@ interface EventCardProps {
 const EventCard: React.FC<EventCardProps> = ({ id, title, date, time, description, image }) => {
   return (
     <Card className="overflow-hidden transition-all hover:shadow-lg h-full flex flex-col">
-      <div className="h-48 overflow-hidden">
+      <div className="h-48 overflow-hidden bg-muted flex items-center justify-center">
         <img 
           src={image} 
           alt={title} 
-          className="w-full h-full object-cover transition-transform hover:scale-105 duration-300"
+          className="w-full h-full object-contain transition-transform hover:scale-105 duration-300"
         />
       </div>
       <CardHeader>

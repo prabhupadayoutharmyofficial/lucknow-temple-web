@@ -8,6 +8,7 @@ interface Photo {
   url: string;
   alt: string;
   collection_id?: string | null;
+  media_type?: string;
 }
 
 interface PhotoCollection {

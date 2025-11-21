@@ -2,13 +2,14 @@
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
-import { ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X, Play } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface Photo {
   id: number;
   url: string;
   alt: string;
+  media_type?: string;
 }
 
 interface PhotoGalleryProps {
@@ -48,14 +49,28 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, className }) => {
         {photos.map((photo, index) => (
           <div 
             key={photo.id} 
-            className="aspect-square cursor-pointer overflow-hidden rounded-lg"
+            className="aspect-square cursor-pointer overflow-hidden rounded-lg bg-muted relative group"
             onClick={() => openLightbox(index)}
           >
-            <img 
-              src={photo.url} 
-              alt={photo.alt} 
-              className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
-            />
+            {photo.media_type === 'video' ? (
+              <>
+                <video 
+                  src={photo.url} 
+                  className="h-full w-full object-contain"
+                />
+                <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/40 transition-colors">
+                  <div className="bg-primary rounded-full p-4 group-hover:scale-110 transition-transform">
+                    <Play className="w-8 h-8 text-primary-foreground fill-current" />
+                  </div>
+                </div>
+              </>
+            ) : (
+              <img 
+                src={photo.url} 
+                alt={photo.alt} 
+                className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
+              />
+            )}
           </div>
         ))}
       </div>
@@ -64,11 +79,20 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, className }) => {
         <DialogContent className="max-w-5xl w-full max-h-[90vh] p-0 bg-black/90">
           <div className="relative h-full w-full flex items-center justify-center">
             {selectedPhotoIndex !== null && (
-              <img 
-                src={photos[selectedPhotoIndex].url} 
-                alt={photos[selectedPhotoIndex].alt} 
-                className="max-h-[80vh] max-w-full object-contain"
-              />
+              photos[selectedPhotoIndex].media_type === 'video' ? (
+                <video 
+                  src={photos[selectedPhotoIndex].url} 
+                  controls
+                  autoPlay
+                  className="max-h-[80vh] max-w-full object-contain"
+                />
+              ) : (
+                <img 
+                  src={photos[selectedPhotoIndex].url} 
+                  alt={photos[selectedPhotoIndex].alt} 
+                  className="max-h-[80vh] max-w-full object-contain"
+                />
+              )
             )}
             
             <Button 
