@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Save, X } from 'lucide-react';
 import { ImageUpload } from './ImageUpload';
+import { EventMediaUpload } from './EventMediaUpload';
 
 interface EventFormProps {
   event: any;
@@ -66,6 +67,10 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onSave, onCancel })
         <ImageUpload
           imageUrl={formData.image}
           onImageChange={(url) => setFormData({ ...formData, image: url })}
+        />
+
+        <EventMediaUpload 
+          eventId={event.id}
         />
         
         <div>
