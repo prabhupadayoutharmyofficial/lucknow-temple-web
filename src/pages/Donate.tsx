@@ -134,7 +134,7 @@ const Donate = () => {
                   </CardHeader>
                   <CardContent className="text-center">
                     <img 
-                      src="/ISKCON PROJECTS.png" 
+                      src="https://jjiyqxfotpfwdiwdexzp.supabase.co/storage/v1/object/public/Media/ISKCON%20PROJECTS.png" 
                       alt="ISKCON PROJECTS QR Code"
                       className="mx-auto w-48 h-48 object-contain"
                     />
@@ -164,7 +164,7 @@ const Donate = () => {
                   </CardHeader>
                   <CardContent className="text-center">
                     <img 
-                      src="/public/ISKCON FOOD FOR LIFE.jpg"
+                      src="https://jjiyqxfotpfwdiwdexzp.supabase.co/storage/v1/object/public/Media/ISKCON%20FOOD%20FOR%20LIFE.jpg"
                       alt="Prasadam Seva QR Code"
                       className="mx-auto w-48 h-48 object-contain"
                     />
@@ -194,7 +194,7 @@ const Donate = () => {
                   </CardHeader>
                   <CardContent className="text-center">
                     <img 
-                      src="/public/ISKCON FESTIVAL.png" 
+                      src="https://jjiyqxfotpfwdiwdexzp.supabase.co/storage/v1/object/public/Media/ISKCON%20FESTIVAL.png" 
                       alt="Festival Donations QR Code"
                       className="mx-auto w-48 h-48 object-contain"
                     />
@@ -224,7 +224,7 @@ const Donate = () => {
                   </CardHeader>
                   <CardContent className="text-center">
                     <img 
-                      src="/ISKCON GAUSHALA.png" 
+                      src="https://jjiyqxfotpfwdiwdexzp.supabase.co/storage/v1/object/public/Media/ISKCON%20GAUSHALA.png" 
                       alt="Goshala Seva QR Code"
                       className="mx-auto w-48 h-48 object-contain"
                     />
