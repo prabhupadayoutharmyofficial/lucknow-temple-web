@@ -534,6 +534,7 @@ const Donate = () => {
                         type="number"
                         placeholder="Enter the amount paid"
                         {...field}
+                        onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : "")}
                       />
                     </FormControl>
                     <FormMessage />
