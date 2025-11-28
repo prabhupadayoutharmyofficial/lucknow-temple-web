@@ -85,11 +85,22 @@ const EventDetail = () => {
       <main className="flex-grow">
         {/* Hero Section */}
         <div className="relative h-96 overflow-hidden">
-          <img 
-            src={event.image} 
-            alt={event.title}
-            className="w-full h-full object-cover"
-          />
+          {event.image.match(/\.(mp4|webm|ogg)$/i) || event.image.includes('gallery-videos') ? (
+            <video 
+              src={event.image} 
+              className="w-full h-full object-cover"
+              autoPlay
+              muted
+              loop
+              playsInline
+            />
+          ) : (
+            <img 
+              src={event.image} 
+              alt={event.title}
+              className="w-full h-full object-cover"
+            />
+          )}
           <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
             <div className="text-center text-white">
               <h1 className="font-devotional text-4xl md:text-5xl font-bold mb-4">

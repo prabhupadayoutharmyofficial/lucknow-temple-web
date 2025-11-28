@@ -3,7 +3,8 @@ import React, { useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Upload, Image, Check } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Upload, Image, Check, Video } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -15,32 +16,35 @@ interface ImageUploadProps {
 export const ImageUpload: React.FC<ImageUploadProps> = ({ imageUrl, onImageChange }) => {
   const [uploadingImage, setUploadingImage] = useState(false);
   const [uploadSuccess, setUploadSuccess] = useState(false);
+  const [mediaType, setMediaType] = useState<'image' | 'video'>('image');
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const uploadImage = async (file: File) => {
+  const uploadMedia = async (file: File) => {
     if (!file) return null;
 
     setUploadingImage(true);
     try {
       const fileExt = file.name.split('.').pop();
       const fileName = `${Math.random()}.${fileExt}`;
-      const filePath = `event-images/${fileName}`;
+      const isVideo = file.type.startsWith('video/');
+      const bucketName = isVideo ? 'gallery-videos' : 'events';
+      const filePath = isVideo ? fileName : `event-images/${fileName}`;
 
       const { data, error } = await supabase.storage
-        .from('events')
+        .from(bucketName)
         .upload(filePath, file);
 
       if (error) throw error;
 
       const { data: { publicUrl } } = supabase.storage
-        .from('events')
+        .from(bucketName)
         .getPublicUrl(filePath);
 
       return publicUrl;
     } catch (error: any) {
       toast({
-        title: "Error uploading image",
+        title: `Error uploading ${mediaType}`,
         description: error.message,
         variant: "destructive"
       });
@@ -50,36 +54,40 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({ imageUrl, onImageChang
     }
   };
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleMediaUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (!file.type.startsWith('image/')) {
+    const isImage = file.type.startsWith('image/');
+    const isVideo = file.type.startsWith('video/');
+
+    if (!isImage && !isVideo) {
       toast({
         title: "Invalid File",
-        description: "Please select an image file",
+        description: "Please select an image or video file",
         variant: "destructive",
       });
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) {
+    const maxSize = isVideo ? 50 * 1024 * 1024 : 5 * 1024 * 1024; // 50MB for video, 5MB for image
+    if (file.size > maxSize) {
       toast({
         title: "File Too Large",
-        description: "Please select an image smaller than 5MB",
+        description: `Please select a ${isVideo ? 'video' : 'image'} smaller than ${isVideo ? '50MB' : '5MB'}`,
         variant: "destructive",
       });
       return;
     }
 
     setUploadSuccess(false);
-    const imageUrl = await uploadImage(file);
-    if (imageUrl) {
-      onImageChange(imageUrl);
+    const mediaUrl = await uploadMedia(file);
+    if (mediaUrl) {
+      onImageChange(mediaUrl);
       setUploadSuccess(true);
       toast({
-        title: "Image Uploaded",
-        description: "Image uploaded successfully",
+        title: `${isVideo ? 'Video' : 'Image'} Uploaded`,
+        description: `${isVideo ? 'Video' : 'Image'} uploaded successfully`,
       });
       setTimeout(() => setUploadSuccess(false), 3000);
     }
@@ -95,13 +103,23 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({ imageUrl, onImageChang
 
   return (
     <div className="space-y-2">
-      <Label htmlFor="image">Event Image</Label>
+      <Label htmlFor="image">Event Media (Image or Video)</Label>
       <div className="flex gap-2">
+        <Select value={mediaType} onValueChange={(value: 'image' | 'video') => setMediaType(value)}>
+          <SelectTrigger className="w-32">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="image">Image</SelectItem>
+            <SelectItem value="video">Video</SelectItem>
+          </SelectContent>
+        </Select>
         <Input
           id="image"
           value={imageUrl}
           onChange={(e) => onImageChange(e.target.value)}
-          placeholder="Enter image URL or upload a file"
+          placeholder={`Enter ${mediaType} URL or upload a file`}
+          className="flex-1"
         />
         <Button 
           type="button"
@@ -115,6 +133,8 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({ imageUrl, onImageChang
             <Upload className="h-4 w-4 animate-spin" />
           ) : uploadSuccess ? (
             <Check className="h-4 w-4 text-green-600" />
+          ) : mediaType === 'video' ? (
+            <Video className="h-4 w-4" />
           ) : (
             <Image className="h-4 w-4" />
           )}
@@ -122,35 +142,43 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({ imageUrl, onImageChang
         <input
           ref={fileInputRef}
           type="file"
-          accept="image/*"
-          onChange={handleImageUpload}
+          accept={mediaType === 'video' ? 'video/*' : 'image/*'}
+          onChange={handleMediaUpload}
           className="hidden"
         />
       </div>
       
       {uploadingImage && (
-        <p className="text-sm text-muted-foreground">Uploading image...</p>
+        <p className="text-sm text-muted-foreground">Uploading {mediaType}...</p>
       )}
       {uploadSuccess && (
         <p className="text-sm text-green-600 flex items-center gap-1">
           <Check className="h-3 w-3" />
-          Image uploaded successfully!
+          {mediaType === 'video' ? 'Video' : 'Image'} uploaded successfully!
         </p>
       )}
       
       {imageUrl && (
         <div className="mt-2">
           <Label className="text-sm text-muted-foreground">Preview:</Label>
-          <div className="mt-1 relative w-32 h-20 border border-gray-200 rounded overflow-hidden">
-            <img
-              src={imageUrl}
-              alt="Event preview"
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                console.log('Image failed to load:', imageUrl);
-                e.currentTarget.src = '/placeholder.svg';
-              }}
-            />
+          <div className="mt-1 relative w-64 h-36 border border-gray-200 rounded overflow-hidden bg-muted">
+            {imageUrl.match(/\.(mp4|webm|ogg)$/i) || imageUrl.includes('gallery-videos') ? (
+              <video
+                src={imageUrl}
+                controls
+                className="w-full h-full object-contain"
+              />
+            ) : (
+              <img
+                src={imageUrl}
+                alt="Event preview"
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  console.log('Image failed to load:', imageUrl);
+                  e.currentTarget.src = '/placeholder.svg';
+                }}
+              />
+            )}
           </div>
         </div>
       )}

@@ -15,15 +15,32 @@ interface EventCardProps {
 }
 
 const EventCard: React.FC<EventCardProps> = ({ id, title, date, time, description, image }) => {
+  const isVideo = image.match(/\.(mp4|webm|ogg)$/i) || image.includes('gallery-videos');
+  
   return (
     <Link to={`/events/${id}`} className="block h-full">
       <Card className="overflow-hidden transition-all hover:shadow-lg h-full flex flex-col cursor-pointer">
         <div className="h-48 overflow-hidden bg-muted flex items-center justify-center">
-          <img 
-            src={image} 
-            alt={title} 
-            className="w-full h-full object-contain transition-transform hover:scale-105 duration-300"
-          />
+          {isVideo ? (
+            <video 
+              src={image} 
+              className="w-full h-full object-contain"
+              muted
+              loop
+              playsInline
+              onMouseEnter={(e) => e.currentTarget.play()}
+              onMouseLeave={(e) => {
+                e.currentTarget.pause();
+                e.currentTarget.currentTime = 0;
+              }}
+            />
+          ) : (
+            <img 
+              src={image} 
+              alt={title} 
+              className="w-full h-full object-contain transition-transform hover:scale-105 duration-300"
+            />
+          )}
         </div>
         <CardHeader>
           <CardTitle className="font-devotional text-xl text-krishna-blue">{title}</CardTitle>
