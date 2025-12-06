@@ -17,17 +17,27 @@ interface EventFormProps {
 }
 
 export const EventForm: React.FC<EventFormProps> = ({ event, onSave, onCancel }) => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState(() => ({
     ...event,
-    highlights_text: event.highlights ? event.highlights.join('\n') : ''
-  });
+    highlights_text: Array.isArray(event.highlights) ? event.highlights.join('\n') : '',
+    image: event.image || '',
+    title: event.title || '',
+    date: event.date || '',
+    time: event.time || '',
+    description: event.description || '',
+    full_description: event.full_description || '',
+    location: event.location || '',
+    is_published: event.is_published !== undefined ? event.is_published : true,
+    scheduled_publish: event.scheduled_publish || '',
+    send_notification: event.send_notification || false
+  }));
 
   return (
-    <Card>
+    <Card className="mb-6">
       <CardHeader>
         <CardTitle>{event.id ? 'Edit Event' : 'Create New Event'}</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-4 max-h-[80vh] overflow-y-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <Label htmlFor="title">Title</Label>

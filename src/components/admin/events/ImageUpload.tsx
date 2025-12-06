@@ -107,7 +107,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({ imageUrl, onImageChang
       <div className="flex gap-2">
         <Select value={mediaType} onValueChange={(value: 'image' | 'video') => setMediaType(value)}>
           <SelectTrigger className="w-32">
-            <SelectValue />
+            <SelectValue placeholder="Select type" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="image">Image</SelectItem>

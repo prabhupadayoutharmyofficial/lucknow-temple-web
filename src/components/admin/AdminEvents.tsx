@@ -7,6 +7,7 @@ import { useToast } from '@/hooks/use-toast';
 import { usePermissions } from '@/hooks/usePermissions';
 import { EventForm } from './events/EventForm';
 import { EventList } from './events/EventList';
+import { EventFormErrorBoundary } from './events/ErrorBoundary';
 
 const AdminEvents = () => {
   const [events, setEvents] = useState<any[]>([]);
@@ -202,19 +203,23 @@ const AdminEvents = () => {
       </div>
 
       {isCreating && permissions.canCreateEvents && (
-        <EventForm
-          event={emptyEvent}
-          onSave={handleSave}
-          onCancel={() => setIsCreating(false)}
-        />
+        <EventFormErrorBoundary>
+          <EventForm
+            event={emptyEvent}
+            onSave={handleSave}
+            onCancel={() => setIsCreating(false)}
+          />
+        </EventFormErrorBoundary>
       )}
 
       {editingEvent && permissions.canEditEvents && (
-        <EventForm
-          event={editingEvent}
-          onSave={handleSave}
-          onCancel={() => setEditingEvent(null)}
-        />
+        <EventFormErrorBoundary>
+          <EventForm
+            event={editingEvent}
+            onSave={handleSave}
+            onCancel={() => setEditingEvent(null)}
+          />
+        </EventFormErrorBoundary>
       )}
 
       <EventList

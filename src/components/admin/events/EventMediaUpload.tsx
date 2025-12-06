@@ -31,7 +31,10 @@ export const EventMediaUpload: React.FC<EventMediaUploadProps> = ({ eventId, onM
   }, [eventId]);
 
   const fetchEventMedia = async () => {
-    if (!eventId) return;
+    if (!eventId) {
+      setMedia([]);
+      return;
+    }
 
     try {
       const { data, error } = await supabase
@@ -44,6 +47,7 @@ export const EventMediaUpload: React.FC<EventMediaUploadProps> = ({ eventId, onM
       setMedia(data || []);
     } catch (error) {
       console.error('Error fetching event media:', error);
+      setMedia([]);
     }
   };
 
@@ -147,7 +151,7 @@ export const EventMediaUpload: React.FC<EventMediaUploadProps> = ({ eventId, onM
       <div className="flex gap-4">
         <Select value={selectedType} onValueChange={setSelectedType}>
           <SelectTrigger className="w-40">
-            <SelectValue />
+            <SelectValue placeholder="Select media type" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="image">Image</SelectItem>
