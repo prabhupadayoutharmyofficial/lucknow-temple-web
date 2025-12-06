@@ -12,7 +12,7 @@ const WeeklyPrograms = () => {
     {
       day: "Tuesday", 
       title: "Bhagavad Gita Class",
-      time: "6:00 PM - 7:30 PM"
+      time: "9:00 AM - 11:30 AM"
     },
     {
       day: "Friday",
