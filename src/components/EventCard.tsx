@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 
 interface EventCardProps {
-  id: number;
+  id: string | number;
   title: string;
   date: string;
   time: string;
@@ -15,7 +15,7 @@ interface EventCardProps {
 }
 
 const EventCard: React.FC<EventCardProps> = ({ id, title, date, time, description, image }) => {
-  const isVideo = image.match(/\.(mp4|webm|ogg)$/i) || image.includes('gallery-videos');
+  const isVideo = image && (/(mp4|webm|ogg)$/i.test(image) || image.includes('gallery-videos'));
   
   return (
     <Link to={`/events/${id}`} className="block h-full">
@@ -34,12 +34,16 @@ const EventCard: React.FC<EventCardProps> = ({ id, title, date, time, descriptio
                 e.currentTarget.currentTime = 0;
               }}
             />
-          ) : (
+          ) : image ? (
             <img 
               src={image} 
               alt={title} 
               className="w-full h-full object-contain transition-transform hover:scale-105 duration-300"
             />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-gray-100">
+              <span className="text-sm text-gray-500">No image</span>
+            </div>
           )}
         </div>
         <CardHeader>

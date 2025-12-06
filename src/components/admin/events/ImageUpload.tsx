@@ -162,7 +162,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({ imageUrl, onImageChang
         <div className="mt-2">
           <Label className="text-sm text-muted-foreground">Preview:</Label>
           <div className="mt-1 relative w-64 h-36 border border-gray-200 rounded overflow-hidden bg-muted">
-            {imageUrl.match(/\.(mp4|webm|ogg)$/i) || imageUrl.includes('gallery-videos') ? (
+            {(imageUrl && (/(mp4|webm|ogg)$/i.test(imageUrl) || imageUrl.includes('gallery-videos'))) ? (
               <video
                 src={imageUrl}
                 controls

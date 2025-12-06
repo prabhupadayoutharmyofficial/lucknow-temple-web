@@ -85,7 +85,7 @@ const EventDetail = () => {
       <main className="flex-grow">
         {/* Hero Section */}
         <div className="relative h-96 overflow-hidden">
-          {event.image.match(/\.(mp4|webm|ogg)$/i) || event.image.includes('gallery-videos') ? (
+          {event?.image && (/(mp4|webm|ogg)$/i.test(event.image) || event.image.includes('gallery-videos')) ? (
             <video 
               src={event.image} 
               className="w-full h-full object-cover"
@@ -94,12 +94,16 @@ const EventDetail = () => {
               loop
               playsInline
             />
-          ) : (
+          ) : event?.image ? (
             <img 
               src={event.image} 
               alt={event.title}
               className="w-full h-full object-cover"
             />
+          ) : (
+            <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+              <span className="text-gray-600">No image available</span>
+            </div>
           )}
           <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
             <div className="text-center text-white">
