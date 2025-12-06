@@ -68,8 +68,8 @@ export const usePermissions = (): Permissions => {
       canSendNotifications: false, // Cannot send notifications
       canViewUsers: true,
       canEditUserRoles: false, // Cannot change user roles
-      canManageTempleInfo: false,
-      canManageSchedule: false,
+      canManageTempleInfo: true,
+      canManageSchedule: true,
       canManageFestivals: true,
       canManageHero: false,
       canManagePopups: true,

@@ -24,11 +24,33 @@ const AdminHero = () => {
       const { data, error } = await supabase
         .from('hero_section')
         .select('*')
-        .limit(1)
-        .single();
+        .limit(1);
 
       if (error) throw error;
-      setHeroData(data);
+      
+      if (data && data.length > 0) {
+        setHeroData(data[0]);
+      } else {
+        // If no data exists, create a default entry
+        const defaultData = {
+          title: 'Shri Shri Radha Raman Bihari',
+          subtitle: 'Iskcon Lucknow Temple',
+          background_image: 'https://jjiyqxfotpfwdiwdexzp.supabase.co/storage/v1/object/public/Media/background.jpg',
+          cta_primary_text: 'Visit the Temple',
+          cta_primary_link: '/visit',
+          cta_secondary_text: 'View Schedule',
+          cta_secondary_link: '/darshan'
+        };
+        
+        const { data: newData, error: insertError } = await supabase
+          .from('hero_section')
+          .insert([defaultData])
+          .select()
+          .single();
+        
+        if (insertError) throw insertError;
+        setHeroData(newData);
+      }
     } catch (error: any) {
       toast({
         title: "Error fetching hero data",
