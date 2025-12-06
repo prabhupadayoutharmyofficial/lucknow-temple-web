@@ -22,10 +22,13 @@ const EventDetail = () => {
 
   const fetchEvent = async (eventId: string) => {
     try {
+      // Supabase may store numeric IDs as numbers — coerce when appropriate
+      const normalizedId: string | number = /^\d+$/.test(eventId) ? Number(eventId) : eventId;
+
       const { data, error } = await supabase
         .from('events')
         .select('*')
-        .eq('id', eventId)
+        .eq('id', normalizedId as any)
         .single();
 
       if (error) throw error;
@@ -60,7 +63,6 @@ const EventDetail = () => {
       </div>
     );
   }
-
   if (!event) {
     return (
       <div className="min-h-screen flex flex-col">
@@ -68,6 +70,7 @@ const EventDetail = () => {
         <main className="flex-grow flex items-center justify-center">
           <div className="text-center">
             <h1 className="text-2xl font-bold mb-4">Event not found</h1>
+            <p className="mb-4 text-gray-600">We couldn't find the event you requested. It may have been removed or the link is incorrect.</p>
             <Link to="/events">
               <Button>Back to Events</Button>
             </Link>
