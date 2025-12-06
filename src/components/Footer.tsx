@@ -15,13 +15,13 @@ const Footer = () => {
               International Society for Krishna Consciousness
             </p>
             <div className="flex space-x-4 mt-4">
-              <a href="https://facebook.com" target="_blank" rel="noreferrer" className="hover:text-krishna-gold transition-colors">
+              <a href="https://www.facebook.com/iskcontemplelucknow" target="_blank" rel="noreferrer" className="hover:text-krishna-gold transition-colors">
                 <Facebook size={20} />
               </a>
-              <a href="https://instagram.com" target="_blank" rel="noreferrer" className="hover:text-krishna-gold transition-colors">
+              <a href="https://www.instagram.com/iskconlucknow/" target="_blank" rel="noreferrer" className="hover:text-krishna-gold transition-colors">
                 <Instagram size={20} />
               </a>
-              <a href="https://youtube.com" target="_blank" rel="noreferrer" className="hover:text-krishna-gold transition-colors">
+              <a href="https://www.youtube.com/@ISKCONLucknow108" target="_blank" rel="noreferrer" className="hover:text-krishna-gold transition-colors">
                 <Youtube size={20} />
               </a>
             </div>
