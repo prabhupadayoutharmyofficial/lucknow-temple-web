@@ -53,7 +53,7 @@ const FeaturedEvents = () => {
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-center mb-12">
           <h2 className="font-devotional text-3xl font-semibold text-krishna-blue">
-            Upcoming Events
+            Events
           </h2>
           <Link to="/events">
             <Button variant="outline" className="border-krishna-gold text-krishna-gold hover:bg-krishna-gold hover:text-white mt-4 md:mt-0">
