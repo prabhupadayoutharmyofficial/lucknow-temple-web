@@ -28,7 +28,7 @@ const TempleInfo: React.FC<TempleInfoProps> = ({ className }) => {
             <Phone className="shrink-0 text-krishna-gold mt-1" />
             <div>
               <strong className="block">Phone</strong>
-              <p>+91 123 456 7890</p>
+              <p>+91-73555-60450, +91-73100-80798</p>
             </div>
           </div>
           
@@ -45,7 +45,7 @@ const TempleInfo: React.FC<TempleInfoProps> = ({ className }) => {
             <Calendar className="shrink-0 text-krishna-gold mt-1" />
             <div>
               <strong className="block">Special Program Days</strong>
-              <p>Daily - Special Feast Program</p>
+              <p>Daily Evening - Special Feast Program</p>
               <p>Sunday - Bhagavad Gita Class</p>
             </div>
           </div>
