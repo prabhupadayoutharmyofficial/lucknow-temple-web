@@ -20,11 +20,11 @@ const EventCard: React.FC<EventCardProps> = ({ id, title, date, time, descriptio
   return (
     <Link to={`/events/${id}`} className="block h-full">
       <Card className="overflow-hidden transition-all hover:shadow-lg h-full flex flex-col cursor-pointer">
-        <div className="h-48 overflow-hidden bg-muted flex items-center justify-center">
+        <div className="aspect-[4/5] overflow-hidden bg-muted flex items-center justify-center">
           {isVideo ? (
             <video 
               src={image} 
-              className="w-full h-full object-contain"
+              className="w-full h-full object-cover"
               muted
               loop
               playsInline
@@ -38,7 +38,7 @@ const EventCard: React.FC<EventCardProps> = ({ id, title, date, time, descriptio
             <img 
               src={image} 
               alt={title} 
-              className="w-full h-full object-contain transition-transform hover:scale-105 duration-300"
+              className="w-full h-full object-cover transition-transform hover:scale-105 duration-300"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-gray-100">
