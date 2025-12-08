@@ -44,7 +44,7 @@ const Visit = () => {
                 <div className="flex gap-2 mb-2">
                   <MapPin className="text-krishna-gold shrink-0 mt-1" />
                   <p className="text-lg">
-                    ISKCON Temple, Aliganj, Lucknow, Uttar Pradesh, India
+                    ISKCON Temple, Sushant Golf City, Lucknow, Uttar Pradesh, India
                   </p>
                 </div>
                 <Button 
@@ -68,7 +68,7 @@ const Visit = () => {
                         <h3 className="text-xl font-medium">By Car</h3>
                       </div>
                       <p className="text-muted-foreground">
-                        The temple is located in Aliganj area. Use GPS navigation or follow signs to ISKCON Temple. Parking available on premise.
+                        The temple is located in Sushant Golf City area. Use GPS navigation or follow signs to ISKCON Temple. Parking available on premise.
                       </p>
                     </CardContent>
                   </Card>

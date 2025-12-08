@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import SewaCarousel from '@/components/SewaCarousel';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -115,6 +116,8 @@ const Donate = () => {
       <Navbar />
 
       <main className="flex-grow">
+        <SewaCarousel />
+        
         <section className="container mx-auto px-4 py-16">
           <h2 className="font-devotional text-3xl font-semibold text-krishna-blue mb-8">
             Donation Options
@@ -448,9 +451,60 @@ const Donate = () => {
           <h3 className="font-devotional text-3xl font-semibold text-red-600 mb-6">
             Request 80G Receipt
           </h3>
-          <p className="text-sm text-gray-600 mb-4">
+          <p className="text-sm text-gray-600 mb-6">
             The receipt can only be requested if the payment has been made. Please ensure you fill in the transaction ID and the amount paid.
           </p>
+
+          <Card className="mb-8 border-l-4 border-krishna-gold bg-gradient-to-r from-blue-50 to-indigo-50">
+            <CardHeader>
+              <CardTitle className="text-lg font-devotional text-krishna-blue">
+                Receipt Information
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4 text-gray-700">
+                <p className="text-sm leading-relaxed">
+                  To get the receipt of donation made through <span className="font-semibold">NEFT, RTGS, IMPS, PayTm, UPI</span> as mentioned above, please share your:
+                </p>
+                
+                <ul className="space-y-2 ml-4">
+                  <li className="flex items-start text-sm">
+                    <span className="text-krishna-gold font-bold mr-3">•</span>
+                    <span>Legal name</span>
+                  </li>
+                  <li className="flex items-start text-sm">
+                    <span className="text-krishna-gold font-bold mr-3">•</span>
+                    <span>Postal address with pincode</span>
+                  </li>
+                  <li className="flex items-start text-sm">
+                    <span className="text-krishna-gold font-bold mr-3">•</span>
+                    <span>PAN (if you need 80G receipt)</span>
+                  </li>
+                  <li className="flex items-start text-sm">
+                    <span className="text-krishna-gold font-bold mr-3">•</span>
+                    <span>Transaction details</span>
+                  </li>
+                </ul>
+
+                <div className="bg-white p-3 rounded border-l-4 border-krishna-gold mt-4">
+                  <p className="text-sm">
+                    Email: <span className="font-semibold text-krishna-blue">contact@iskconlucknow.org</span>
+                  </p>
+                </div>
+
+                <div className="bg-white p-3 rounded border border-gray-200 mt-4">
+                  <p className="text-sm font-semibold text-krishna-blue mb-2">For More Information:</p>
+                  <p className="text-sm">
+                    <span className="font-semibold">Call / WhatsApp:</span> <span className="text-krishna-gold font-semibold">+91-91-73100-80798</span>
+                  </p>
+                  <p className="text-sm mt-1">
+                    <span className="font-semibold">Available:</span> Monday to Saturday, 9:00 AM to 6:00 PM
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           <Form {...updatedReceiptForm}>
             <form onSubmit={updatedReceiptForm.handleSubmit(onSubmitUpdatedReceiptForm)} className="space-y-6">
               <FormField
@@ -558,6 +612,14 @@ const Donate = () => {
               </Button>
             </form>
           </Form>
+        </section>
+
+        <section className="container mx-auto px-4 py-16">
+          <img 
+            src="https://jjiyqxfotpfwdiwdexzp.supabase.co/storage/v1/object/public/Media/donation%20page.png"
+            alt="Donation Information"
+            className="w-full rounded-lg shadow-lg"
+          />
         </section>
 
         <Dialog open={showPopup} onOpenChange={setShowPopup}>
