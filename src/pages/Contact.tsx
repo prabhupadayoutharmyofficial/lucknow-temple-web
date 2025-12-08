@@ -10,12 +10,15 @@ const CONTACT_HERO_IMAGE = 'https://jjiyqxfotpfwdiwdexzp.supabase.co/storage/v1/
 
 const Contact = () => {
   useEffect(() => {
-    const link = document.createElement('link');
-    link.rel = 'preload';
-    link.as = 'image';
-    link.href = CONTACT_HERO_IMAGE;
-    link.fetchPriority = 'high';
-    document.head.appendChild(link);
+    const existingLink = document.querySelector(`link[href="${CONTACT_HERO_IMAGE}"]`);
+    if (!existingLink) {
+      const link = document.createElement('link');
+      link.rel = 'preload';
+      link.as = 'image';
+      link.href = CONTACT_HERO_IMAGE;
+      link.fetchPriority = 'high';
+      document.head.appendChild(link);
+    }
   }, []);
   return (
     <div className="min-h-screen flex flex-col">

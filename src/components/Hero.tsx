@@ -7,14 +7,19 @@ import { Link } from 'react-router-dom';
 const HERO_BG_IMAGE = 'https://jjiyqxfotpfwdiwdexzp.supabase.co/storage/v1/object/public/Media/background.webp';
 
 const Hero = () => {
+  // Note: Image preloading is already handled in index.html head
+  // This useEffect serves as a backup preload strategy
   useEffect(() => {
-    // Preload the background image
-    const link = document.createElement('link');
-    link.rel = 'preload';
-    link.as = 'image';
-    link.href = HERO_BG_IMAGE;
-    link.fetchPriority = 'high';
-    document.head.appendChild(link);
+    // Check if link already exists to avoid duplicates
+    const existingLink = document.querySelector(`link[href="${HERO_BG_IMAGE}"]`);
+    if (!existingLink) {
+      const link = document.createElement('link');
+      link.rel = 'preload';
+      link.as = 'image';
+      link.href = HERO_BG_IMAGE;
+      link.fetchPriority = 'high';
+      document.head.appendChild(link);
+    }
   }, []);
 
   return (

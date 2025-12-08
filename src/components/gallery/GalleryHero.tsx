@@ -5,12 +5,15 @@ const GALLERY_HERO_IMAGE = 'https://jjiyqxfotpfwdiwdexzp.supabase.co/storage/v1/
 
 const GalleryHero = () => {
   useEffect(() => {
-    const link = document.createElement('link');
-    link.rel = 'preload';
-    link.as = 'image';
-    link.href = GALLERY_HERO_IMAGE;
-    link.fetchPriority = 'high';
-    document.head.appendChild(link);
+    const existingLink = document.querySelector(`link[href="${GALLERY_HERO_IMAGE}"]`);
+    if (!existingLink) {
+      const link = document.createElement('link');
+      link.rel = 'preload';
+      link.as = 'image';
+      link.href = GALLERY_HERO_IMAGE;
+      link.fetchPriority = 'high';
+      document.head.appendChild(link);
+    }
   }, []);
   return (
     <div className="relative h-[80vh] bg-cover bg-center flex items-center justify-center" 
