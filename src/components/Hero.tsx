@@ -1,17 +1,29 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Calendar } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
+const HERO_BG_IMAGE = 'https://jjiyqxfotpfwdiwdexzp.supabase.co/storage/v1/object/public/Media/background.webp';
+
 const Hero = () => {
+  useEffect(() => {
+    // Preload the background image
+    const link = document.createElement('link');
+    link.rel = 'preload';
+    link.as = 'image';
+    link.href = HERO_BG_IMAGE;
+    link.fetchPriority = 'high';
+    document.head.appendChild(link);
+  }, []);
+
   return (
     <div className="relative h-[100vh]">
       {/* Background image with overlay */}
       <div 
         className="absolute inset-0 bg-cover bg-center"
         style={{
-          backgroundImage: "url('https://jjiyqxfotpfwdiwdexzp.supabase.co/storage/v1/object/public/Media/background.webp')",
+          backgroundImage: `url('${HERO_BG_IMAGE}')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
