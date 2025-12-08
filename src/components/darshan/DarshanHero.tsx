@@ -1,11 +1,21 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
+
+const DARSHAN_HERO_IMAGE = 'https://jjiyqxfotpfwdiwdexzp.supabase.co/storage/v1/object/public/Media/temple-schedule%20BACKGROUND2.png';
 
 const DarshanHero = () => {
+  useEffect(() => {
+    const link = document.createElement('link');
+    link.rel = 'preload';
+    link.as = 'image';
+    link.href = DARSHAN_HERO_IMAGE;
+    link.fetchPriority = 'high';
+    document.head.appendChild(link);
+  }, []);
   return (
     <div className="relative h-[80vh] bg-cover bg-center flex items-center justify-center" 
       style={{ 
-        backgroundImage: "url('https://jjiyqxfotpfwdiwdexzp.supabase.co/storage/v1/object/public/Media/temple-schedule%20BACKGROUND2.png')",
+        backgroundImage: `url('${DARSHAN_HERO_IMAGE}')`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}>

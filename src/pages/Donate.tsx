@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import SewaCarousel from '@/components/SewaCarousel';
@@ -13,6 +13,15 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useToast } from "@/hooks/use-toast";
+
+// Image constants for preloading
+const DONATE_IMAGES = {
+  projects: 'https://jjiyqxfotpfwdiwdexzp.supabase.co/storage/v1/object/public/Media/ISKCON%20PROJECTS.png',
+  foodForLife: 'https://jjiyqxfotpfwdiwdexzp.supabase.co/storage/v1/object/public/Media/ISKCON%20FOOD%20FOR%20LIFE.jpg',
+  festival: 'https://jjiyqxfotpfwdiwdexzp.supabase.co/storage/v1/object/public/Media/ISKCON%20FESTIVAL.png',
+  gaushala: 'https://jjiyqxfotpfwdiwdexzp.supabase.co/storage/v1/object/public/Media/ISKCON%20GAUSHALA.png',
+  donationPage: 'https://jjiyqxfotpfwdiwdexzp.supabase.co/storage/v1/object/public/Media/donation%20page.png'
+};
 
 const receiptFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -34,6 +43,17 @@ const Donate = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+
+  // Preload donation page images
+  useEffect(() => {
+    Object.values(DONATE_IMAGES).forEach((imageUrl) => {
+      const link = document.createElement('link');
+      link.rel = 'preload';
+      link.as = 'image';
+      link.href = imageUrl;
+      document.head.appendChild(link);
+    });
+  }, []);
 
   const copyToClipboard = (text: string, type: string) => {
     navigator.clipboard.writeText(text);
@@ -137,7 +157,7 @@ const Donate = () => {
                   </CardHeader>
                   <CardContent className="text-center">
                     <img 
-                      src="https://jjiyqxfotpfwdiwdexzp.supabase.co/storage/v1/object/public/Media/ISKCON%20PROJECTS.png" 
+                      src={DONATE_IMAGES.projects} 
                       alt="ISKCON PROJECTS QR Code"
                       className="mx-auto w-48 h-48 object-contain"
                     />
@@ -167,7 +187,7 @@ const Donate = () => {
                   </CardHeader>
                   <CardContent className="text-center">
                     <img 
-                      src="https://jjiyqxfotpfwdiwdexzp.supabase.co/storage/v1/object/public/Media/ISKCON%20FOOD%20FOR%20LIFE.jpg"
+                      src={DONATE_IMAGES.foodForLife}
                       alt="Prasadam Seva QR Code"
                       className="mx-auto w-48 h-48 object-contain"
                     />
@@ -197,7 +217,7 @@ const Donate = () => {
                   </CardHeader>
                   <CardContent className="text-center">
                     <img 
-                      src="https://jjiyqxfotpfwdiwdexzp.supabase.co/storage/v1/object/public/Media/ISKCON%20FESTIVAL.png" 
+                      src={DONATE_IMAGES.festival} 
                       alt="Festival Donations QR Code"
                       className="mx-auto w-48 h-48 object-contain"
                     />
@@ -227,7 +247,7 @@ const Donate = () => {
                   </CardHeader>
                   <CardContent className="text-center">
                     <img 
-                      src="https://jjiyqxfotpfwdiwdexzp.supabase.co/storage/v1/object/public/Media/ISKCON%20GAUSHALA.png" 
+                      src={DONATE_IMAGES.gaushala} 
                       alt="Goshala Seva QR Code"
                       className="mx-auto w-48 h-48 object-contain"
                     />
@@ -616,7 +636,7 @@ const Donate = () => {
 
         <section className="container mx-auto px-4 py-16">
           <img 
-            src="https://jjiyqxfotpfwdiwdexzp.supabase.co/storage/v1/object/public/Media/donation%20page.png"
+            src={DONATE_IMAGES.donationPage}
             alt="Donation Information"
             className="w-full rounded-lg shadow-lg"
           />

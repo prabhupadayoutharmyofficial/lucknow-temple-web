@@ -1,12 +1,22 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Card, CardContent } from '@/components/ui/card';
 import { MapPin, Bus, Car, Train, Clock, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
+const VISIT_HERO_IMAGE = 'https://jjiyqxfotpfwdiwdexzp.supabase.co/storage/v1/object/public/Media/visit.jpg';
+
 const Visit = () => {
+  useEffect(() => {
+    const link = document.createElement('link');
+    link.rel = 'preload';
+    link.as = 'image';
+    link.href = VISIT_HERO_IMAGE;
+    link.fetchPriority = 'high';
+    document.head.appendChild(link);
+  }, []);
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -15,7 +25,7 @@ const Visit = () => {
         {/* Hero Section */}
         <div className="relative h-[80vh] bg-cover bg-center flex items-center justify-center" 
           style={{ 
-            backgroundImage: "url('https://jjiyqxfotpfwdiwdexzp.supabase.co/storage/v1/object/public/Media/visit.jpg')",
+            backgroundImage: `url('${VISIT_HERO_IMAGE}')`,
           }}>
           <div className="absolute inset-0 bg-black/40"></div>
           <div className="relative text-center text-white z-10">

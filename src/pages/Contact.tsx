@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import ContactForm from '@/components/ContactForm';
@@ -6,7 +6,17 @@ import TempleInfo from '@/components/TempleInfo';
 import { Card, CardContent } from '@/components/ui/card';
 import { MessageSquare, Share2, HelpCircle } from 'lucide-react';
 
+const CONTACT_HERO_IMAGE = 'https://jjiyqxfotpfwdiwdexzp.supabase.co/storage/v1/object/public/Media/contact.jpeg';
+
 const Contact = () => {
+  useEffect(() => {
+    const link = document.createElement('link');
+    link.rel = 'preload';
+    link.as = 'image';
+    link.href = CONTACT_HERO_IMAGE;
+    link.fetchPriority = 'high';
+    document.head.appendChild(link);
+  }, []);
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -15,7 +25,7 @@ const Contact = () => {
         {/* Hero Section */}
         <div className="relative h-[80vh] bg-cover bg-center flex items-center justify-center" 
           style={{ 
-            backgroundImage: "url('https://jjiyqxfotpfwdiwdexzp.supabase.co/storage/v1/object/public/Media/contact.jpeg')"
+            backgroundImage: `url('${CONTACT_HERO_IMAGE}')`
           }}>
           <div className="absolute inset-0 bg-black/50"></div>
           <div className="relative text-center text-white z-10">

@@ -1,11 +1,21 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { QuestionMarkIcon } from '@/components/QuestionMarkIcon';
 
+const FAQ_HERO_IMAGE = 'https://jjiyqxfotpfwdiwdexzp.supabase.co/storage/v1/object/public/Media/FAQ2.jpg';
+
 const FAQ = () => {
+  useEffect(() => {
+    const link = document.createElement('link');
+    link.rel = 'preload';
+    link.as = 'image';
+    link.href = FAQ_HERO_IMAGE;
+    link.fetchPriority = 'high';
+    document.head.appendChild(link);
+  }, []);
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -14,7 +24,7 @@ const FAQ = () => {
         {/* Hero Section */}
         <div className="relative h-[80vh] bg-cover bg-center flex items-center justify-center" 
           style={{ 
-            backgroundImage: "url('https://jjiyqxfotpfwdiwdexzp.supabase.co/storage/v1/object/public/Media/FAQ2.jpg')",
+            backgroundImage: `url('${FAQ_HERO_IMAGE}')`,
           }}>
           <div className="absolute inset-0 bg-black/40"></div>
           <div className="relative text-center text-white z-10">
