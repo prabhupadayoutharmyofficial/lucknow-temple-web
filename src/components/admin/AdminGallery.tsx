@@ -43,6 +43,7 @@ const AdminGallery = () => {
   const { toast } = useToast();
 
   const categories = [
+    { value: 'dailyDarshan', label: 'Daily Darshan' },
     { value: 'temple', label: 'Temple' },
     { value: 'deities', label: 'Deities' },
     { value: 'festivals', label: 'Festivals' },
